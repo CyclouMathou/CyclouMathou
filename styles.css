@@ -1,77 +1,42 @@
-.calendar {
-    background-color: #1a1a2e;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #0f0f1e;
+  color: white;
 }
 
-.day {
-    background-color: #1ABC9C;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 10px;
-    transition: background-color 0.3s ease;
+.circular-day-display {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background-color: #FF1493;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: white;
+  margin: 20px;
 }
 
-.day:hover {
-    background-color: #00D9A3;
+.two-column-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  width: 100%;
 }
 
-.mood-needs {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-    padding: 20px;
-    background-color: #1a1a2e;
+.mood, .need {
+  background-color: #1ABC9C;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  color: white;
 }
 
-.phase-menstruation {
-    background-color: #E91E63;
-}
-
-.phase-follicular {
-    background-color: #1ABC9C;
-}
-
-.phase-ovulation {
-    background-color: #FF1493;
-}
-
-.phase-luteal {
-    background-color: #9B59B6;
-}
-
-body {
-    background-color: #0f0f1e;
-    color: #FFFFFF;
-    font-family: Arial, sans-serif;
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-h1, h2, h3 {
-    color: #FF1493;
-}
-
-button {
-    background-color: #1ABC9C;
-    border: none;
-    border-radius: 5px;
-    padding: 10px 20px;
-    color: white;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-button:hover {
-    background-color: #00D9A3;
-}
-
-.gradient {
-    background: linear-gradient(135deg, #FF1493, #E91E63);
-    -webkit-background-clip: text;
-    color: transparent;
+@media (max-width: 768px) {
+  .two-column-layout {
+    grid-template-columns: 1fr;
+  }
 }
