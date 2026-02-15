@@ -1,1 +1,39 @@
-<!DOCTYPE html>\n<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>Cycle Tracking Interface</title>\n    <style>\n        body {\n            background-color: #121212;\n            color: #ffffff;\n            font-family: Arial, sans-serif;\n        }\n        .day-circle {\n            width: 100px;\n            height: 100px;\n            border-radius: 50%;\n            background-color: magenta;\n            display: flex;\n            align-items: center;\n            justify-content: center;\n            cursor: pointer;\n        }\n        .container {\n            display: flex;\n            justify-content: space-between;\n            margin-top: 20px;\n        }\n        .column {\n            width: 45%;\n            background-color: #1e1e1e;\n            padding: 20px;\n            border-radius: 5px;\n        }\n        .button {\n            margin-top: 20px;\n        }\n    </style>\n</head>\n<body>\n    <h1>Cycle Tracking Interface</h1>\n    <div class="day-circle" onclick="openCalendar()">\n        <span>Select Day</span>\n    </div>\n    <div class="container">\n        <div class="column">\n            <h2>Mood Tracking</h2>\n            <textarea placeholder="Log your mood here..."></textarea>\n        </div>\n        <div class="column">\n            <h2>Needs Tracking</h2>\n            <textarea placeholder="Log your needs here..."></textarea>\n        </div>\n    </div>\n    <script>\n        function openCalendar() {\n            // Logic to open calendar modal\n            alert('Calendar modal to select menstruation dates.');\n        }\n    </script>\n</body>\n</html>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suivi de Cycle Menstruel</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="main-container">
+        <h1>Suivi de Cycle</h1>
+        
+        <div class="day-circle" onclick="openCalendar()">
+            <span id="currentDay">15</span>
+        </div>
+        
+        <div class="columns-container">
+            <div class="column">
+                <h2>Humeurs</h2>
+                <textarea id="moodLog" placeholder="Notez vos humeurs..."></textarea>
+            </div>
+            <div class="column">
+                <h2>Besoins</h2>
+                <textarea id="needsLog" placeholder="Notez vos besoins..."></textarea>
+            </div>
+        </div>
+
+        <div id="calendarModal" class="modal hidden">
+            <div class="modal-content">
+                <h2>Calendrier de Menstruation</h2>
+                <div id="calendarDays" class="calendar-grid"></div>
+                <button onclick="closeCalendar()">Fermer</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
