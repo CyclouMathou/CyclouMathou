@@ -3,93 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cycle Tracking Interface</title>
+    <title>Cycle Tracking App</title>
     <style>
         body {
-            background-color: #1a1a1a;
-            color: white;
             font-family: Arial, sans-serif;
-            margin: 0;
-        }
-        header {
             text-align: center;
-            padding: 20px;
         }
-        .calendar {
-            display: flex;
-            justify-content: center;
-            margin: 20px;
-        }
-        .calendar div {
-            border: 2px solid magenta;
-            border-radius: 50%;
+        #circle {
             width: 300px;
             height: 300px;
+            border-radius: 50%;
+            border: 5px solid #4CAF50;
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative;
+            margin: 20px auto;
         }
-        .calendar div::before {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border: 10px solid mintgreen;
-            border-radius: 50%;
-            box-sizing: border-box;
-            animation: rotate 60s linear infinite;
-        }
-        .phase-indicators, .tracking {
+        .tracking-columns {
             display: flex;
             justify-content: space-around;
             margin-top: 20px;
         }
-        .note-section, .stats-section {
-            margin: 20px;
+        .column {
+            width: 45%;
             padding: 10px;
-            border: 1px solid magenta;
-        }
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+            border: 1px solid #ccc;
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>Cycle Tracking Interface</h1>
-    </header>
-    <div class="calendar">
-        <div>
-            <p>Current Day</p>
-        </div>
+    <h1>Cycle Tracking App</h1>
+    <div id="circle" onclick="modifyCalendar()">
+        <span>Calendar Day Display</span>
     </div>
-    <div class="phase-indicators">
-        <div>Follicular</div>
-        <div>Ovulatory</div>
-        <div>Luteal</div>
-        <div>Menstrual</div>
-    </div>
-    <div class="tracking">
-        <div>
+    <div class="tracking-columns">
+        <div class="column" id="mood-tracking">
             <h2>Mood Tracking</h2>
-            <p>Notes:</p>
-            <textarea rows="5" cols="30"></textarea>
+            <!-- Mood tracking implementation goes here -->
         </div>
-        <div>
+        <div class="column" id="needs-tracking">
             <h2>Needs Tracking</h2>
-            <p>Notes:</p>
-            <textarea rows="5" cols="30"></textarea>
+            <!-- Needs tracking implementation goes here -->
         </div>
     </div>
-    <div class="note-section">
-        <h2>Notes</h2>
-        <textarea rows="10" cols="50"></textarea>
-    </div>
-    <div class="stats-section">
-        <h2>Statistics</h2>
-        <p>Here you can display statistics about the cycle.</p>
-    </div>
+    <script>
+        function modifyCalendar() {
+            alert('Functionality to modify the calendar goes here.');
+        }
+    </script>
 </body>
 </html>
