@@ -12,15 +12,13 @@ function updateDateDisplay() {
     const dateDisplay = document.getElementById('dateDisplay');
     const today = new Date();
     
-    const options = { 
-        weekday: 'long', 
-        day: 'numeric', 
-        month: 'long',
-        year: 'numeric'
-    };
+    const day = today.getDate();
+    const month = today.toLocaleDateString('fr-FR', { month: 'long' });
     
-    const formattedDate = today.toLocaleDateString('fr-FR', options);
-    dateDisplay.innerHTML = formattedDate.replace(',', '<br>');
+    // Capitalize first letter of month
+    const capitalizedMonth = month.charAt(0).toUpperCase() + month.slice(1);
+    
+    dateDisplay.innerHTML = `<div class="day">${day}</div><div class="month">${capitalizedMonth}</div>`;
 }
 
 // Mood Tracking
