@@ -3,74 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cycle Tracking Interface</title>
+    <title>Calendar Interface</title>
     <style>
         body {
-            background-color: #121212;
+            background-color: #121212; /* Dark theme */
             color: white;
-            font-family: Arial, sans-serif;
         }
-        .container {
-            text-align: center;
-            padding: 20px;
+        .calendar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
         }
-        .day-display {
-            border: 5px solid magenta;
+        .day {
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
-            width: 300px;
-            height: 300px;
+            background-color: #1d1d1d; /* Background for days */
+            margin: 5px;
             display: flex;
-            justify-content: center;
             align-items: center;
-            margin: 20px auto;
-            font-size: 2em;
-            position: relative;
-        }
-        .columns {
-            display: flex;
             justify-content: center;
-            margin-top: 20px;
+            cursor: pointer;
         }
-        .column {
-            background-color: #1ABC9C;
-            width: 45%;
-            margin: 0 10px;
-            padding: 20px;
-            border-radius: 10px;
+        .popup {
+            display: none; /* Hidden by default */
+            position: absolute;
+            background-color: white;
+            color: black;
+            border: 1px solid #ccc;
+            padding: 10px;
         }
-        .mood {
-            background-color: magenta;
+        .mood-needs {
+            display: flex;
+            justify-content: space-between;
+        }
+        .mood, .need {
+            width: 48%;
+            background-color: #4A9AEB; /* Mint Green */
             padding: 10px;
             border-radius: 5px;
         }
-        /* Additional styles */
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Cycle Tracking Interface</h1>
-        <div class="day-display" onclick="openCalendar()">15</div>
-        <div class="columns">
-            <div class="column">
-                <h2>Moods</h2>
-                <div class="mood">Happy</div>
-                <div class="mood">Sad</div>
-                <div class="mood">Anxious</div>
-                <div class="mood">Excited</div>
-            </div>
-            <div class="column">
-                <h2>Needs</h2>
-                <div>More Sleep</div>
-                <div>Exercise</div>
-                <div>Socialize</div>
-                <div>Work on Projects</div>
-            </div>
-        </div>
+
+<div class="calendar" id="calendar">
+    <!-- Day circles will be generated here -->
+</div>
+
+<div class="mood-needs">
+    <div class="mood" id="mood">
+        <h3>Moods</h3>
+        <!-- Moods selection -->
     </div>
-    <script>
-        function openCalendar() {
-            alert('Open calendar to modify cycle dates!');
+    <div class="need" id="need">
+        <h3>Needs</h3>
+        <!-- Needs selection -->
+    </div>
+</div>
+
+<script>
+    // JavaScript to generate calendar and handle popup
+    document.addEventListener('DOMContentLoaded', function () {
+        const calendarElement = document.getElementById('calendar');
+        const daysInMonth = 30; // For simplification
+        
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dayCircle = document.createElement('div');
+            dayCircle.className = 'day';
+            dayCircle.textContent = day;
+
+            dayCircle.addEventListener('click', function () {
+                // Show popup functionality
+                const popup = document.createElement('div');
+                popup.className = 'popup';
+                popup.textContent = `Select menstruation date for day ${day}`;
+                calendarElement.appendChild(popup);
+                popup.style.display = 'block';
+                popup.style.left = `${event.pageX}px`;
+                popup.style.top = `${event.pageY}px`;
+            });
+
+            calendarElement.appendChild(dayCircle);
         }
-    </script>
+    });
+</script>
+
 </body>
 </html>
