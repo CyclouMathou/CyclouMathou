@@ -3,78 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CyclouMathou</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Cycle Tracking Interface</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .calendar { display: flex; flex-wrap: wrap; max-width: 400px; margin: auto; }
+        .day { border: 1px solid #ccc; border-radius: 50%; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; margin: 5px; cursor: pointer; }
+        .phase-dropdown { width: 100%; padding: 10px; }
+        .tracking { display: flex; justify-content: space-between; }
+        .mood, .needs { width: 48%; }
+        .emoji { cursor: pointer; font-size: 24px; }
+        textarea { width: 100%; height: 100px; margin-top: 10px; }
+        .statistics { margin-top: 20px; }
+    </style>
 </head>
 <body>
-    <header>
-        <h1>CyclouMathou</h1>
-    </header>
-
-    <main>
-        <section id="cycle-tracking">
-            <div class="month-selector">
-                <button id="prev-month">Previous</button>
-                <span id="current-month"></span>
-                <button id="next-month">Next</button>
-            </div>
-
-            <div class="calendar" id="calendar">
-                <!-- Calendar days will be dynamically generated here -->
-            </div>
-
-            <div class="phase-selector">
-                <label for="phase">Select Phase:</label>
-                <select id="phase">
-                    <option value="menstruation">Menstruation</option>
-                    <option value="follicular">Follicular</option>
-                    <option value="ovulation">Ovulation</option>
-                    <option value="luteal">Luteal</option>
-                </select>
-            </div>
-
-            <div class="mood-tracking">
-                <h2>Mood Tracking</h2>
-                <div class="mood-column">
-                    <h3>Moods</h3>
-                    <input type="checkbox" id="joyeuse"> Joyeuse<br>
-                    <input type="checkbox" id="energique"> Energique<br>
-                    <input type="checkbox" id="calme"> Calme<br>
-                    <input type="checkbox" id="fatiguee"> Fatiguée<br>
-                    <input type="checkbox" id="triste"> Triste<br>
-                    <input type="checkbox" id="stressée"> Stressée<br>
-                </div>
-
-                <div class="needs-column">
-                    <h3>Needs Tracking</h3>
-                    <input type="checkbox" id="intimite"> Intimité<br>
-                    <input type="checkbox" id="affection"> Affection<br>
-                    <input type="checkbox" id="espace"> Espace<br>
-                    <input type="checkbox" id="communication"> Communication<br>
-                    <input type="checkbox" id="solitude"> Solitude<br>
-                    <input type="checkbox" id="partage"> Partage<br>
-                </div>
-            </div>
-
-            <div class="notes-section">
-                <h2>Notes</h2>
-                <textarea id="notes" rows="4" cols="50" placeholder="Add your notes here..."></textarea>
-            </div>
-
-            <div class="action-buttons">
-                <button id="save-button">Save</button>
-                <button id="delete-button">Delete</button>
-            </div>
-
-            <div class="statistics">
-                <h2>Statistics</h2>
-                <p>Cycle Length: <span id="cycle-length"></span></p>
-                <p>Period Length: <span id="period-length"></span></p>
-                <p>Next Period Date: <span id="next-period-date"></span></p>
-            </div>
-        </section>
-    </main>
-
-    <script src="script.js"></script>
+    <h1>Cycle Tracking Interface</h1>
+    <div class="calendar">
+        <!-- Circular Day Buttons -->
+        <!-- Generate 28 buttons for a typical cycle -->
+        <script>
+            for (let i = 1; i <= 28; i++) {
+                document.write(`<div class='day'>${i}</div>`);
+            }
+        </script>
+    </div>
+    <h2>Phase Selection</h2>
+    <select class="phase-dropdown">
+        <option value="menstruation">Menstruation</option>
+        <option value="follicular">Follicular</option>
+        <option value="ovulation">Ovulation</option>
+        <option value="luteal">Luteal</option>
+    </select>
+    <h2>Mood Tracking</h2>
+    <div class="tracking">
+        <div class="mood">
+            <h3>Mood</h3>
+            <div class="emoji">😊</div>
+            <div class="emoji">😐</div>
+            <div class="emoji">😞</div>
+        </div>
+        <div class="needs">
+            <h3>Needs</h3>
+            <div class="emoji">❤️</div>
+            <div class="emoji">🛌</div>
+            <div class="emoji">🍽️</div>
+        </div>
+    </div>
+    <h2>Notes</h2>
+    <textarea placeholder="Your notes..."></textarea>
+    <div class="statistics">
+        <h2>Statistics</h2>
+        <p>Track your cycle stats here.</p>
+    </div>
 </body>
 </html>
