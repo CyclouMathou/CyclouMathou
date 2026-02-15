@@ -3,68 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles.css">
-    <title>CyclouMathou</title>
+    <title>Cycle Tracking Interface</title>
+    <style>
+        body {
+            background-color: #1a1a1a;
+            color: white;
+            font-family: Arial, sans-serif;
+            margin: 0;
+        }
+        header {
+            text-align: center;
+            padding: 20px;
+        }
+        .calendar {
+            display: flex;
+            justify-content: center;
+            margin: 20px;
+        }
+        .calendar div {
+            border: 2px solid magenta;
+            border-radius: 50%;
+            width: 300px;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .calendar div::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 10px solid mintgreen;
+            border-radius: 50%;
+            box-sizing: border-box;
+            animation: rotate 60s linear infinite;
+        }
+        .phase-indicators, .tracking {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+        .note-section, .stats-section {
+            margin: 20px;
+            padding: 10px;
+            border: 1px solid magenta;
+        }
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 <body>
     <header>
-        <h1>CyclouMathou</h1>
+        <h1>Cycle Tracking Interface</h1>
     </header>
-    <main>
-        <section id="month-selector">
-            <button id="prev-month">&lt;</button>
-            <select id="month-dropdown">
-                <option value="1">January</option>
-                <option value="2">February</option>
-                <option value="3">March</option>
-                <option value="4">April</option>
-                <option value="5">May</option>
-                <option value="6">June</option>
-                <option value="7">July</option>
-                <option value="8">August</option>
-                <option value="9">September</option>
-                <option value="10">October</option>
-                <option value="11">November</option>
-                <option value="12">December</option>
-            </select>
-            <button id="next-month">&gt;</button>
-        </section>
-        <section id="calendar">
-            <!-- Circular day elements would be generated here -->
-            <div class="day-circle">1</div>
-            <div class="day-circle">2</div>
-            <div class="day-circle">3</div>
-            <!-- More days -->
-        </section>
-        <section id="day-details">
-            <h2>Day Details</h2>
-            <label for="phase-selection">Phase:</label>
-            <select id="phase-selection">
-                <option value="phase-1">Phase 1</option>
-                <option value="phase-2">Phase 2</option>
-            </select>
-            <div id="mood-tracking">
-                <h3>Mood Tracking</h3>
-                <button class="emoji">😊</button>
-                <button class="emoji">😐</button>
-                <button class="emoji">😢</button>
-            </div>
-            <div id="needs-tracking">
-                <h3>Needs Tracking</h3>
-                <button class="emoji">🍎</button>
-                <button class="emoji">💧</button>
-                <button class="emoji">🛏️</button>
-            </div>
-            <section id="notes">
-                <h3>Notes</h3>
-                <textarea id="notes-content" rows="4" cols="50"></textarea>
-            </section>
-        </section>
-        <section id="statistics">
-            <div class="card">Statistics Card 1</div>
-            <div class="card">Statistics Card 2</div>
-        </section>
-    </main>
-    <script src="script.js"></script>
+    <div class="calendar">
+        <div>
+            <p>Current Day</p>
+        </div>
+    </div>
+    <div class="phase-indicators">
+        <div>Follicular</div>
+        <div>Ovulatory</div>
+        <div>Luteal</div>
+        <div>Menstrual</div>
+    </div>
+    <div class="tracking">
+        <div>
+            <h2>Mood Tracking</h2>
+            <p>Notes:</p>
+            <textarea rows="5" cols="30"></textarea>
+        </div>
+        <div>
+            <h2>Needs Tracking</h2>
+            <p>Notes:</p>
+            <textarea rows="5" cols="30"></textarea>
+        </div>
+    </div>
+    <div class="note-section">
+        <h2>Notes</h2>
+        <textarea rows="10" cols="50"></textarea>
+    </div>
+    <div class="stats-section">
+        <h2>Statistics</h2>
+        <p>Here you can display statistics about the cycle.</p>
+    </div>
 </body>
 </html>
