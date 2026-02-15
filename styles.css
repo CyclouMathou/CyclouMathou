@@ -1,56 +1,77 @@
-.container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  background-color: #1a1a2e;
-  color: #FFFFFF;
-  padding: 20px;
-}
-
-header {
-  background: linear-gradient(135deg, #FF1493, #00E5B6);
-  text-align: center;
-  padding: 20px;
-  border-radius: 10px;
-}
-
-h1, h2 {
-  color: #FF1493;
-}
-
-section {
-  flex: 1 1 45%;
-  margin: 10px;
-  padding: 20px;
-  background-color: #2e2e39;
-  border-radius: 10px;
-}
-
 .calendar {
-  border-radius: 50%;
-  background-color: #00E5B6;
-  width: 200px;
-  height: 200px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+    background-color: #1a1a2e;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
-.mood, .need {
-  flex: 1;
-  background-color: #1DE9B6;
-  padding: 15px;
-  margin: 5px;
-  border-radius: 10px;
-  transition: background-color 0.3s;
+.day {
+    background-color: #1ABC9C;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px;
+    transition: background-color 0.3s ease;
 }
 
-.mood:hover, .need:hover {
-  background-color: #FF1493;
+.day:hover {
+    background-color: #00D9A3;
 }
 
-.footer {
-  text-align: center;
-  padding: 10px;
-  background: #1a1a2e;
+.mood-needs {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    padding: 20px;
+    background-color: #1a1a2e;
+}
+
+.phase-menstruation {
+    background-color: #E91E63;
+}
+
+.phase-follicular {
+    background-color: #1ABC9C;
+}
+
+.phase-ovulation {
+    background-color: #FF1493;
+}
+
+.phase-luteal {
+    background-color: #9B59B6;
+}
+
+body {
+    background-color: #0f0f1e;
+    color: #FFFFFF;
+    font-family: Arial, sans-serif;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+h1, h2, h3 {
+    color: #FF1493;
+}
+
+button {
+    background-color: #1ABC9C;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #00D9A3;
+}
+
+.gradient {
+    background: linear-gradient(135deg, #FF1493, #E91E63);
+    -webkit-background-clip: text;
+    color: transparent;
 }
