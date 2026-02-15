@@ -1,1 +1,70 @@
-<!DOCTYPE html>\n<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <link rel="stylesheet" href="styles.css">\n    <title>Cycle Tracking App</title>\n    <style>\n        body {\n            background-color: #1a1a1a;\n            color: white;\n            font-family: Arial, sans-serif;\n        }\n        .day-selector {\n            display: flex;\n            justify-content: space-between;\n            margin-bottom: 20px;\n        }\n        .day {\n            background-color: magenta;\n            padding: 10px;\n            border-radius: 5px;\n            cursor: pointer;\n        }\n        .day:hover {\n            background-color: mintgreen;\n        }\n        .dropdown {\n            margin: 10px 0;\n        }\n        .tracking {\n            display: flex;\n            justify-content: space-between;\n        }\n        .column {\n            flex: 1;\n            margin: 10px;\n            background: #2e2e2e;\n            padding: 10px;\n            border-radius: 5px;\n        }\n        .emoji {\n            cursor: pointer;\n            font-size: 24px;\n        }\n        .notes {\n            margin-top: 20px;\n        }\n    </style>\n</head>\n<body>\n    <h1>Cycle Tracking App</h1>\n    <div class="day-selector">\n        <div class="day">Day 1</div>\n        <div class="day">Day 2</div>\n        <div class="day">Day 3</div>\n        <div class="day">Day 4</div>\n        <div class="day">Day 5</div>\n        <div class="day">Day 6</div>\n        <div class="day">Day 7</div>\n    </div>\n    <div class="dropdown">\n        <label for="phase-selection">Select Phase:</label>\n        <select id="phase-selection">\n            <option value="">--Choose Phase--</option>\n            <option value="follicular">Follicular</option>\n            <option value="ovulation">Ovulation</option>\n            <option value="luteal">Luteal</option>\n            <option value="menstrual">Menstrual</option>\n        </select>\n    </div>\n    <div class="tracking">\n        <div class="column">\n            <h2>Moods</h2>\n            <button class="emoji">😊</button>\n            <button class="emoji">😡</button>\n            <button class="emoji">😢</button>\n            <button class="emoji">😃</button>\n        </div>\n        <div class="column">\n            <h2>Needs</h2>\n            <button class="emoji">🛌</button>\n            <button class="emoji">🍕</button>\n            <button class="emoji">💪</button>\n            <button class="emoji">📖</button>\n        </div>\n    </div>\n    <div class="notes">\n        <h2>Notes</h2>\n        <textarea rows="4" cols="50" placeholder="Write your notes here..."></textarea>\n    </div>\n    <div class="statistics">\n        <h2>Cycle Statistics</h2>\n        <p>Track your cycle and insights here.</p>\n    </div>\n    <script src="script.js"></script>\n</body>\n</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>CyclouMathou</title>
+</head>
+<body>
+    <header>
+        <h1>CyclouMathou</h1>
+    </header>
+    <main>
+        <section id="month-selector">
+            <button id="prev-month">&lt;</button>
+            <select id="month-dropdown">
+                <option value="1">January</option>
+                <option value="2">February</option>
+                <option value="3">March</option>
+                <option value="4">April</option>
+                <option value="5">May</option>
+                <option value="6">June</option>
+                <option value="7">July</option>
+                <option value="8">August</option>
+                <option value="9">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+            </select>
+            <button id="next-month">&gt;</button>
+        </section>
+        <section id="calendar">
+            <!-- Circular day elements would be generated here -->
+            <div class="day-circle">1</div>
+            <div class="day-circle">2</div>
+            <div class="day-circle">3</div>
+            <!-- More days -->
+        </section>
+        <section id="day-details">
+            <h2>Day Details</h2>
+            <label for="phase-selection">Phase:</label>
+            <select id="phase-selection">
+                <option value="phase-1">Phase 1</option>
+                <option value="phase-2">Phase 2</option>
+            </select>
+            <div id="mood-tracking">
+                <h3>Mood Tracking</h3>
+                <button class="emoji">😊</button>
+                <button class="emoji">😐</button>
+                <button class="emoji">😢</button>
+            </div>
+            <div id="needs-tracking">
+                <h3>Needs Tracking</h3>
+                <button class="emoji">🍎</button>
+                <button class="emoji">💧</button>
+                <button class="emoji">🛏️</button>
+            </div>
+            <section id="notes">
+                <h3>Notes</h3>
+                <textarea id="notes-content" rows="4" cols="50"></textarea>
+            </section>
+        </section>
+        <section id="statistics">
+            <div class="card">Statistics Card 1</div>
+            <div class="card">Statistics Card 2</div>
+        </section>
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>
