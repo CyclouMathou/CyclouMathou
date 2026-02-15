@@ -1,39 +1,52 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Suivi de Cycle Menstruel</title>
+    <title>Cycle Tracking Interface</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="main-container">
-        <h1>Suivi de Cycle</h1>
-        
-        <div class="day-circle" onclick="openCalendar()">
-            <span id="currentDay">15</span>
-        </div>
-        
-        <div class="columns-container">
-            <div class="column">
-                <h2>Humeurs</h2>
-                <textarea id="moodLog" placeholder="Notez vos humeurs..."></textarea>
+    <header>
+        <h1>Cycle Tracking Interface</h1>
+    </header>
+    <main>
+        <section id="day-circle">
+            <h2>Day Circle</h2>
+            <div class="circle">
+                <div class="day-info">
+                    <p>Today is: <span id="current-day"></span></p>
+                </div>
             </div>
-            <div class="column">
-                <h2>Besoins</h2>
-                <textarea id="needsLog" placeholder="Notez vos besoins..."></textarea>
+        </section>
+        <section id="calendar-modal">
+            <h2>Calendar</h2>
+            <button id="open-calendar">Open Calendar</button>
+            <div id="calendar" class="modal">
+                <span class="close" id="close-calendar">&times;</span>
+                <div class="modal-content">
+                    <h2>Select Date</h2>
+                    <input type="date" id="date-picker">
+                </div>
             </div>
-        </div>
-
-        <div id="calendarModal" class="modal hidden">
-            <div class="modal-content">
-                <h2>Calendrier de Menstruation</h2>
-                <div id="calendarDays" class="calendar-grid"></div>
-                <button onclick="closeCalendar()">Fermer</button>
+        </section>
+        <section id="tracking">
+            <h2>Mood and Needs Tracking</h2>
+            <div class="tracking-columns">
+                <div class="column" id="mood-tracking">
+                    <h3>Mood Tracking</h3>
+                    <textarea placeholder="Describe your mood..."></textarea>
+                </div>
+                <div class="column" id="needs-tracking">
+                    <h3>Needs Tracking</h3>
+                    <textarea placeholder="Describe your needs..."></textarea>
+                </div>
             </div>
-        </div>
-    </div>
-
-    <script src="script.js"></script>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2026 CyclouMathou</p>
+    </footer>
+    <script src="main.js"></script>
 </body>
 </html>
