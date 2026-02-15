@@ -3,91 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calendar Interface</title>
-    <style>
-        body {
-            background-color: #121212; /* Dark theme */
-            color: white;
-        }
-        .calendar {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-around;
-        }
-        .day {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background-color: #1d1d1d; /* Background for days */
-            margin: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
-        .popup {
-            display: none; /* Hidden by default */
-            position: absolute;
-            background-color: white;
-            color: black;
-            border: 1px solid #ccc;
-            padding: 10px;
-        }
-        .mood-needs {
-            display: flex;
-            justify-content: space-between;
-        }
-        .mood, .need {
-            width: 48%;
-            background-color: #4A9AEB; /* Mint Green */
-            padding: 10px;
-            border-radius: 5px;
-        }
-    </style>
+    <title>Cycle Tracking Interface</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
-<div class="calendar" id="calendar">
-    <!-- Day circles will be generated here -->
-</div>
-
-<div class="mood-needs">
-    <div class="mood" id="mood">
-        <h3>Moods</h3>
-        <!-- Moods selection -->
+    <h1>Cycle Tracking Interface</h1>
+    <div id="calendar-modal">
+        <h2>Set Menstruation Dates</h2>
+        <input type="date" id="menstruation-date" />
+        <button id="set-date">Set Date</button>
     </div>
-    <div class="need" id="need">
-        <h3>Needs</h3>
-        <!-- Needs selection -->
+    <div id="current-day-cycle">
+        <h2>Current Day and Cycle Phase</h2>
+        <div id="phase-circle"></div>
+        <span id="current-phase"></span>
     </div>
-</div>
-
-<script>
-    // JavaScript to generate calendar and handle popup
-    document.addEventListener('DOMContentLoaded', function () {
-        const calendarElement = document.getElementById('calendar');
-        const daysInMonth = 30; // For simplification
-        
-        for (let day = 1; day <= daysInMonth; day++) {
-            const dayCircle = document.createElement('div');
-            dayCircle.className = 'day';
-            dayCircle.textContent = day;
-
-            dayCircle.addEventListener('click', function () {
-                // Show popup functionality
-                const popup = document.createElement('div');
-                popup.className = 'popup';
-                popup.textContent = `Select menstruation date for day ${day}`;
-                calendarElement.appendChild(popup);
-                popup.style.display = 'block';
-                popup.style.left = `${event.pageX}px`;
-                popup.style.top = `${event.pageY}px`;
-            });
-
-            calendarElement.appendChild(dayCircle);
-        }
-    });
-</script>
-
+    <div id="moods-needs">
+        <div>
+            <h3>Moods</h3>
+            <textarea id="moods-log"></textarea>
+        </div>
+        <div>
+            <h3>Needs</h3>
+            <textarea id="needs-log"></textarea>
+        </div>
+    </div>
+    <script src="script.js"></script>
 </body>
 </html>
