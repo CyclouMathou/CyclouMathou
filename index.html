@@ -3,52 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cycle Tracking App</title>
+    <title>Cycle Tracking Interface</title>
     <style>
         body {
+            background-color: #121212;
+            color: white;
             font-family: Arial, sans-serif;
-            text-align: center;
         }
-        #circle {
+        .container {
+            text-align: center;
+            padding: 20px;
+        }
+        .day-display {
+            border: 5px solid magenta;
+            border-radius: 50%;
             width: 300px;
             height: 300px;
-            border-radius: 50%;
-            border: 5px solid #4CAF50;
             display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
             margin: 20px auto;
+            font-size: 2em;
+            position: relative;
         }
-        .tracking-columns {
+        .columns {
             display: flex;
-            justify-content: space-around;
+            justify-content: center;
             margin-top: 20px;
         }
         .column {
+            background-color: #1ABC9C;
             width: 45%;
-            padding: 10px;
-            border: 1px solid #ccc;
+            margin: 0 10px;
+            padding: 20px;
+            border-radius: 10px;
         }
+        .mood {
+            background-color: magenta;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        /* Additional styles */
     </style>
 </head>
 <body>
-    <h1>Cycle Tracking App</h1>
-    <div id="circle" onclick="modifyCalendar()">
-        <span>Calendar Day Display</span>
-    </div>
-    <div class="tracking-columns">
-        <div class="column" id="mood-tracking">
-            <h2>Mood Tracking</h2>
-            <!-- Mood tracking implementation goes here -->
-        </div>
-        <div class="column" id="needs-tracking">
-            <h2>Needs Tracking</h2>
-            <!-- Needs tracking implementation goes here -->
+    <div class="container">
+        <h1>Cycle Tracking Interface</h1>
+        <div class="day-display" onclick="openCalendar()">15</div>
+        <div class="columns">
+            <div class="column">
+                <h2>Moods</h2>
+                <div class="mood">Happy</div>
+                <div class="mood">Sad</div>
+                <div class="mood">Anxious</div>
+                <div class="mood">Excited</div>
+            </div>
+            <div class="column">
+                <h2>Needs</h2>
+                <div>More Sleep</div>
+                <div>Exercise</div>
+                <div>Socialize</div>
+                <div>Work on Projects</div>
+            </div>
         </div>
     </div>
     <script>
-        function modifyCalendar() {
-            alert('Functionality to modify the calendar goes here.');
+        function openCalendar() {
+            alert('Open calendar to modify cycle dates!');
         }
     </script>
 </body>
