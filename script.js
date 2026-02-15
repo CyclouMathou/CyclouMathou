@@ -1,73 +1,30 @@
-// Cycle Tracking Script for Menstruation Calendar
+// Calendar functionality with menstruation date tracking
 
-class CycleTracker {
-    constructor() {
-        this.cycleDays = 28; // Average cycle length
-        this.menstruationDays = [];
-        this.phases = ['Follicular', 'Ovulation', 'Luteal', 'Menstruation'];
-        this.currentPhase = '';
-        this.currentDate = new Date();
-        this.loadData();
-        this.updateUI();
-    }
-
-    // Load data from local storage
-    loadData() {
-        const storedDates = JSON.parse(localStorage.getItem('menstruationDates')) || [];
-        this.menstruationDays = storedDates;
-    }
-
-    // Save data to local storage
-    saveData() {
-        localStorage.setItem('menstruationDates', JSON.stringify(this.menstruationDays));
-    }
-
-    // Mark a menstruation date
-    markDate(date) {
-        this.menstruationDays.push(date);
-        this.saveData();
-        this.calculatePhase();
-        this.updateUI();
-    }
-
-    // Calculate the current phase based on marked menstruation dates
-    calculatePhase() {
-        const today = new Date();
-        const lastMenstruationDate = new Date(this.menstruationDays[this.menstruationDays.length - 1]);
-        const difference = Math.floor((today - lastMenstruationDate) / (1000 * 60 * 60 * 24));
-
-        if (difference < 5) {
-            this.currentPhase = this.phases[3]; // Menstruation
-        } else if (difference < 14) {
-            this.currentPhase = this.phases[0]; // Follicular
-        } else if (difference < 17) {
-            this.currentPhase = this.phases[1]; // Ovulation
-        } else {
-            this.currentPhase = this.phases[2]; // Luteal
-        }
-    }
-
-    // Update the UI
-    updateUI() {
-        // For UI update, you'd implement DOM manipulation here
-        console.log(`Current Phase: ${this.currentPhase}`);
-        console.log(`Menstruation Dates: ${this.menstruationDays}`);
-    }
-
-    // Navigate months
-    navigateMonth(direction) {
-        if (direction === 'next') {
-            this.currentDate.setMonth(this.currentDate.getMonth() + 1);
-        } else {
-            this.currentDate.setMonth(this.currentDate.getMonth() - 1);
-        }
-        this.updateCalendar();
-    }
-
-    // Implement additional methods for handling UI interactions
+function initCalendar() {
+    // Initialize calendar UI
+    // Include code to create the modal and handle date selections
 }
 
-const cycleTracker = new CycleTracker();
+function trackMenstruationDates(selectedDate) {
+    // Store selected menstruation dates in local storage or a database
+}
 
-// Example UI interaction
-// cycleTracker.markDate('2026-02-01'); // Example of marking a date
+function calculatePhase(cycleLength, lastMenstruationDate) {
+    const today = new Date();
+    const lastDate = new Date(lastMenstruationDate);
+    const daysSinceLast = Math.floor((today - lastDate) / (1000 * 60 * 60 * 24));
+    const phase = daysSinceLast % cycleLength;
+
+    if (phase < 5) {
+        return "Menstrual Phase";
+    } else if (phase < 14) {
+        return "Follicular Phase";
+    } else if (phase < 21) {
+        return "Luteal Phase";
+    } else {
+        return "Pre-Menstrual Phase";
+    }
+}
+
+// Example usage
+document.addEventListener('DOMContentLoaded', initCalendar);
