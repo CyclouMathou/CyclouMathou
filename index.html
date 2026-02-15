@@ -1,1 +1,41 @@
-<!DOCTYPE html>\n<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>Cycle Tracking Interface</title>\n    <style>\n        body {\n            font-family: Arial, sans-serif;\n            display: flex;\n            justify-content: center;\n            align-items: center;\n            height: 100vh;\n            margin: 0;\n            background-color: #f4f4f4;\n        }\n        #container {\n            width: 80%;\n            display: flex;\n            flex-direction: column;\n            align-items: center;\n        }\n        #cycleCircle {\n            border: 10px solid #4CAF50;\n            border-radius: 50%;\n            width: 200px;\n            height: 200px;\n            display: flex;\n            justify-content: center;\n            align-items: center;\n            font-size: 24px;\n            position: relative;\n            text-align: center;\n        }\n        #calendar {\n            display: none;\n            position: absolute;\n            top: 220px;\n            background: white;\n            border: 1px solid #ccc;\n            box-shadow: 0 2px 10px rgba(0,0,0,0.1);\n            padding: 10px;\n        }\n        #moodNeeds {\n            display: flex;\n            width: 100%;\n            justify-content: space-around;\n            margin-top: 20px;\n        }\n        .side {\n            width: 45%;\n            background: white;\n            border: 1px solid #ccc;\n            padding: 10px;\n            box-shadow: 0 2px 5px rgba(0,0,0,0.1);\n        }\n    </style>\n</head>\n<body>\n    <div id="container">\n        <div id="cycleCircle">\n            <span id="day">15</span>\n            <div id="calendar">\n                <h4>Calendar Modal</h4>\n                <p>Select a date to track.</p>\n            </div>\n        </div>\n        <div id="moodNeeds">\n            <div class="side">\n                <h3>Mood Tracking</h3>\n                <p>Record your mood here.</p>\n            </div>\n            <div class="side">\n                <h3>Needs Tracking</h3>\n                <p>List your needs here.</p>\n            </div>\n        </div>\n    </div>\n</body>\n</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cycle Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Cycle Tracker</h1>
+    </header>
+
+    <main>
+        <div class="calendar-modal">
+            <!-- Calendar modal content can be added here -->
+            <h2>Select Date</h2>
+            <input type="date" id="calendar-input">
+        </div>
+
+        <div class="day-circle">
+            <span id="current-date">2026-02-15</span>
+        </div>
+
+        <div class="tracking-columns">
+            <div class="mood-tracking">
+                <h2>Mood Tracking</h2>
+                <textarea placeholder="How are you feeling today?"></textarea>
+            </div>
+            <div class="needs-tracking">
+                <h2>Needs Tracking</h2>
+                <textarea placeholder="What do you need today?"></textarea>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Cycle Tracker</p>
+    </footer>
+</body>
+</html>
