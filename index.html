@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyclouMathou - Suivi de Cycle</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌙 CyclouMathou</h1>
+            <p>Suivi simple de votre cycle menstruel et besoins relationnels</p>
+        </header>
+
+        <main>
+            <!-- Calendrier -->
+            <section class="calendar-section">
+                <h2>Calendrier</h2>
+                <div class="calendar-controls">
+                    <button id="prevMonth">&lt; Précédent</button>
+                    <h3 id="currentMonth"></h3>
+                    <button id="nextMonth">Suivant &gt;</button>
+                </div>
+                <div id="calendar" class="calendar"></div>
+            </section>
+
+            <!-- Formulaire d'ajout -->
+            <section class="form-section">
+                <h2>Ajouter une entrée</h2>
+                <form id="entryForm">
+                    <div class="form-group">
+                        <label for="entryDate">Date :</label>
+                        <input type="date" id="entryDate" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cyclePhase">Phase du cycle :</label>
+                        <select id="cyclePhase" required>
+                            <option value="">-- Sélectionner --</option>
+                            <option value="menstruation">Menstruation</option>
+                            <option value="follicular">Phase folliculaire</option>
+                            <option value="ovulation">Ovulation</option>
+                            <option value="luteal">Phase lutéale</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="symptoms">Symptômes :</label>
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" value="cramps"> Crampes</label>
+                            <label><input type="checkbox" value="headache"> Mal de tête</label>
+                            <label><input type="checkbox" value="fatigue"> Fatigue</label>
+                            <label><input type="checkbox" value="bloating"> Ballonnements</label>
+                            <label><input type="checkbox" value="acne"> Acné</label>
+                            <label><input type="checkbox" value="nausea"> Nausée</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="mood">Humeur :</label>
+                        <select id="mood" required>
+                            <option value="">-- Sélectionner --</option>
+                            <option value="very-happy">Très heureuse 😄</option>
+                            <option value="happy">Heureuse 🙂</option>
+                            <option value="neutral">Neutre 😐</option>
+                            <option value="sad">Triste 😢</option>
+                            <option value="very-sad">Très triste 😞</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="relationshipNeeds">Besoins relationnels :</label>
+                        <select id="relationshipNeeds" required>
+                            <option value="">-- Sélectionner --</option>
+                            <option value="alone">Besoin d'être seule</option>
+                            <option value="intimate">Besoin d'intimité</option>
+                            <option value="affection">Besoin d'affection</option>
+                            <option value="social">Besoin social</option>
+                            <option value="neutral">Neutre</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="notes">Notes :</label>
+                        <textarea id="notes" placeholder="Vos observations..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-primary">Ajouter l'entrée</button>
+                </form>
+            </section>
+
+            <!-- Historique -->
+            <section class="history-section">
+                <h2>Historique récent</h2>
+                <div id="history" class="history-list"></div>
+            </section>
+
+            <!-- Statistiques -->
+            <section class="stats-section">
+                <h2>Statistiques</h2>
+                <div id="stats" class="stats-container"></div>
+            </section>
+
+            <!-- Actions -->
+            <section class="actions-section">
+                <button id="exportBtn" class="btn-secondary">📥 Exporter les données</button>
+                <button id="importBtn" class="btn-secondary">📤 Importer les données</button>
+                <button id="resetBtn" class="btn-danger">🗑️ Réinitialiser</button>
+                <input type="file" id="importFile" style="display: none;" accept=".json">
+            </section>
+        </main>
+
+        <footer>
+            <p>CyclouMathou © 2026 - Données stockées localement sur votre appareil</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
