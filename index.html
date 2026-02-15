@@ -1,54 +1,47 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mood and Needs Tracker</title>
-    <style>
-        body {
-            background-color: navy;
-            color: white;
-            font-family: Arial, sans-serif;
-            text-align: center;
-        }
-        .circle {
-            width: 150px;
-            height: 150px;
-            background-color: white;
-            color: navy;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 48px;
-            margin: 20px auto;
-        }
-        .container {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 20px;
-        }
-        .box {
-            width: 200px;
-            padding: 10px;
-            border: 1px solid white;
-            border-radius: 5px;
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-    </style>
+    <meta name="description" content="Suivez votre cycle, votre humeur et vos besoins">
+    <title>Suit mon cycle</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Mood and Needs Tracker</h1>
-    <div class="circle">15</div>
-    <div class="container">
-        <div class="box">
-            <h2>Mood Tracking</h2>
-            <!-- Mood tracking content goes here -->
+    <main class="container">
+        <h1>suit mon cycle</h1>
+        
+        <div class="circle" id="dateCircle">
+            <div class="date-display" id="dateDisplay">--</div>
         </div>
-        <div class="box">
-            <h2>Needs Tracking</h2>
-            <!-- Needs tracking content goes here -->
+
+        <div class="two-columns">
+            <div class="column">
+                <h2>mes humeurs</h2>
+                <div class="mood-container">
+                    <button class="mood" data-mood="happy" aria-label="Heureuse">😊</button>
+                    <button class="mood" data-mood="calm" aria-label="Calme">😌</button>
+                    <button class="mood" data-mood="sad" aria-label="Triste">😢</button>
+                    <button class="mood" data-mood="angry" aria-label="En colère">😠</button>
+                    <button class="mood" data-mood="tired" aria-label="Fatiguée">😴</button>
+                    <button class="mood" data-mood="energetic" aria-label="Énergique">⚡</button>
+                </div>
+            </div>
+            
+            <div class="column">
+                <h2>mes besoins</h2>
+                <div class="needs-container">
+                    <button class="need" data-need="rest" aria-label="Repos">🛌 Repos</button>
+                    <button class="need" data-need="exercise" aria-label="Exercice">🏃 Exercice</button>
+                    <button class="need" data-need="social" aria-label="Social">👥 Social</button>
+                    <button class="need" data-need="alone" aria-label="Temps seule">🧘 Seule</button>
+                    <button class="need" data-need="comfort" aria-label="Confort">🤗 Confort</button>
+                    <button class="need" data-need="creativity" aria-label="Créativité">🎨 Créativité</button>
+                </div>
+            </div>
         </div>
-    </div>
+    </main>
+
+    <script src="script.js"></script>
 </body>
 </html>
