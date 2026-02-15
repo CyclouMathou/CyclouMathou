@@ -4,12 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cycle Tracking Application</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Welcome to the Cycle Tracking Application!</h1>
-    <p>This application helps you track your cycles and manage your health.</p>
-    <footer>
-        <p>Current Date: 2026-02-15 21:43:36 UTC</p>
-    </footer>
+    <header>
+        <h1>Cycle Tracking Application</h1>
+    </header>
+    <main>
+        <section id="calendar">
+            <h2>Select Cycle Start Date</h2>
+            <input type="date" id="startDate">
+        </section>
+        <section id="inputForm">
+            <h2>Enter Cycle Details</h2>
+            <form id="cycleForm">
+                <label for="cycleLength">Cycle Length (days):</label>
+                <input type="number" id="cycleLength" min="1" required>
+                <button type="submit">Track Cycle</button>
+            </form>
+        </section>
+        <section id="trackingResults">
+            <h2>Your Cycle Tracking Results</h2>
+            <div id="results"></div>
+        </section>
+    </main>
+    <script src="script.js"></script>
 </body>
 </html>
