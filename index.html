@@ -3,39 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cycle Tracker</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Mood and Needs Tracker</title>
+    <style>
+        body {
+            background-color: navy;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        .circle {
+            width: 150px;
+            height: 150px;
+            background-color: white;
+            color: navy;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            margin: 20px auto;
+        }
+        .container {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+        .box {
+            width: 200px;
+            padding: 10px;
+            border: 1px solid white;
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <h1>Cycle Tracker</h1>
-    </header>
-
-    <main>
-        <div class="calendar-modal">
-            <!-- Calendar modal content can be added here -->
-            <h2>Select Date</h2>
-            <input type="date" id="calendar-input">
+    <h1>Mood and Needs Tracker</h1>
+    <div class="circle">15</div>
+    <div class="container">
+        <div class="box">
+            <h2>Mood Tracking</h2>
+            <!-- Mood tracking content goes here -->
         </div>
-
-        <div class="day-circle">
-            <span id="current-date">2026-02-15</span>
+        <div class="box">
+            <h2>Needs Tracking</h2>
+            <!-- Needs tracking content goes here -->
         </div>
-
-        <div class="tracking-columns">
-            <div class="mood-tracking">
-                <h2>Mood Tracking</h2>
-                <textarea placeholder="How are you feeling today?"></textarea>
-            </div>
-            <div class="needs-tracking">
-                <h2>Needs Tracking</h2>
-                <textarea placeholder="What do you need today?"></textarea>
-            </div>
-        </div>
-    </main>
-
-    <footer>
-        <p>&copy; 2026 Cycle Tracker</p>
-    </footer>
+    </div>
 </body>
 </html>
