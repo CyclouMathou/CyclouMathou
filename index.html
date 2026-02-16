@@ -92,22 +92,31 @@
         <div class="hormone-graph-container">
             <h2>Cycle Hormonal</h2>
             <div class="hormone-legend">
-                <div class="legend-item">
+                <button class="legend-item" data-hormone="estrogene" aria-label="En savoir plus sur l'œstrogène">
                     <span class="legend-color" style="background-color: #ff1493;"></span>
                     <span>Œstrogène</span>
-                </div>
-                <div class="legend-item">
+                </button>
+                <button class="legend-item" data-hormone="progesterone" aria-label="En savoir plus sur la progestérone">
                     <span class="legend-color" style="background-color: #9370db;"></span>
                     <span>Progestérone</span>
-                </div>
-                <div class="legend-item">
+                </button>
+                <button class="legend-item" data-hormone="testosterone" aria-label="En savoir plus sur la testostérone">
                     <span class="legend-color" style="background-color: #4169e1;"></span>
                     <span>Testostérone</span>
-                </div>
+                </button>
             </div>
             <canvas id="hormoneGraph" width="700" height="300"></canvas>
         </div>
     </main>
+
+    <!-- Hormone Information Modal -->
+    <div class="hormone-modal" id="hormoneModal">
+        <div class="hormone-modal-content">
+            <button class="hormone-modal-close" id="closeModal" aria-label="Fermer">&times;</button>
+            <h3 id="modalTitle"></h3>
+            <div id="modalBody"></div>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>
