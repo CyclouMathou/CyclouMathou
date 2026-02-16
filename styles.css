@@ -1338,3 +1338,230 @@ body.read-only .need.selected {
     font-size: 0.8rem;
   }
 }
+
+/* Cervical Mucus Tracking Section */
+.cervical-mucus-section {
+  margin-top: 60px;
+  padding: 30px;
+  background-color: rgba(26, 26, 26, 0.5);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 0, 255, 0.3);
+}
+
+.cervical-mucus-section h2 {
+  font-size: 1.5rem;
+  font-weight: 300;
+  color: #ff00ff;
+  margin-bottom: 15px;
+  letter-spacing: 1px;
+  text-align: center;
+}
+
+.mucus-description {
+  font-size: 0.9rem;
+  color: #ffffff;
+  text-align: center;
+  margin-bottom: 25px;
+  opacity: 0.8;
+  line-height: 1.5;
+}
+
+.mucus-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-width: 500px;
+  margin: 0 auto 30px;
+  padding: 20px;
+  background-color: rgba(10, 15, 26, 0.5);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 0, 255, 0.2);
+}
+
+.mucus-selector label {
+  font-size: 1rem;
+  color: #ffffff;
+  font-weight: 400;
+  text-align: center;
+}
+
+.mucus-selector select {
+  width: 100%;
+  padding: 12px;
+  background-color: rgba(26, 26, 26, 0.8);
+  border: 1px solid rgba(135, 206, 250, 0.3);
+  border-radius: 6px;
+  color: #ffffff;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.mucus-selector select:focus {
+  outline: none;
+  border-color: #ff00ff;
+}
+
+.mucus-selector select option {
+  background-color: #1a1a1a;
+  color: #ffffff;
+  padding: 10px;
+}
+
+.save-mucus {
+  padding: 12px 20px;
+  background-color: rgba(255, 0, 255, 0.2);
+  border: 1px solid #ff00ff;
+  border-radius: 6px;
+  color: #ff00ff;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  letter-spacing: 0.5px;
+}
+
+.save-mucus:hover {
+  background-color: rgba(255, 0, 255, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 0, 255, 0.3);
+}
+
+.save-mucus:active {
+  transform: translateY(0);
+}
+
+.mucus-calendar {
+  margin-top: 25px;
+  padding: 20px;
+  background-color: rgba(10, 15, 26, 0.3);
+  border-radius: 8px;
+  min-height: 100px;
+}
+
+.mucus-calendar-title {
+  font-size: 1rem;
+  color: #87ceeb;
+  margin-bottom: 15px;
+  text-align: center;
+  font-weight: 400;
+}
+
+.mucus-entries {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.mucus-entry {
+  padding: 12px;
+  background-color: rgba(26, 26, 26, 0.6);
+  border: 1px solid rgba(255, 0, 255, 0.2);
+  border-radius: 6px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.mucus-entry:hover {
+  border-color: rgba(255, 0, 255, 0.5);
+  transform: translateY(-2px);
+}
+
+.mucus-entry-date {
+  font-size: 0.85rem;
+  color: #87ceeb;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.mucus-entry-texture {
+  font-size: 0.9rem;
+  color: #ffffff;
+  font-weight: 400;
+}
+
+.mucus-entry-icon {
+  font-size: 1.5rem;
+  margin-bottom: 5px;
+}
+
+/* Texture-specific colors */
+.mucus-entry.fertile {
+  border-color: rgba(0, 255, 0, 0.5);
+  background-color: rgba(0, 255, 0, 0.1);
+}
+
+.mucus-entry.watery {
+  border-color: rgba(135, 206, 250, 0.5);
+  background-color: rgba(135, 206, 250, 0.1);
+}
+
+@media (max-width: 768px) {
+  .cervical-mucus-section {
+    margin-top: 40px;
+    padding: 20px;
+  }
+
+  .cervical-mucus-section h2 {
+    font-size: 1.3rem;
+  }
+
+  .mucus-description {
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+
+  .mucus-selector {
+    padding: 15px;
+  }
+
+  .mucus-entries {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .cervical-mucus-section {
+    margin-top: 30px;
+    padding: 15px;
+  }
+
+  .cervical-mucus-section h2 {
+    font-size: 1.1rem;
+  }
+
+  .mucus-description {
+    font-size: 0.8rem;
+    margin-bottom: 15px;
+  }
+
+  .mucus-selector {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .mucus-selector label {
+    font-size: 0.9rem;
+  }
+
+  .mucus-selector select {
+    font-size: 0.85rem;
+    padding: 10px;
+  }
+
+  .save-mucus {
+    font-size: 0.85rem;
+    padding: 10px 16px;
+  }
+
+  .mucus-entries {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .mucus-entry {
+    padding: 10px;
+  }
+}
