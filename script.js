@@ -1420,6 +1420,13 @@ const phaseDisplayNames = {
 
 // Adapt interface for Jo's profile
 function adaptInterfaceForJo() {
+    // Show style toggle button
+    const styleToggle = document.getElementById('joStyleToggle');
+    if (styleToggle) {
+        styleToggle.style.display = 'flex';
+        initStyleToggle();
+    }
+    
     // Wait for DOM to be fully loaded
     setTimeout(() => {
         updateJoMoodDisplay();
@@ -1427,14 +1434,58 @@ function adaptInterfaceForJo() {
     }, 100);
 }
 
+// Initialize style toggle buttons
+function initStyleToggle() {
+    const buttons = document.querySelectorAll('.style-variant-btn');
+    const currentStyle = getJoStyleVariant();
+    
+    // Set active button based on saved preference
+    buttons.forEach(btn => {
+        const style = btn.getAttribute('data-style');
+        if (style === currentStyle) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+        
+        // Add click handler
+        btn.addEventListener('click', () => {
+            // Update active state
+            buttons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            // Save preference
+            localStorage.setItem('joStyleVariant', style);
+            
+            // Update displays
+            updateJoMoodDisplay();
+            updateJoNeedsDisplay();
+        });
+    });
+}
+
+// Get Jo's style variant preference (romantic or pragmatic)
+function getJoStyleVariant() {
+    // Check if there's a saved preference
+    const savedStyle = localStorage.getItem('joStyleVariant');
+    if (savedStyle && (savedStyle === 'romantic' || savedStyle === 'pragmatic')) {
+        return savedStyle;
+    }
+    
+    // Default to romantic style
+    return 'romantic';
+}
+
 // Update mood display for Jo's profile
 function updateJoMoodDisplay() {
     const moodContainer = document.querySelector('.mood-container');
     if (!moodContainer) return;
 
+    const styleVariant = getJoStyleVariant();
+    
     const cycleDay = getCurrentCycleDay();
     if (cycleDay === null) {
-        moodContainer.innerHTML = '<div class="jo-mood-display">Ajoute des dates de règles pour voir l\'humeur du jour</div>';
+        moodContainer.innerHTML = `<div class="jo-mood-display ${styleVariant}">Ajoute des dates de règles pour voir l'humeur du jour</div>`;
         return;
     }
 
@@ -1456,7 +1507,7 @@ function updateJoMoodDisplay() {
     const moodData = joMoodByPhase[phase];
     if (moodData) {
         moodContainer.innerHTML = `
-            <div class="jo-mood-display">
+            <div class="jo-mood-display ${styleVariant}">
                 <div class="jo-mood-emoji">${moodData.emoji}</div>
                 <div class="jo-mood-emotion">${moodData.emotion}</div>
             </div>
@@ -1469,9 +1520,11 @@ function updateJoNeedsDisplay() {
     const needsContainer = document.querySelector('.needs-container');
     if (!needsContainer) return;
 
+    const styleVariant = getJoStyleVariant();
+    
     const cycleDay = getCurrentCycleDay();
     if (cycleDay === null) {
-        needsContainer.innerHTML = '<div class="jo-suggestion-display">Ajoute des dates de règles pour voir les suggestions du jour</div>';
+        needsContainer.innerHTML = `<div class="jo-suggestion-display ${styleVariant}">Ajoute des dates de règles pour voir les suggestions du jour</div>`;
         return;
     }
 
@@ -1499,7 +1552,7 @@ function updateJoNeedsDisplay() {
         const todaySuggestion = suggestions[suggestionIndex];
 
         needsContainer.innerHTML = `
-            <div class="jo-suggestion-display">
+            <div class="jo-suggestion-display ${styleVariant}">
                 <div class="jo-suggestion-title">💡 Suggestion du jour pour toi</div>
                 <div class="jo-suggestion-text">${todaySuggestion}</div>
                 <div class="jo-suggestion-phase">Phase: ${phaseDisplayNames[phase] || 'Retard'}</div>
