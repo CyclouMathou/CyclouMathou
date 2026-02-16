@@ -839,7 +839,7 @@ function initHormoneModal() {
     const modal = document.getElementById('hormoneModal');
     const closeBtn = document.getElementById('closeModal');
     
-    if (!modal) return;
+    if (!modal || !closeBtn) return;
     
     // Add click events to legend items
     const legendItems = document.querySelectorAll('.legend-item');
@@ -863,14 +863,17 @@ function initHormoneModal() {
             modal.classList.remove('active');
         }
     });
-    
-    // Close modal on Escape key
-    document.addEventListener('keydown', function(event) {
-        if (event.key === 'Escape' && modal.classList.contains('active')) {
+}
+
+// Close modal on Escape key (global handler registered once)
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        const modal = document.getElementById('hormoneModal');
+        if (modal && modal.classList.contains('active')) {
             modal.classList.remove('active');
         }
-    });
-}
+    }
+});
 
 // Show hormone information in modal
 function showHormoneInfo(hormone) {
