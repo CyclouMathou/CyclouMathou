@@ -1,11 +1,63 @@
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
     updateDateDisplay();
+    updatePhaseDisplay();
     initMoodTracking();
     initNeedsTracking();
     loadTodaysMood();
     loadTodaysNeeds();
 });
+
+// Calculate cycle phase based on cycle day
+function getCyclePhase(cycleDay) {
+    // Standard 28-day cycle phases:
+    // Days 1-5: Menstruation
+    // Days 6-13: Follicular phase
+    // Days 14-16: Ovulation
+    // Days 17-28: Luteal phase
+    
+    if (cycleDay >= 1 && cycleDay <= 5) {
+        return 'menstruation';
+    } else if (cycleDay >= 6 && cycleDay <= 13) {
+        return 'folliculaire';
+    } else if (cycleDay >= 14 && cycleDay <= 16) {
+        return 'ovulation';
+    } else if (cycleDay >= 17 && cycleDay <= 28) {
+        return 'lutéale';
+    } else {
+        // If beyond 28 days, cycle repeats
+        return getCyclePhase(((cycleDay - 1) % 28) + 1);
+    }
+}
+
+// Update phase display
+function updatePhaseDisplay() {
+    const phaseDisplay = document.getElementById('phaseDisplay');
+    
+    // Get or initialize cycle start date
+    let cycleStartDate = localStorage.getItem('cycleStartDate');
+    
+    if (!cycleStartDate) {
+        // Initialize with today as day 1 of cycle
+        cycleStartDate = new Date().toDateString();
+        localStorage.setItem('cycleStartDate', cycleStartDate);
+    }
+    
+    // Calculate current cycle day
+    const startDate = new Date(cycleStartDate);
+    const today = new Date();
+    const diffTime = Math.abs(today - startDate);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const cycleDay = ((diffDays % 28) === 0) ? 28 : (diffDays % 28);
+    
+    // Get phase name
+    const phase = getCyclePhase(cycleDay);
+    
+    // Capitalize first letter
+    const phaseName = phase.charAt(0).toUpperCase() + phase.slice(1);
+    
+    phaseDisplay.textContent = phaseName;
+}
 
 // Update date display in the circle
 function updateDateDisplay() {
