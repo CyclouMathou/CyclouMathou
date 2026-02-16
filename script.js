@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initCalendar();
     initSettings();
     drawHormoneGraph();
+    initHormoneModal();
 });
 
 // Calculate cycle phase based on cycle day
@@ -759,3 +760,131 @@ function drawCurrentDayIndicator(ctx, padding, graphWidth, graphHeight, cycleLen
 window.addEventListener('resize', function() {
     drawHormoneGraph();
 });
+
+// Hormone Information Data - Medical and precise
+const hormoneInfo = {
+    estrogene: {
+        title: 'Œstrogène (Estradiol)',
+        content: `
+            <p>L'<strong>œstrogène</strong>, principalement sous forme d'estradiol, est une hormone stéroïdienne sécrétée par les follicules ovariens. Elle joue un rôle central dans le cycle menstruel et la physiologie reproductive féminine.</p>
+            
+            <p><strong>Rôle physiologique dans le cycle menstruel :</strong></p>
+            <ul>
+                <li><strong>Phase folliculaire (J1 à J14) :</strong> L'estradiol est sécrété en quantités croissantes par le follicule dominant en développement. Il stimule la prolifération de l'endomètre (muqueuse utérine), augmentant son épaisseur de 1 à 5-7 mm pour préparer une éventuelle nidation.</li>
+                <li><strong>Pic pré-ovulatoire (J12-14) :</strong> Le taux d'estradiol atteint son maximum (200-400 pg/mL), déclenchant par rétrocontrôle positif une libération massive de LH (hormone lutéinisante) par l'hypophyse, provoquant l'ovulation.</li>
+                <li><strong>Phase lutéale (J14 à J28) :</strong> Après l'ovulation, les niveaux d'estradiol diminuent puis remontent légèrement grâce au corps jaune (follicule transformé post-ovulation).</li>
+            </ul>
+            
+            <p><strong>Autres effets physiologiques :</strong></p>
+            <ul>
+                <li>Favorise la sécrétion de glaire cervicale claire et élastique facilitant la migration des spermatozoïdes en période péri-ovulatoire</li>
+                <li>Augmente la densité osseuse (prévention de l'ostéoporose)</li>
+                <li>Effet cardio-protecteur par action sur le métabolisme lipidique</li>
+                <li>Influence l'humeur et le bien-être psychologique</li>
+                <li>Stimule la libido en période péri-ovulatoire</li>
+            </ul>
+        `
+    },
+    progesterone: {
+        title: 'Progestérone',
+        content: `
+            <p>La <strong>progestérone</strong> est une hormone stéroïdienne sécrétée principalement par le corps jaune ovarien après l'ovulation. Elle est essentielle pour préparer l'utérus à une grossesse potentielle.</p>
+            
+            <p><strong>Rôle physiologique dans le cycle menstruel :</strong></p>
+            <ul>
+                <li><strong>Phase folliculaire (J1 à J14) :</strong> Les niveaux de progestérone restent très bas (< 1 ng/mL), car elle n'est pratiquement pas sécrétée avant l'ovulation.</li>
+                <li><strong>Phase lutéale (J14 à J28) :</strong> Après l'ovulation, le corps jaune sécrète massivement de la progestérone, atteignant un pic vers J21 du cycle (10-20 ng/mL). Cette élévation transforme l'endomètre prolifératif en endomètre sécrétoire, riche en glycogène et en vaisseaux sanguins, optimal pour l'implantation d'un embryon.</li>
+                <li><strong>Absence de grossesse :</strong> Si la fécondation n'a pas lieu, le corps jaune régresse après 12-14 jours, entraînant une chute brutale de la progestérone qui provoque la desquamation de l'endomètre (menstruation).</li>
+            </ul>
+            
+            <p><strong>Autres effets physiologiques :</strong></p>
+            <ul>
+                <li>Épaissit la glaire cervicale, la rendant imperméable aux spermatozoïdes après l'ovulation</li>
+                <li>Augmente la température corporelle basale de 0,3-0,5°C en phase lutéale (effet thermogénique)</li>
+                <li>Action sédative et anxiolytique via ses métabolites actifs sur le système nerveux central</li>
+                <li>Prépare les glandes mammaires à la lactation</li>
+                <li>Effet relaxant sur la musculature utérine (prévention des contractions prématurées)</li>
+                <li>Peut entraîner une rétention hydrique et des symptômes prémenstruels (tension mammaire, ballonnements)</li>
+            </ul>
+        `
+    },
+    testosterone: {
+        title: 'Testostérone',
+        content: `
+            <p>La <strong>testostérone</strong> est une hormone androgène principalement connue comme hormone masculine, mais elle est également présente chez la femme en quantités plus faibles. Elle est produite par les ovaires et les glandes surrénales.</p>
+            
+            <p><strong>Rôle physiologique dans le cycle menstruel :</strong></p>
+            <ul>
+                <li><strong>Niveaux de base :</strong> Les concentrations de testostérone chez la femme sont relativement stables tout au long du cycle (15-70 ng/dL), soit environ 10 fois moins que chez l'homme.</li>
+                <li><strong>Pic péri-ovulatoire (J12-14) :</strong> Une légère augmentation de la testostérone est observée autour de l'ovulation, contribuant à l'augmentation de la libido et de l'énergie à cette période propice à la conception.</li>
+                <li><strong>Phase lutéale :</strong> Les niveaux demeurent relativement constants avec une légère diminution possible en fin de cycle.</li>
+            </ul>
+            
+            <p><strong>Autres effets physiologiques :</strong></p>
+            <ul>
+                <li>Contribue significativement à la libido et au désir sexuel chez la femme</li>
+                <li>Maintien de la masse musculaire et de la force physique</li>
+                <li>Favorise la densité osseuse en synergie avec les œstrogènes</li>
+                <li>Influence l'humeur, l'énergie et la motivation</li>
+                <li>Participe à la production de nouveaux follicules ovariens</li>
+                <li>Action sur la distribution de la masse grasse et le métabolisme</li>
+                <li>En excès (hyperandrogénie), peut causer de l'acné, une pilosité excessive (hirsutisme) et des troubles du cycle (syndrome des ovaires polykystiques)</li>
+            </ul>
+        `
+    }
+};
+
+// Initialize hormone modal functionality
+function initHormoneModal() {
+    const modal = document.getElementById('hormoneModal');
+    const closeBtn = document.getElementById('closeModal');
+    
+    if (!modal || !closeBtn) return;
+    
+    // Add click events to legend items
+    const legendItems = document.querySelectorAll('.legend-item');
+    legendItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const hormone = this.getAttribute('data-hormone');
+            if (hormone) {
+                showHormoneInfo(hormone);
+            }
+        });
+    });
+    
+    // Close modal on close button click
+    closeBtn.addEventListener('click', function() {
+        modal.classList.remove('active');
+    });
+    
+    // Close modal on outside click
+    modal.addEventListener('click', function(event) {
+        if (event.target === modal) {
+            modal.classList.remove('active');
+        }
+    });
+}
+
+// Close modal on Escape key (global handler registered once)
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        const modal = document.getElementById('hormoneModal');
+        if (modal && modal.classList.contains('active')) {
+            modal.classList.remove('active');
+        }
+    }
+});
+
+// Show hormone information in modal
+function showHormoneInfo(hormone) {
+    const modal = document.getElementById('hormoneModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalBody = document.getElementById('modalBody');
+    
+    const info = hormoneInfo[hormone];
+    if (!info) return;
+    
+    modalTitle.textContent = info.title;
+    modalBody.innerHTML = info.content;
+    modal.classList.add('active');
+}
