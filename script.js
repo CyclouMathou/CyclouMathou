@@ -246,6 +246,183 @@ function initHomeButton() {
     document.body.appendChild(homeButton);
 }
 
+// Notification Settings for Jo's profile
+
+// Request notification permission
+async function requestNotificationPermission() {
+    if (!('Notification' in window)) {
+        alert('Les notifications ne sont pas supportées par votre navigateur');
+        return false;
+    }
+    
+    if (Notification.permission === 'granted') {
+        return true;
+    }
+    
+    if (Notification.permission !== 'denied') {
+        const permission = await Notification.requestPermission();
+        return permission === 'granted';
+    }
+    
+    return false;
+}
+
+// Load notification settings from localStorage
+function loadNotificationSettings() {
+    const settings = {
+        lateRules: localStorage.getItem('notif_lateRules') === 'true',
+        firstDayRules: localStorage.getItem('notif_firstDayRules') === 'true',
+        daily: localStorage.getItem('notif_daily') === 'true'
+    };
+    return settings;
+}
+
+// Save notification settings to localStorage
+function saveNotificationSettings(lateRules, firstDayRules, daily) {
+    localStorage.setItem('notif_lateRules', lateRules);
+    localStorage.setItem('notif_firstDayRules', firstDayRules);
+    localStorage.setItem('notif_daily', daily);
+}
+
+// Show notification
+function showNotification(title, body) {
+    if (Notification.permission === 'granted') {
+        new Notification(title, {
+            body: body,
+            icon: '/favicon.ico',
+            badge: '/favicon.ico'
+        });
+    }
+}
+
+// Check and send notifications based on settings
+function checkAndSendNotifications() {
+    const settings = loadNotificationSettings();
+    
+    // Don't send notifications if no settings are enabled
+    if (!settings.lateRules && !settings.firstDayRules && !settings.daily) {
+        return;
+    }
+    
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const todayString = today.toDateString();
+    
+    const periodDates = getPeriodDates();
+    const predictedDates = getPredictedPeriodDates();
+    
+    // Check for daily notification
+    if (settings.daily) {
+        const lastDailyNotif = localStorage.getItem('lastDailyNotif');
+        if (lastDailyNotif !== todayString) {
+            const cycleDay = getCurrentCycleDay();
+            if (cycleDay !== null) {
+                const settingsCycle = loadCycleSettings();
+                const phase = getCyclePhase(cycleDay, settingsCycle);
+                showNotification('CyClub - Notification quotidienne', `Jour ${cycleDay} du cycle - Phase: ${phase}`);
+                localStorage.setItem('lastDailyNotif', todayString);
+            }
+        }
+    }
+    
+    // Check for first day of period notification
+    if (settings.firstDayRules) {
+        if (periodDates.includes(todayString)) {
+            // Check if this is the first day of this period
+            const yesterday = new Date(today);
+            yesterday.setDate(yesterday.getDate() - 1);
+            const yesterdayString = yesterday.toDateString();
+            
+            if (!periodDates.includes(yesterdayString)) {
+                const lastFirstDayNotif = localStorage.getItem('lastFirstDayNotif');
+                if (lastFirstDayNotif !== todayString) {
+                    showNotification('CyClub - Premier jour de règle', 'C\'est le premier jour de tes règles aujourd\'hui');
+                    localStorage.setItem('lastFirstDayNotif', todayString);
+                }
+            }
+        }
+    }
+    
+    // Check for late period notification
+    if (settings.lateRules) {
+        const isInPredictedPeriod = predictedDates.includes(todayString) && !periodDates.includes(todayString);
+        if (isInPredictedPeriod) {
+            const lastLateNotif = localStorage.getItem('lastLateNotif');
+            if (lastLateNotif !== todayString) {
+                showNotification('CyClub - Retard de règle', 'Tes règles sont en retard par rapport à la date prévue');
+                localStorage.setItem('lastLateNotif', todayString);
+            }
+        }
+    }
+}
+
+// Initialize notification settings
+function initNotificationSettings() {
+    const notificationToggle = document.getElementById('notificationSettingsToggle');
+    const notificationPanel = document.getElementById('notificationSettingsPanel');
+    const saveButton = document.getElementById('saveNotificationSettings');
+    
+    if (!notificationToggle || !notificationPanel || !saveButton) return;
+    
+    // Show notification settings button only for Jo's profile
+    if (currentProfile === 'jo') {
+        notificationToggle.style.display = 'block';
+        
+        // Load current notification settings
+        const settings = loadNotificationSettings();
+        document.getElementById('notifLateRules').checked = settings.lateRules;
+        document.getElementById('notifFirstDayRules').checked = settings.firstDayRules;
+        document.getElementById('notifDaily').checked = settings.daily;
+        
+        // Toggle notification panel
+        notificationToggle.addEventListener('click', () => {
+            notificationPanel.classList.toggle('open');
+        });
+        
+        // Save notification settings
+        saveButton.addEventListener('click', async () => {
+            const lateRules = document.getElementById('notifLateRules').checked;
+            const firstDayRules = document.getElementById('notifFirstDayRules').checked;
+            const daily = document.getElementById('notifDaily').checked;
+            
+            // Request permission if at least one notification is enabled
+            if (lateRules || firstDayRules || daily) {
+                const hasPermission = await requestNotificationPermission();
+                if (!hasPermission) {
+                    alert('Les notifications ont été refusées. Veuillez activer les notifications dans les paramètres de votre navigateur.');
+                    return;
+                }
+            }
+            
+            saveNotificationSettings(lateRules, firstDayRules, daily);
+            notificationPanel.classList.remove('open');
+            
+            // Visual feedback
+            saveButton.textContent = '✓ Enregistré';
+            saveButton.style.backgroundColor = 'rgba(76, 175, 80, 0.3)';
+            saveButton.style.borderColor = '#4caf50';
+            saveButton.style.color = '#4caf50';
+            
+            setTimeout(() => {
+                saveButton.textContent = 'Enregistrer';
+                saveButton.style.backgroundColor = '';
+                saveButton.style.borderColor = '';
+                saveButton.style.color = '';
+            }, 2000);
+            
+            // Check and send notifications immediately if applicable
+            checkAndSendNotifications();
+        });
+        
+        // Check notifications on page load
+        if (Notification.permission === 'granted') {
+            checkAndSendNotifications();
+        }
+    } else {
+        notificationToggle.style.display = 'none';
+    }
+}
+
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
     // Load data from URL if present (for data sharing)
@@ -266,6 +443,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initHormoneCheckboxes();
     updateHormoneInterpretation();
     initShareButton();
+    initNotificationSettings();
     
     // Draw graph after a short delay to ensure canvas is properly sized
     // and all checkboxes are initialized
