@@ -1452,9 +1452,7 @@ function initStyleToggle() {
             btn.classList.remove('active');
         }
         
-        // Remove any existing listener before adding a new one
-        btn.removeEventListener('click', handleStyleChange);
-        // Add click handler
+        // Add click handler (only called once due to initialization guard in adaptInterfaceForJo)
         btn.addEventListener('click', handleStyleChange);
     });
 }

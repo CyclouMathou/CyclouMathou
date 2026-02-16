@@ -1237,6 +1237,7 @@ body.read-only .need.selected {
   border-radius: 12px;
   border: 2px solid #40e0d0;
   min-height: 80px;
+  position: relative;
 }
 
 .jo-mood-emoji {
@@ -1262,6 +1263,7 @@ body.read-only .need.selected {
   border-radius: 12px;
   border: 2px solid #40e0d0;
   min-height: 80px;
+  position: relative;
 }
 
 .jo-suggestion-title {
@@ -1294,7 +1296,6 @@ body.read-only .need.selected {
 /* Romantic Style Variant - "Douceur et Tendresse" */
 .jo-mood-display.romantic,
 .jo-suggestion-display.romantic {
-  position: relative;
   background: linear-gradient(135deg, rgba(255, 182, 193, 0.15) 0%, rgba(255, 105, 180, 0.1) 100%);
   border: 2px solid #ff69b4;
   box-shadow: 0 4px 15px rgba(255, 105, 180, 0.2);
@@ -1317,7 +1318,6 @@ body.read-only .need.selected {
 /* Pragmatic Style Variant - "Claire et Directe" */
 .jo-mood-display.pragmatic,
 .jo-suggestion-display.pragmatic {
-  position: relative;
   background: linear-gradient(135deg, rgba(100, 149, 237, 0.15) 0%, rgba(70, 130, 180, 0.1) 100%);
   border: 2px solid #6495ed;
   box-shadow: 0 4px 15px rgba(100, 149, 237, 0.2);
