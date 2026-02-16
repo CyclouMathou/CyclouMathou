@@ -1,6 +1,15 @@
 // Profile and Splash Screen Management
 let currentProfile = null;
 
+// Hormone visibility state
+let visibleHormones = {
+    estrogene: true,
+    progesterone: true,
+    testosterone: true,
+    lh: true,
+    fsh: true
+};
+
 function initSplashScreen() {
     // Check if profile was already selected
     const savedProfile = localStorage.getItem('cycleAppProfile');
@@ -221,6 +230,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initSettings();
     drawHormoneGraph();
     initHormoneModal();
+    initHormoneCheckboxes();
     updateHormoneInterpretation();
     initShareButton();
 });
@@ -872,166 +882,176 @@ function drawHormoneCurves(ctx, padding, graphWidth, graphHeight, cycleLength) {
     const ovulationEnd = ovulationDay + 2;
     
     // Estrogen curve (pink) - peaks at ovulation
-    ctx.strokeStyle = '#ff1493';
-    ctx.lineWidth = 2.5;
-    ctx.beginPath();
-    for (let i = 0; i <= points; i++) {
-        const day = (i / points) * cycleLength;
-        const x = padding + (i / points) * graphWidth;
-        
-        // Estrogen: rises during follicular phase, peaks at ovulation, drops in luteal phase with small rise
-        let estrogen;
-        if (day < ovulationDay) {
-            // Rising during follicular phase
-            estrogen = 0.2 + 0.7 * (day / ovulationDay);
-        } else if (day < ovulationEnd) {
-            // Peak at ovulation
-            estrogen = 0.9 - 0.3 * ((day - ovulationDay) / 2);
-        } else {
-            // Drop with small secondary rise in luteal phase
-            const lutealDay = day - ovulationEnd;
-            const lutealLength = cycleLength - ovulationEnd;
-            estrogen = 0.6 - 0.3 * Math.sin((lutealDay / lutealLength) * Math.PI);
+    if (visibleHormones.estrogene) {
+        ctx.strokeStyle = '#ff1493';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        for (let i = 0; i <= points; i++) {
+            const day = (i / points) * cycleLength;
+            const x = padding + (i / points) * graphWidth;
+            
+            // Estrogen: rises during follicular phase, peaks at ovulation, drops in luteal phase with small rise
+            let estrogen;
+            if (day < ovulationDay) {
+                // Rising during follicular phase
+                estrogen = 0.2 + 0.7 * (day / ovulationDay);
+            } else if (day < ovulationEnd) {
+                // Peak at ovulation
+                estrogen = 0.9 - 0.3 * ((day - ovulationDay) / 2);
+            } else {
+                // Drop with small secondary rise in luteal phase
+                const lutealDay = day - ovulationEnd;
+                const lutealLength = cycleLength - ovulationEnd;
+                estrogen = 0.6 - 0.3 * Math.sin((lutealDay / lutealLength) * Math.PI);
+            }
+            
+            const y = padding + graphHeight - (estrogen * graphHeight * 0.9);
+            
+            if (i === 0) {
+                ctx.moveTo(x, y);
+            } else {
+                ctx.lineTo(x, y);
+            }
         }
-        
-        const y = padding + graphHeight - (estrogen * graphHeight * 0.9);
-        
-        if (i === 0) {
-            ctx.moveTo(x, y);
-        } else {
-            ctx.lineTo(x, y);
-        }
+        ctx.stroke();
     }
-    ctx.stroke();
     
     // Progesterone curve (purple) - rises after ovulation
-    ctx.strokeStyle = '#9370db';
-    ctx.lineWidth = 2.5;
-    ctx.beginPath();
-    for (let i = 0; i <= points; i++) {
-        const day = (i / points) * cycleLength;
-        const x = padding + (i / points) * graphWidth;
-        
-        // Progesterone: low until ovulation, then rises and dominates luteal phase
-        let progesterone;
-        if (day < ovulationDay) {
-            // Very low during follicular phase
-            progesterone = 0.1;
-        } else {
-            // Rises after ovulation, peaks mid-luteal, then drops
-            const lutealDay = day - ovulationDay;
-            const lutealLength = cycleLength - ovulationDay;
-            progesterone = 0.1 + 0.8 * Math.sin((lutealDay / lutealLength) * Math.PI);
+    if (visibleHormones.progesterone) {
+        ctx.strokeStyle = '#9370db';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        for (let i = 0; i <= points; i++) {
+            const day = (i / points) * cycleLength;
+            const x = padding + (i / points) * graphWidth;
+            
+            // Progesterone: low until ovulation, then rises and dominates luteal phase
+            let progesterone;
+            if (day < ovulationDay) {
+                // Very low during follicular phase
+                progesterone = 0.1;
+            } else {
+                // Rises after ovulation, peaks mid-luteal, then drops
+                const lutealDay = day - ovulationDay;
+                const lutealLength = cycleLength - ovulationDay;
+                progesterone = 0.1 + 0.8 * Math.sin((lutealDay / lutealLength) * Math.PI);
+            }
+            
+            const y = padding + graphHeight - (progesterone * graphHeight * 0.9);
+            
+            if (i === 0) {
+                ctx.moveTo(x, y);
+            } else {
+                ctx.lineTo(x, y);
+            }
         }
-        
-        const y = padding + graphHeight - (progesterone * graphHeight * 0.9);
-        
-        if (i === 0) {
-            ctx.moveTo(x, y);
-        } else {
-            ctx.lineTo(x, y);
-        }
+        ctx.stroke();
     }
-    ctx.stroke();
     
     // Testosterone curve (blue) - relatively stable with small peak at ovulation
-    ctx.strokeStyle = '#4169e1';
-    ctx.lineWidth = 2.5;
-    ctx.beginPath();
-    for (let i = 0; i <= points; i++) {
-        const day = (i / points) * cycleLength;
-        const x = padding + (i / points) * graphWidth;
-        
-        // Testosterone: relatively stable with small peak around ovulation
-        let testosterone;
-        if (day < ovulationStart) {
-            testosterone = 0.3 + 0.1 * (day / ovulationStart);
-        } else if (day < ovulationEnd) {
-            // Small peak at ovulation
-            testosterone = 0.4 + 0.15 * Math.sin(((day - ovulationStart) / (ovulationEnd - ovulationStart)) * Math.PI);
-        } else {
-            testosterone = 0.3 + 0.1 * Math.sin(((day - ovulationEnd) / (cycleLength - ovulationEnd)) * Math.PI);
+    if (visibleHormones.testosterone) {
+        ctx.strokeStyle = '#4169e1';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        for (let i = 0; i <= points; i++) {
+            const day = (i / points) * cycleLength;
+            const x = padding + (i / points) * graphWidth;
+            
+            // Testosterone: relatively stable with small peak around ovulation
+            let testosterone;
+            if (day < ovulationStart) {
+                testosterone = 0.3 + 0.1 * (day / ovulationStart);
+            } else if (day < ovulationEnd) {
+                // Small peak at ovulation
+                testosterone = 0.4 + 0.15 * Math.sin(((day - ovulationStart) / (ovulationEnd - ovulationStart)) * Math.PI);
+            } else {
+                testosterone = 0.3 + 0.1 * Math.sin(((day - ovulationEnd) / (cycleLength - ovulationEnd)) * Math.PI);
+            }
+            
+            const y = padding + graphHeight - (testosterone * graphHeight * 0.9);
+            
+            if (i === 0) {
+                ctx.moveTo(x, y);
+            } else {
+                ctx.lineTo(x, y);
+            }
         }
-        
-        const y = padding + graphHeight - (testosterone * graphHeight * 0.9);
-        
-        if (i === 0) {
-            ctx.moveTo(x, y);
-        } else {
-            ctx.lineTo(x, y);
-        }
+        ctx.stroke();
     }
-    ctx.stroke();
     
     // LH curve (orange) - sharp peak at ovulation
-    const LH_BASELINE = 0.15;
-    ctx.strokeStyle = '#ffa500';
-    ctx.lineWidth = 2.5;
-    ctx.beginPath();
-    for (let i = 0; i <= points; i++) {
-        const day = (i / points) * cycleLength;
-        const x = padding + (i / points) * graphWidth;
-        
-        // LH: low baseline with sharp surge just before ovulation
-        let lh;
-        if (day < ovulationDay - 2) {
-            // Low baseline during early follicular phase
-            lh = LH_BASELINE;
-        } else if (day < ovulationDay + 1) {
-            // Sharp LH surge triggering ovulation
-            const surgeProgress = (day - (ovulationDay - 2)) / 3;
-            lh = LH_BASELINE + 0.75 * Math.sin(surgeProgress * Math.PI);
-        } else {
-            // Returns to baseline after ovulation
-            lh = LH_BASELINE;
+    if (visibleHormones.lh) {
+        const LH_BASELINE = 0.15;
+        ctx.strokeStyle = '#ffa500';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        for (let i = 0; i <= points; i++) {
+            const day = (i / points) * cycleLength;
+            const x = padding + (i / points) * graphWidth;
+            
+            // LH: low baseline with sharp surge just before ovulation
+            let lh;
+            if (day < ovulationDay - 2) {
+                // Low baseline during early follicular phase
+                lh = LH_BASELINE;
+            } else if (day < ovulationDay + 1) {
+                // Sharp LH surge triggering ovulation
+                const surgeProgress = (day - (ovulationDay - 2)) / 3;
+                lh = LH_BASELINE + 0.75 * Math.sin(surgeProgress * Math.PI);
+            } else {
+                // Returns to baseline after ovulation
+                lh = LH_BASELINE;
+            }
+            
+            const y = padding + graphHeight - (lh * graphHeight * 0.9);
+            
+            if (i === 0) {
+                ctx.moveTo(x, y);
+            } else {
+                ctx.lineTo(x, y);
+            }
         }
-        
-        const y = padding + graphHeight - (lh * graphHeight * 0.9);
-        
-        if (i === 0) {
-            ctx.moveTo(x, y);
-        } else {
-            ctx.lineTo(x, y);
-        }
+        ctx.stroke();
     }
-    ctx.stroke();
     
     // FSH curve (lime green) - peaks early follicular, drops at ovulation
-    ctx.strokeStyle = '#32cd32';
-    ctx.lineWidth = 2.5;
-    ctx.beginPath();
-    for (let i = 0; i <= points; i++) {
-        const day = (i / points) * cycleLength;
-        const x = padding + (i / points) * graphWidth;
-        
-        // FSH: high in early follicular phase, drops as estrogen rises, slight rise in luteal
-        let fsh;
-        if (day < 5) {
-            // High at cycle start to stimulate follicle development
-            fsh = 0.7 - 0.2 * (day / 5);
-        } else if (day < ovulationDay) {
-            // Gradual decrease as estrogen rises
-            fsh = 0.5 - 0.3 * ((day - 5) / (ovulationDay - 5));
-        } else if (day < ovulationDay + 2) {
-            // Small surge at ovulation with LH
-            const surgeProgress = (day - ovulationDay) / 2;
-            fsh = 0.2 + 0.2 * Math.sin(surgeProgress * Math.PI);
-        } else {
-            // Low during luteal phase with slight increase at end
-            const lutealDay = day - (ovulationDay + 2);
-            const lutealLength = cycleLength - (ovulationDay + 2);
-            fsh = 0.2 + 0.15 * (lutealDay / lutealLength);
+    if (visibleHormones.fsh) {
+        ctx.strokeStyle = '#32cd32';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        for (let i = 0; i <= points; i++) {
+            const day = (i / points) * cycleLength;
+            const x = padding + (i / points) * graphWidth;
+            
+            // FSH: high in early follicular phase, drops as estrogen rises, slight rise in luteal
+            let fsh;
+            if (day < 5) {
+                // High at cycle start to stimulate follicle development
+                fsh = 0.7 - 0.2 * (day / 5);
+            } else if (day < ovulationDay) {
+                // Gradual decrease as estrogen rises
+                fsh = 0.5 - 0.3 * ((day - 5) / (ovulationDay - 5));
+            } else if (day < ovulationDay + 2) {
+                // Small surge at ovulation with LH
+                const surgeProgress = (day - ovulationDay) / 2;
+                fsh = 0.2 + 0.2 * Math.sin(surgeProgress * Math.PI);
+            } else {
+                // Low during luteal phase with slight increase at end
+                const lutealDay = day - (ovulationDay + 2);
+                const lutealLength = cycleLength - (ovulationDay + 2);
+                fsh = 0.2 + 0.15 * (lutealDay / lutealLength);
+            }
+            
+            const y = padding + graphHeight - (fsh * graphHeight * 0.9);
+            
+            if (i === 0) {
+                ctx.moveTo(x, y);
+            } else {
+                ctx.lineTo(x, y);
+            }
         }
-        
-        const y = padding + graphHeight - (fsh * graphHeight * 0.9);
-        
-        if (i === 0) {
-            ctx.moveTo(x, y);
-        } else {
-            ctx.lineTo(x, y);
-        }
+        ctx.stroke();
     }
-    ctx.stroke();
 }
 
 // Draw current day indicator line
@@ -1276,6 +1296,18 @@ function initHormoneModal() {
         if (event.target === modal) {
             modal.classList.remove('active');
         }
+    });
+}
+
+// Initialize hormone checkboxes
+function initHormoneCheckboxes() {
+    const checkboxes = document.querySelectorAll('.hormone-checkbox');
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const hormone = this.getAttribute('data-hormone');
+            visibleHormones[hormone] = this.checked;
+            drawHormoneGraph();
+        });
     });
 }
 
