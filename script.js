@@ -864,7 +864,8 @@ function drawPhaseBackgrounds(ctx, padding, graphWidth, graphHeight, cycleLength
     // Calculate phase boundaries proportionally
     // Ovulation typically occurs around day 14 in a standard 28-day cycle
     const ovulationDay = Math.round(cycleLength / 2);
-    // Ovulation phase should start around day 13-14 (2-3 days before ovulation day)
+    // Ovulation phase: follicularEnd = 12, ovulationEnd = 15 (for 28-day cycle)
+    // This makes the ovulation phase span from day 13 to day 15 (3 days centered on day 14)
     const follicularEnd = ovulationDay - 2;
     const ovulationEnd = ovulationDay + 1;
     
@@ -1044,6 +1045,7 @@ function drawHormoneCurves(ctx, padding, graphWidth, graphHeight, cycleLength, v
                 // Small peak at ovulation
                 testosterone = 0.4 + 0.15 * Math.sin(((day - ovulationStart) / (ovulationEnd - ovulationStart)) * Math.PI);
             } else if (day <= cycleLength) {
+                // Remains relatively stable during luteal phase with minor fluctuations
                 testosterone = 0.3 + 0.1 * Math.sin(((day - ovulationEnd) / (cycleLength - ovulationEnd)) * Math.PI);
             } else {
                 // Extended/delayed phase - stable baseline
