@@ -76,10 +76,31 @@ function applyProfileSettings() {
     // If viewer mode (Jo), apply read-only restrictions
     if (currentProfile === 'jo') {
         document.body.classList.add('read-only');
+        // Reset calendar to frozen date for Jo
+        currentWeekStart = getCurrentDate();
+        // Reinitialize calendar to show the frozen week
+        currentWeekStart.setDate(currentWeekStart.getDate() - (currentWeekStart.getDay() || 7) + 1);
+        currentWeekStart.setHours(0, 0, 0, 0);
+        renderCalendar();
+        updateDateDisplay();
+        updatePhaseDisplay();
+        updateCircleColor();
         adaptInterfaceForJo();
     } else {
         // Restore original headers for Mathilde's profile
         document.body.classList.remove('read-only');
+        // Reset calendar to current date for Mathilde
+        currentWeekStart = new Date();
+        // Reinitialize calendar to show current week
+        currentWeekStart.setDate(currentWeekStart.getDate() - (currentWeekStart.getDay() || 7) + 1);
+        currentWeekStart.setHours(0, 0, 0, 0);
+        renderCalendar();
+        updateDateDisplay();
+        updatePhaseDisplay();
+        updateCircleColor();
+        // Show calendar navigation for Mathilde
+        document.getElementById('prevWeek').style.display = 'block';
+        document.getElementById('nextWeek').style.display = 'block';
         const columns = document.querySelectorAll('.two-columns .column h2');
         if (columns.length >= 2) {
             columns[0].textContent = 'Humeurs';
@@ -1564,6 +1585,10 @@ const phaseDisplayNames = {
 
 // Adapt interface for Jo's profile
 function adaptInterfaceForJo() {
+    // Hide calendar navigation for Jo's profile
+    document.getElementById('prevWeek').style.display = 'none';
+    document.getElementById('nextWeek').style.display = 'none';
+    
     // Show style toggle button
     const styleToggle = document.getElementById('joStyleToggle');
     if (styleToggle) {
