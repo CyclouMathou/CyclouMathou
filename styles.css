@@ -1131,8 +1131,7 @@ h1 {
 
 /* Read-Only Mode Styles */
 body.read-only .settings-toggle,
-body.read-only .share-button,
-body.read-only .home-button {
+body.read-only .share-button {
   display: none;
 }
 
