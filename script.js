@@ -806,7 +806,7 @@ function updateHormoneInterpretation() {
     const cycleDay = getCurrentCycleDay();
     
     if (cycleDay === null) {
-        hormoneLevel.textContent = 'Ajoutez vos dates de règles dans le calendrier pour voir l\'interprétation de votre cycle.';
+        hormoneLevel.textContent = 'Ajoutez vos dates de règles pour voir l\'interprétation';
         moodInterpretation.textContent = 'Non disponible';
         relationalNeeds.textContent = 'Non disponible';
         return;
