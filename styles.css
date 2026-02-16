@@ -1,4 +1,10 @@
 /* Global Styles */
+:root {
+  /* Jo's profile style decorator positioning */
+  --jo-decorator-top: 8px;
+  --jo-decorator-right: 12px;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -1305,8 +1311,8 @@ body.read-only .need.selected {
 .jo-suggestion-display.romantic::before {
   content: '💕';
   position: absolute;
-  top: 8px;
-  right: 12px;
+  top: var(--jo-decorator-top);
+  right: var(--jo-decorator-right);
   font-size: 1.2rem;
   opacity: 0.6;
 }
@@ -1327,8 +1333,8 @@ body.read-only .need.selected {
 .jo-suggestion-display.pragmatic::before {
   content: '📋';
   position: absolute;
-  top: 8px;
-  right: 12px;
+  top: var(--jo-decorator-top);
+  right: var(--jo-decorator-right);
   font-size: 1.2rem;
   opacity: 0.6;
 }
@@ -1396,6 +1402,7 @@ body.read-only .need.selected {
   .jo-suggestion-display {
     padding: 20px 15px;
     min-height: 70px;
+    /* Revert to vertical layout on mobile for better readability on narrow screens */
     flex-direction: column;
     gap: 10px;
   }
