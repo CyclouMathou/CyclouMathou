@@ -77,11 +77,7 @@ function applyProfileSettings() {
     if (currentProfile === 'jo') {
         document.body.classList.add('read-only');
         // Reset calendar to frozen date for Jo
-        currentWeekStart = getCurrentDate();
-        // Reinitialize calendar to show the frozen week
-        currentWeekStart.setDate(currentWeekStart.getDate() - (currentWeekStart.getDay() || 7) + 1);
-        currentWeekStart.setHours(0, 0, 0, 0);
-        renderCalendar();
+        resetCalendarToDate(getCurrentDate());
         updateDateDisplay();
         updatePhaseDisplay();
         updateCircleColor();
@@ -91,11 +87,7 @@ function applyProfileSettings() {
         // Restore original headers for Mathilde's profile
         document.body.classList.remove('read-only');
         // Reset calendar to current date for Mathilde
-        currentWeekStart = new Date();
-        // Reinitialize calendar to show current week
-        currentWeekStart.setDate(currentWeekStart.getDate() - (currentWeekStart.getDay() || 7) + 1);
-        currentWeekStart.setHours(0, 0, 0, 0);
-        renderCalendar();
+        resetCalendarToDate(new Date());
         updateDateDisplay();
         updatePhaseDisplay();
         updateCircleColor();
@@ -550,6 +542,15 @@ function loadTodaysNeeds() {
 // Calendar functionality
 let currentWeekStart = getCurrentDate();
 let calendarInitialized = false;
+
+// Helper function to reset calendar to start of week for a given date
+function resetCalendarToDate(date) {
+    currentWeekStart = date;
+    // Set to start of week (Monday)
+    currentWeekStart.setDate(currentWeekStart.getDate() - (currentWeekStart.getDay() || 7) + 1);
+    currentWeekStart.setHours(0, 0, 0, 0);
+    renderCalendar();
+}
 
 // Helper function to update calendar navigation button visibility
 function updateCalendarNavigationVisibility() {
