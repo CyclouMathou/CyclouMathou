@@ -70,7 +70,6 @@ function isReadOnlyMode() {
 // Data Sharing via URL
 function exportDataToURL() {
     const data = {
-        profile: currentProfile,
         periodDates: JSON.parse(localStorage.getItem('periodDates') || '[]'),
         cycleLength: localStorage.getItem('cycleLength') || '28',
         periodLength: localStorage.getItem('periodLength') || '5',
@@ -83,8 +82,8 @@ function exportDataToURL() {
     const jsonString = JSON.stringify(data);
     const base64Data = encodeURIComponent(btoa(jsonString));
     
-    // Create shareable URL
-    const url = new URL(window.location.href);
+    // Create shareable URL - without profile to allow recipient to choose
+    const url = new URL(window.location.origin + window.location.pathname);
     url.searchParams.set('data', base64Data);
     
     return url.toString();
@@ -103,12 +102,7 @@ function loadDataFromURL() {
         const jsonString = atob(decodeURIComponent(dataParam));
         const data = JSON.parse(jsonString);
         
-        // Import data to localStorage
-        if (data.profile) {
-            localStorage.setItem('cycleAppProfile', data.profile);
-            currentProfile = data.profile;
-        }
-        
+        // Import data to localStorage (excluding profile to allow user selection)
         if (data.periodDates) {
             localStorage.setItem('periodDates', JSON.stringify(data.periodDates));
         }
@@ -203,6 +197,31 @@ function initShareButton() {
     }
 }
 
+function initHomeButton() {
+    // Check if home button already exists
+    if (document.getElementById('homeButton')) {
+        return;
+    }
+    
+    // Create home button
+    const homeButton = document.createElement('button');
+    homeButton.id = 'homeButton';
+    homeButton.className = 'home-button';
+    homeButton.innerHTML = '🏠 Accueil';
+    homeButton.setAttribute('aria-label', 'Retour à l\'accueil');
+    
+    // Add click handler
+    homeButton.addEventListener('click', () => {
+        // Clear profile selection
+        localStorage.removeItem('cycleAppProfile');
+        // Reload page to show splash screen
+        window.location.reload();
+    });
+    
+    // Add button to the page
+    document.body.appendChild(homeButton);
+}
+
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
     // Load data from URL if present (for data sharing)
@@ -224,6 +243,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initHormoneCheckboxes();
     updateHormoneInterpretation();
     initShareButton();
+    initHomeButton();
 });
 
 // Calculate cycle phase based on cycle day
