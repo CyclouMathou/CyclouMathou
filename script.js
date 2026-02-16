@@ -44,6 +44,9 @@ function hideSplashScreen() {
 function applyProfileSettings() {
     // Add profile indicator
     addProfileIndicator();
+    
+    // Initialize home button with profile-specific styling
+    initHomeButton();
 
     // If viewer mode (Jo), apply read-only restrictions
     if (currentProfile === 'jo') {
@@ -206,7 +209,7 @@ function initHomeButton() {
     // Create home button
     const homeButton = document.createElement('button');
     homeButton.id = 'homeButton';
-    homeButton.className = 'home-button';
+    homeButton.className = `home-button ${currentProfile}`;
     homeButton.innerHTML = '🏠 Accueil';
     homeButton.setAttribute('aria-label', 'Retour à l\'accueil');
     
@@ -243,7 +246,6 @@ document.addEventListener('DOMContentLoaded', function() {
     initHormoneCheckboxes();
     updateHormoneInterpretation();
     initShareButton();
-    initHomeButton();
 });
 
 // Calculate cycle phase based on cycle day
