@@ -6,8 +6,8 @@ let currentProfile = null;
 const SPLASH_GRAPH_RENDER_DELAY_MS = 50; // Delay after splash screen is hidden
 const INIT_GRAPH_DELAY_MS = 100; // Initial delay on page load
 
-// Frozen date for Jo's profile - February 14, 2026
-const JO_FROZEN_DATE = new Date('2026-02-14T00:00:00');
+// Frozen date for Jo's profile - February 16, 2026
+const JO_FROZEN_DATE = new Date('2026-02-16T00:00:00');
 
 // Helper function to get current date or frozen date for Jo's profile
 function getCurrentDate() {
