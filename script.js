@@ -1345,10 +1345,8 @@ function updateHormoneInterpretation() {
     const isInPredictedPeriod = predictedDates.includes(todayString) && !periodDates.includes(todayString);
     
     let phase;
-    if (isInPredictedPeriod) {
-        phase = 'retard';
-    } else if (cycleDay > settings.cycleLength) {
-        // If cycle day exceeds expected length, show delayed period interpretation
+    if (isInPredictedPeriod || cycleDay > settings.cycleLength) {
+        // Show delayed period interpretation if in predicted period or cycle exceeds expected length
         phase = 'retard';
     } else {
         phase = getCyclePhase(cycleDay, settings);
