@@ -1,11 +1,72 @@
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
     updateDateDisplay();
+    updatePhaseDisplay();
     initMoodTracking();
     initNeedsTracking();
     loadTodaysMood();
     loadTodaysNeeds();
 });
+
+// Calculate cycle phase based on cycle day
+function getCyclePhase(cycleDay) {
+    // Standard 28-day cycle phases:
+    // Days 1-5: Menstruation
+    // Days 6-13: Follicular phase
+    // Days 14-16: Ovulation
+    // Days 17-28: Luteal phase
+    
+    if (cycleDay >= 1 && cycleDay <= 5) {
+        return 'menstruation';
+    } else if (cycleDay >= 6 && cycleDay <= 13) {
+        return 'folliculaire';
+    } else if (cycleDay >= 14 && cycleDay <= 16) {
+        return 'ovulation';
+    } else {
+        return 'lutéale';
+    }
+}
+
+// Update phase display
+function updatePhaseDisplay() {
+    const phaseDisplay = document.getElementById('phaseDisplay');
+    
+    // Get or initialize cycle start date
+    let cycleStartDate = localStorage.getItem('cycleStartDate');
+    
+    if (!cycleStartDate) {
+        // Initialize with today as day 1 of cycle
+        // Note: User can manually reset cycle start date by clearing localStorage
+        cycleStartDate = new Date().toDateString();
+        localStorage.setItem('cycleStartDate', cycleStartDate);
+    }
+    
+    // Normalize dates to midnight for consistent day counting
+    const startDate = new Date(cycleStartDate);
+    startDate.setHours(0, 0, 0, 0);
+    
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const diffTime = today - startDate;
+    
+    // If start date is in the future, reset it to today
+    if (diffTime < 0) {
+        cycleStartDate = new Date().toDateString();
+        localStorage.setItem('cycleStartDate', cycleStartDate);
+        phaseDisplay.textContent = 'menstruation';
+        return;
+    }
+    
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    // Calculate cycle day (1-28) assuming a repeating 28-day cycle
+    const cycleDay = (diffDays % 28) + 1;
+    
+    // Get phase name
+    const phase = getCyclePhase(cycleDay);
+    
+    phaseDisplay.textContent = phase;
+}
 
 // Update date display in the circle
 function updateDateDisplay() {

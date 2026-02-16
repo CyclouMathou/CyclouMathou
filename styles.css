@@ -33,6 +33,16 @@ h1 {
   margin-bottom: 60px;
 }
 
+/* Phase Display */
+.phase-display {
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: #ffffff;
+  text-transform: capitalize;
+  margin-bottom: 20px;
+  letter-spacing: 1px;
+}
+
 /* Circle with Date */
 .circle {
   width: 200px;
