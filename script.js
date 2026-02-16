@@ -6,19 +6,6 @@ let currentProfile = null;
 const SPLASH_GRAPH_RENDER_DELAY_MS = 50; // Delay after splash screen is hidden
 const INIT_GRAPH_DELAY_MS = 100; // Initial delay on page load
 
-// Frozen date for Jo's profile - February 14, 2026
-const JO_FROZEN_DATE = new Date('2026-02-14T00:00:00');
-
-// Helper function to get current date or frozen date for Jo's profile
-function getCurrentDate() {
-    if (currentProfile === 'jo') {
-        const frozenDate = new Date(JO_FROZEN_DATE);
-        frozenDate.setHours(0, 0, 0, 0);
-        return frozenDate;
-    }
-    return new Date();
-}
-
 function initSplashScreen() {
     // Check if profile was already selected
     const savedProfile = localStorage.getItem('cycleAppProfile');
@@ -76,22 +63,10 @@ function applyProfileSettings() {
     // If viewer mode (Jo), apply read-only restrictions
     if (currentProfile === 'jo') {
         document.body.classList.add('read-only');
-        // Reset calendar to frozen date for Jo
-        resetCalendarToDate(getCurrentDate());
-        updateDateDisplay();
-        updatePhaseDisplay();
-        updateCircleColor();
-        updateCalendarNavigationVisibility();
         adaptInterfaceForJo();
     } else {
         // Restore original headers for Mathilde's profile
         document.body.classList.remove('read-only');
-        // Reset calendar to current date for Mathilde
-        resetCalendarToDate(new Date());
-        updateDateDisplay();
-        updatePhaseDisplay();
-        updateCircleColor();
-        updateCalendarNavigationVisibility();
         const columns = document.querySelectorAll('.two-columns .column h2');
         if (columns.length >= 2) {
             columns[0].textContent = 'Humeurs';
@@ -379,7 +354,7 @@ function updatePhaseDisplay() {
     const settings = loadCycleSettings();
     
     // Check if today is in predicted period dates (not confirmed)
-    const today = getCurrentDate();
+    const today = new Date();
     today.setHours(0, 0, 0, 0);
     const todayString = today.toDateString();
     const periodDates = getPeriodDates();
@@ -423,7 +398,7 @@ function updatePhaseDisplay() {
 // Update date display in the circle
 function updateDateDisplay() {
     const dateDisplay = document.getElementById('dateDisplay');
-    const today = getCurrentDate();
+    const today = new Date();
     
     const day = today.getDate();
     const month = today.toLocaleDateString('fr-FR', { month: 'long' });
@@ -462,7 +437,7 @@ function initMoodTracking() {
 
 // Save today's mood
 function saveTodaysMood(mood, label) {
-    const today = getCurrentDate().toDateString();
+    const today = new Date().toDateString();
     const moodData = {
         date: today,
         mood: mood,
@@ -476,7 +451,7 @@ function loadTodaysMood() {
     const savedMood = localStorage.getItem('todaysMood');
     if (savedMood) {
         const moodData = JSON.parse(savedMood);
-        const today = getCurrentDate().toDateString();
+        const today = new Date().toDateString();
         
         if (moodData.date === today) {
             const button = document.querySelector(`[data-mood="${moodData.mood}"]`);
@@ -513,7 +488,7 @@ function initNeedsTracking() {
 
 // Save today's needs
 function saveTodaysNeeds(needs) {
-    const today = getCurrentDate().toDateString();
+    const today = new Date().toDateString();
     const needsData = {
         date: today,
         needs: needs
@@ -526,7 +501,7 @@ function loadTodaysNeeds() {
     const savedNeeds = localStorage.getItem('todaysNeeds');
     if (savedNeeds) {
         const needsData = JSON.parse(savedNeeds);
-        const today = getCurrentDate().toDateString();
+        const today = new Date().toDateString();
         
         if (needsData.date === today) {
             needsData.needs.forEach(need => {
@@ -540,28 +515,7 @@ function loadTodaysNeeds() {
 }
 
 // Calendar functionality
-let currentWeekStart = getCurrentDate();
-let calendarInitialized = false;
-
-// Helper function to reset calendar to start of week for a given date
-function resetCalendarToDate(date) {
-    currentWeekStart = date;
-    // Set to start of week (Monday)
-    currentWeekStart.setDate(currentWeekStart.getDate() - (currentWeekStart.getDay() || 7) + 1);
-    currentWeekStart.setHours(0, 0, 0, 0);
-    renderCalendar();
-}
-
-// Helper function to update calendar navigation button visibility
-function updateCalendarNavigationVisibility() {
-    const prevWeekBtn = document.getElementById('prevWeek');
-    const nextWeekBtn = document.getElementById('nextWeek');
-    if (prevWeekBtn && nextWeekBtn) {
-        const isVisible = currentProfile !== 'jo';
-        prevWeekBtn.style.display = isVisible ? 'block' : 'none';
-        nextWeekBtn.style.display = isVisible ? 'block' : 'none';
-    }
-}
+let currentWeekStart = new Date();
 
 function initCalendar() {
     // Set to start of week (Monday)
@@ -571,30 +525,15 @@ function initCalendar() {
     
     renderCalendar();
     
-    // Only add event listeners once
-    if (!calendarInitialized) {
-        const prevWeekBtn = document.getElementById('prevWeek');
-        const nextWeekBtn = document.getElementById('nextWeek');
-        
-        prevWeekBtn.addEventListener('click', () => {
-            if (currentProfile !== 'jo') {
-                currentWeekStart.setDate(currentWeekStart.getDate() - 7);
-                renderCalendar();
-            }
-        });
-        
-        nextWeekBtn.addEventListener('click', () => {
-            if (currentProfile !== 'jo') {
-                currentWeekStart.setDate(currentWeekStart.getDate() + 7);
-                renderCalendar();
-            }
-        });
-        
-        calendarInitialized = true;
-    }
+    document.getElementById('prevWeek').addEventListener('click', () => {
+        currentWeekStart.setDate(currentWeekStart.getDate() - 7);
+        renderCalendar();
+    });
     
-    // Update button visibility based on profile
-    updateCalendarNavigationVisibility();
+    document.getElementById('nextWeek').addEventListener('click', () => {
+        currentWeekStart.setDate(currentWeekStart.getDate() + 7);
+        renderCalendar();
+    });
 }
 
 function renderCalendar() {
@@ -611,7 +550,7 @@ function renderCalendar() {
     // Get period dates and predictions
     const periodDates = getPeriodDates();
     const predictedDates = getPredictedPeriodDates();
-    const today = getCurrentDate();
+    const today = new Date();
     today.setHours(0, 0, 0, 0);
     
     // Render 7 days of the week
@@ -821,7 +760,7 @@ function getPredictedPeriodDates() {
             // If we detected fertile mucus, calculate when ovulation likely occurred
             // Ovulation typically occurs around day 14, and fertile mucus appears 1-2 days before
             // The luteal phase is typically 14 days
-            const today = getCurrentDate();
+            const today = new Date();
             today.setHours(0, 0, 0, 0);
             
             // Calculate days since fertile mucus was detected
@@ -885,7 +824,7 @@ function getCurrentCycleDay() {
         lastPeriodStart = previous;
     }
     
-    const today = getCurrentDate();
+    const today = new Date();
     today.setHours(0, 0, 0, 0);
     lastPeriodStart.setHours(0, 0, 0, 0);
     
@@ -1693,7 +1632,7 @@ function updateJoMoodDisplay() {
     }
 
     const settings = loadCycleSettings();
-    const today = getCurrentDate();
+    const today = new Date();
     today.setHours(0, 0, 0, 0);
     const todayString = today.toDateString();
     const periodDates = getPeriodDates();
@@ -1756,7 +1695,7 @@ function updateJoNeedsDisplay() {
     }
 
     const settings = loadCycleSettings();
-    const today = getCurrentDate();
+    const today = new Date();
     today.setHours(0, 0, 0, 0);
     const todayString = today.toDateString();
     const periodDates = getPeriodDates();
@@ -1812,7 +1751,7 @@ function updateHormoneInterpretation() {
     }
     
     const settings = loadCycleSettings();
-    const today = getCurrentDate();
+    const today = new Date();
     today.setHours(0, 0, 0, 0);
     const todayString = today.toDateString();
     const periodDates = getPeriodDates();
@@ -2002,7 +1941,7 @@ function saveCervicalMucusData(data) {
 // Save today's mucus texture
 function saveTodayMucus(texture) {
     const mucusData = getCervicalMucusData();
-    const today = getCurrentDate();
+    const today = new Date();
     today.setHours(0, 0, 0, 0);
     const dateString = today.toDateString();
     
@@ -2097,7 +2036,7 @@ function initCervicalMucusTracking() {
         
         // Load today's mucus data if it exists
         const mucusData = getCervicalMucusData();
-        const today = getCurrentDate();
+        const today = new Date();
         today.setHours(0, 0, 0, 0);
         const dateString = today.toDateString();
         const todayTexture = mucusData[dateString] || '';
@@ -2137,7 +2076,7 @@ function getFertileWindowFromMucus() {
     if (entries.length === 0) return null;
     
     // Find recent fertile mucus (egg-white or watery within last 30 days)
-    const today = getCurrentDate();
+    const today = new Date();
     today.setHours(0, 0, 0, 0);
     const thirtyDaysAgo = new Date(today);
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
