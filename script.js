@@ -64,6 +64,14 @@ function applyProfileSettings() {
     if (currentProfile === 'jo') {
         document.body.classList.add('read-only');
         adaptInterfaceForJo();
+    } else {
+        // Restore original headers for Mathilde's profile
+        document.body.classList.remove('read-only');
+        const columns = document.querySelectorAll('.two-columns .column h2');
+        if (columns.length >= 2) {
+            columns[0].textContent = 'Humeurs';
+            columns[1].textContent = 'Besoins';
+        }
     }
 }
 
@@ -1546,6 +1554,13 @@ function adaptInterfaceForJo() {
             initStyleToggle();
             styleToggle.dataset.initialized = 'true';
         }
+    }
+    
+    // Update column headers for Jo's profile
+    const columns = document.querySelectorAll('.two-columns .column h2');
+    if (columns.length >= 2) {
+        columns[0].textContent = 'Mathilde en émotion';  // Change "Humeurs" to "Mathilde en émotion"
+        columns[1].textContent = 'Jo en Action';  // Change "Besoins" to "Jo en Action"
     }
     
     // Wait for DOM to be fully loaded
