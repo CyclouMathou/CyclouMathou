@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
     loadTodaysNeeds();
     initCalendar();
     initSettings();
+    drawHormoneGraph();
 });
 
 // Calculate cycle phase based on cycle day
@@ -426,6 +427,7 @@ function initSettings() {
         renderCalendar();
         updatePhaseDisplay();
         updateCircleColor();
+        drawHormoneGraph();
     });
 }
 
@@ -509,3 +511,241 @@ function getCurrentCycleDay() {
     
     return cycleDay;
 }
+
+// Draw hormone graph with cycle phases and current day indicator
+function drawHormoneGraph() {
+    const canvas = document.getElementById('hormoneGraph');
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    const settings = loadCycleSettings();
+    const cycleLength = settings.cycleLength;
+    const periodLength = settings.periodLength;
+    
+    // Get current cycle day for indicator
+    const currentCycleDay = getCurrentCycleDay();
+    
+    // Set canvas size with device pixel ratio for crisp rendering
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    ctx.scale(dpr, dpr);
+    
+    // Graph dimensions
+    const width = rect.width;
+    const height = rect.height;
+    const padding = 40;
+    const graphWidth = width - 2 * padding;
+    const graphHeight = height - 2 * padding;
+    
+    // Clear canvas
+    ctx.clearRect(0, 0, width, height);
+    
+    // Draw phase backgrounds
+    drawPhaseBackgrounds(ctx, padding, graphWidth, graphHeight, cycleLength, periodLength);
+    
+    // Draw axes
+    drawAxes(ctx, padding, width, height, graphWidth, graphHeight, cycleLength);
+    
+    // Draw hormone curves
+    drawHormoneCurves(ctx, padding, graphWidth, graphHeight, cycleLength);
+    
+    // Draw current day indicator
+    if (currentCycleDay !== null) {
+        drawCurrentDayIndicator(ctx, padding, graphWidth, graphHeight, cycleLength, currentCycleDay);
+    }
+}
+
+// Draw phase backgrounds with colors
+function drawPhaseBackgrounds(ctx, padding, graphWidth, graphHeight, cycleLength, periodLength) {
+    const phases = [
+        { start: 1, end: periodLength, color: 'rgba(255, 0, 0, 0.1)' }, // Menstruation
+        { start: periodLength + 1, end: 11, color: 'rgba(255, 215, 0, 0.1)' }, // Follicular
+        { start: 12, end: 16, color: 'rgba(0, 255, 0, 0.1)' }, // Ovulation
+        { start: 17, end: cycleLength, color: 'rgba(64, 224, 208, 0.1)' } // Luteal
+    ];
+    
+    phases.forEach(phase => {
+        const startX = padding + (phase.start - 1) / cycleLength * graphWidth;
+        const endX = padding + phase.end / cycleLength * graphWidth;
+        const width = endX - startX;
+        
+        ctx.fillStyle = phase.color;
+        ctx.fillRect(startX, padding, width, graphHeight);
+    });
+}
+
+// Draw axes with labels
+function drawAxes(ctx, padding, width, height, graphWidth, graphHeight, cycleLength) {
+    ctx.strokeStyle = 'rgba(135, 206, 250, 0.5)';
+    ctx.lineWidth = 1;
+    
+    // Y-axis
+    ctx.beginPath();
+    ctx.moveTo(padding, padding);
+    ctx.lineTo(padding, height - padding);
+    ctx.stroke();
+    
+    // X-axis
+    ctx.beginPath();
+    ctx.moveTo(padding, height - padding);
+    ctx.lineTo(width - padding, height - padding);
+    ctx.stroke();
+    
+    // X-axis labels (cycle days)
+    ctx.fillStyle = '#87ceeb';
+    ctx.font = '11px Inter, sans-serif';
+    ctx.textAlign = 'center';
+    
+    // Draw labels for key days
+    const keyDays = [1, 7, 14, 21, cycleLength];
+    keyDays.forEach(day => {
+        if (day <= cycleLength) {
+            const x = padding + (day - 1) / cycleLength * graphWidth;
+            ctx.fillText(`J${day}`, x, height - padding + 20);
+            
+            // Draw tick mark
+            ctx.beginPath();
+            ctx.moveTo(x, height - padding);
+            ctx.lineTo(x, height - padding + 5);
+            ctx.strokeStyle = 'rgba(135, 206, 250, 0.5)';
+            ctx.stroke();
+        }
+    });
+    
+    // Y-axis label
+    ctx.save();
+    ctx.translate(15, height / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.textAlign = 'center';
+    ctx.fillText('Niveau hormonal', 0, 0);
+    ctx.restore();
+    
+    // X-axis label
+    ctx.textAlign = 'center';
+    ctx.fillText('Jour du cycle', width / 2, height - 5);
+}
+
+// Draw hormone curves (estrogen, progesterone, testosterone)
+function drawHormoneCurves(ctx, padding, graphWidth, graphHeight, cycleLength) {
+    const points = 100; // Number of points for smooth curves
+    
+    // Estrogen curve (pink) - peaks at ovulation
+    ctx.strokeStyle = '#ff1493';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    for (let i = 0; i <= points; i++) {
+        const day = (i / points) * cycleLength;
+        const x = padding + (i / points) * graphWidth;
+        
+        // Estrogen: rises during follicular phase, peaks at ovulation, drops in luteal phase with small rise
+        let estrogen;
+        if (day < 14) {
+            // Rising during follicular phase
+            estrogen = 0.2 + 0.7 * (day / 14);
+        } else if (day < 16) {
+            // Peak at ovulation
+            estrogen = 0.9 - 0.3 * ((day - 14) / 2);
+        } else {
+            // Drop with small secondary rise in luteal phase
+            const lutealDay = day - 16;
+            const lutealLength = cycleLength - 16;
+            estrogen = 0.6 - 0.3 * Math.sin((lutealDay / lutealLength) * Math.PI);
+        }
+        
+        const y = padding + graphHeight - (estrogen * graphHeight * 0.9);
+        
+        if (i === 0) {
+            ctx.moveTo(x, y);
+        } else {
+            ctx.lineTo(x, y);
+        }
+    }
+    ctx.stroke();
+    
+    // Progesterone curve (purple) - rises after ovulation
+    ctx.strokeStyle = '#9370db';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    for (let i = 0; i <= points; i++) {
+        const day = (i / points) * cycleLength;
+        const x = padding + (i / points) * graphWidth;
+        
+        // Progesterone: low until ovulation, then rises and dominates luteal phase
+        let progesterone;
+        if (day < 14) {
+            // Very low during follicular phase
+            progesterone = 0.1;
+        } else {
+            // Rises after ovulation, peaks mid-luteal, then drops
+            const lutealDay = day - 14;
+            const lutealLength = cycleLength - 14;
+            progesterone = 0.1 + 0.8 * Math.sin((lutealDay / lutealLength) * Math.PI);
+        }
+        
+        const y = padding + graphHeight - (progesterone * graphHeight * 0.9);
+        
+        if (i === 0) {
+            ctx.moveTo(x, y);
+        } else {
+            ctx.lineTo(x, y);
+        }
+    }
+    ctx.stroke();
+    
+    // Testosterone curve (blue) - relatively stable with small peak at ovulation
+    ctx.strokeStyle = '#4169e1';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    for (let i = 0; i <= points; i++) {
+        const day = (i / points) * cycleLength;
+        const x = padding + (i / points) * graphWidth;
+        
+        // Testosterone: relatively stable with small peak around ovulation
+        let testosterone;
+        if (day < 12) {
+            testosterone = 0.3 + 0.1 * (day / 12);
+        } else if (day < 16) {
+            // Small peak at ovulation
+            testosterone = 0.4 + 0.15 * Math.sin(((day - 12) / 4) * Math.PI);
+        } else {
+            testosterone = 0.3 + 0.1 * Math.sin(((day - 16) / (cycleLength - 16)) * Math.PI);
+        }
+        
+        const y = padding + graphHeight - (testosterone * graphHeight * 0.9);
+        
+        if (i === 0) {
+            ctx.moveTo(x, y);
+        } else {
+            ctx.lineTo(x, y);
+        }
+    }
+    ctx.stroke();
+}
+
+// Draw current day indicator line
+function drawCurrentDayIndicator(ctx, padding, graphWidth, graphHeight, cycleLength, currentDay) {
+    const x = padding + ((currentDay - 1) / cycleLength) * graphWidth;
+    
+    // Draw vertical line
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([5, 5]);
+    ctx.beginPath();
+    ctx.moveTo(x, padding);
+    ctx.lineTo(x, padding + graphHeight);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    
+    // Draw label
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 12px Inter, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(`Jour ${currentDay}`, x, padding - 10);
+}
+
+// Redraw graph on window resize
+window.addEventListener('resize', function() {
+    drawHormoneGraph();
+});
