@@ -1655,3 +1655,16 @@ body.read-only .need.selected {
     padding: 10px;
   }
 }
+
+/* Warning Message */
+.warning-message {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 8px;
+  text-align: center;
+  font-style: italic;
+  color: #856404;
+}
+}
