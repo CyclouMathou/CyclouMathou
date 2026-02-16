@@ -759,3 +759,193 @@ function drawCurrentDayIndicator(ctx, padding, graphWidth, graphHeight, cycleLen
 window.addEventListener('resize', function() {
     drawHormoneGraph();
 });
+
+// Hormone medical explanations
+const hormoneExplanations = {
+    estrogen: {
+        title: "Œstrogène",
+        content: "L'œstrogène est l'hormone féminine principale. Elle augmente pendant la phase folliculaire, atteint son pic lors de l'ovulation, puis diminue. Elle influence l'énergie, l'humeur positive, la libido et la qualité de la peau. Des niveaux élevés peuvent améliorer la clarté mentale et la confiance en soi."
+    },
+    progesterone: {
+        title: "Progestérone",
+        content: "La progestérone domine la phase lutéale après l'ovulation. Elle prépare le corps à une éventuelle grossesse et favorise le calme et la relaxation. Elle peut également causer de la fatigue, une augmentation de l'appétit et une sensibilité émotionnelle accrue. C'est l'hormone du repos et de la restauration."
+    },
+    testosterone: {
+        title: "Testostérone",
+        content: "Bien que présente en petites quantités, la testostérone joue un rôle important chez les femmes. Elle augmente légèrement pendant l'ovulation, stimulant la libido, l'énergie, la motivation et la force physique. Elle contribue également à la santé musculaire et osseuse."
+    }
+};
+
+// Initialize hormone tooltip functionality
+function initHormoneTooltip() {
+    const canvas = document.getElementById('hormoneGraph');
+    const tooltip = document.getElementById('hormoneTooltip');
+    
+    if (!canvas || !tooltip) return;
+    
+    // Add click event to canvas
+    canvas.addEventListener('click', function(event) {
+        event.stopPropagation(); // Prevent document click handler from firing
+        
+        const rect = canvas.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+        
+        // Scale coordinates to actual canvas size
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        const canvasX = x * scaleX;
+        const canvasY = y * scaleY;
+        
+        // Check which hormone curve was clicked
+        const hormone = detectHormoneClick(canvasX, canvasY);
+        
+        if (hormone) {
+            showHormoneTooltip(hormone, event.pageX, event.pageY);
+        } else {
+            hideHormoneTooltip();
+        }
+    });
+    
+    // Hide tooltip when clicking outside
+    document.addEventListener('click', function(event) {
+        if (!canvas.contains(event.target) && !tooltip.contains(event.target)) {
+            hideHormoneTooltip();
+        }
+    });
+}
+
+// Detect which hormone curve was clicked
+function detectHormoneClick(canvasX, canvasY) {
+    const canvas = document.getElementById('hormoneGraph');
+    const rect = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    
+    // Graph dimensions (matching drawHormoneGraph)
+    const width = rect.width;
+    const height = rect.height;
+    const padding = 40;
+    const graphWidth = width - 2 * padding;
+    const graphHeight = height - 2 * padding;
+    
+    // Convert canvas coordinates back to graph coordinates
+    const graphX = (canvasX / dpr - padding) / graphWidth;
+    const graphY = (canvasY / dpr - padding) / graphHeight;
+    
+    // Check if click is within graph bounds
+    if (graphX < 0 || graphX > 1 || graphY < 0 || graphY > 1) {
+        return null;
+    }
+    
+    const settings = loadCycleSettings();
+    const cycleLength = settings.cycleLength;
+    const day = graphX * cycleLength;
+    const ovulationDay = cycleLength / 2;
+    const ovulationStart = ovulationDay - 2;
+    const ovulationEnd = ovulationDay + 2;
+    
+    // Calculate hormone levels at click position
+    let estrogenLevel, progesteroneLevel, testosteroneLevel;
+    
+    // Estrogen
+    if (day < ovulationDay) {
+        estrogenLevel = 0.2 + 0.7 * (day / ovulationDay);
+    } else if (day < ovulationEnd) {
+        estrogenLevel = 0.9 - 0.3 * ((day - ovulationDay) / 2);
+    } else {
+        const lutealDay = day - ovulationEnd;
+        const lutealLength = cycleLength - ovulationEnd;
+        estrogenLevel = 0.6 - 0.3 * Math.sin((lutealDay / lutealLength) * Math.PI);
+    }
+    
+    // Progesterone
+    if (day < ovulationDay) {
+        progesteroneLevel = 0.1;
+    } else {
+        const lutealDay = day - ovulationDay;
+        const lutealLength = cycleLength - ovulationDay;
+        progesteroneLevel = 0.1 + 0.8 * Math.sin((lutealDay / lutealLength) * Math.PI);
+    }
+    
+    // Testosterone
+    if (day < ovulationStart) {
+        testosteroneLevel = 0.3 + 0.1 * (day / ovulationStart);
+    } else if (day < ovulationEnd) {
+        testosteroneLevel = 0.4 + 0.15 * Math.sin(((day - ovulationStart) / (ovulationEnd - ovulationStart)) * Math.PI);
+    } else {
+        testosteroneLevel = 0.3 + 0.1 * Math.sin(((day - ovulationEnd) / (cycleLength - ovulationEnd)) * Math.PI);
+    }
+    
+    // Convert levels to Y positions
+    const estrogenY = 1 - (estrogenLevel * 0.9);
+    const progesteroneY = 1 - (progesteroneLevel * 0.9);
+    const testosteroneY = 1 - (testosteroneLevel * 0.9);
+    
+    // Check which curve is closest (within threshold)
+    const threshold = 0.15; // 15% of graph height (increased for better usability)
+    const distances = {
+        estrogen: Math.abs(graphY - estrogenY),
+        progesterone: Math.abs(graphY - progesteroneY),
+        testosterone: Math.abs(graphY - testosteroneY)
+    };
+    
+    // Find closest hormone
+    let closestHormone = null;
+    let minDistance = threshold;
+    
+    for (const [hormone, distance] of Object.entries(distances)) {
+        if (distance < minDistance) {
+            minDistance = distance;
+            closestHormone = hormone;
+        }
+    }
+    
+    return closestHormone;
+}
+
+// Show hormone tooltip
+function showHormoneTooltip(hormone, x, y) {
+    const tooltip = document.getElementById('hormoneTooltip');
+    const tooltipTitle = document.getElementById('tooltipTitle');
+    const tooltipContent = document.getElementById('tooltipContent');
+    
+    if (!tooltip || !tooltipTitle || !tooltipContent) return;
+    
+    const explanation = hormoneExplanations[hormone];
+    if (!explanation) return;
+    
+    tooltipTitle.textContent = explanation.title;
+    tooltipContent.textContent = explanation.content;
+    
+    tooltip.classList.add('visible');
+    
+    // Position tooltip near click
+    const tooltipRect = tooltip.getBoundingClientRect();
+    let tooltipX = x + 10;
+    let tooltipY = y + 10;
+    
+    // Keep tooltip within viewport
+    if (tooltipX + tooltipRect.width > window.innerWidth) {
+        tooltipX = x - tooltipRect.width - 10;
+    }
+    if (tooltipY + tooltipRect.height > window.innerHeight) {
+        tooltipY = y - tooltipRect.height - 10;
+    }
+    
+    tooltip.style.left = tooltipX + 'px';
+    tooltip.style.top = tooltipY + 'px';
+}
+
+// Hide hormone tooltip
+function hideHormoneTooltip() {
+    const tooltip = document.getElementById('hormoneTooltip');
+    if (tooltip) {
+        tooltip.classList.remove('visible');
+    }
+}
+
+// Initialize tooltip when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // ... existing initialization code runs first ...
+    initHormoneTooltip();
+});
