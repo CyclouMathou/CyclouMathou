@@ -1251,6 +1251,7 @@ body.read-only .need.selected {
   min-height: 120px;
   position: relative;
   box-shadow: 0 4px 20px rgba(64, 224, 208, 0.2);
+  grid-column: 1 / -1;
 }
 
 .jo-mood-emoji {
@@ -1338,9 +1339,7 @@ body.read-only .need.selected {
   min-height: 180px;
   position: relative;
   box-shadow: 0 4px 20px rgba(64, 224, 208, 0.2);
-  width: 100%;
-  max-width: 800px;
-  margin: 0 auto;
+  grid-column: 1 / -1;
 }
 
 .jo-suggestion-title {
