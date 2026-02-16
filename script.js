@@ -85,9 +85,7 @@ function applyProfileSettings() {
         updateDateDisplay();
         updatePhaseDisplay();
         updateCircleColor();
-        // Hide calendar navigation
-        document.getElementById('prevWeek').style.display = 'none';
-        document.getElementById('nextWeek').style.display = 'none';
+        updateCalendarNavigationVisibility();
         adaptInterfaceForJo();
     } else {
         // Restore original headers for Mathilde's profile
@@ -101,9 +99,7 @@ function applyProfileSettings() {
         updateDateDisplay();
         updatePhaseDisplay();
         updateCircleColor();
-        // Show calendar navigation for Mathilde
-        document.getElementById('prevWeek').style.display = 'block';
-        document.getElementById('nextWeek').style.display = 'block';
+        updateCalendarNavigationVisibility();
         const columns = document.querySelectorAll('.two-columns .column h2');
         if (columns.length >= 2) {
             columns[0].textContent = 'Humeurs';
@@ -555,6 +551,17 @@ function loadTodaysNeeds() {
 let currentWeekStart = getCurrentDate();
 let calendarInitialized = false;
 
+// Helper function to update calendar navigation button visibility
+function updateCalendarNavigationVisibility() {
+    const prevWeekBtn = document.getElementById('prevWeek');
+    const nextWeekBtn = document.getElementById('nextWeek');
+    if (prevWeekBtn && nextWeekBtn) {
+        const isVisible = currentProfile !== 'jo';
+        prevWeekBtn.style.display = isVisible ? 'block' : 'none';
+        nextWeekBtn.style.display = isVisible ? 'block' : 'none';
+    }
+}
+
 function initCalendar() {
     // Set to start of week (Monday)
     // JavaScript's getDay() returns 0 for Sunday, so we convert 0 to 7 to treat Monday as day 1
@@ -586,8 +593,7 @@ function initCalendar() {
     }
     
     // Update button visibility based on profile
-    document.getElementById('prevWeek').style.display = currentProfile === 'jo' ? 'none' : 'block';
-    document.getElementById('nextWeek').style.display = currentProfile === 'jo' ? 'none' : 'block';
+    updateCalendarNavigationVisibility();
 }
 
 function renderCalendar() {
