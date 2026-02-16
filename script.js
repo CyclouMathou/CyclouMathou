@@ -739,6 +739,7 @@ function drawHormoneCurves(ctx, padding, graphWidth, graphHeight, cycleLength) {
     ctx.stroke();
     
     // LH curve (orange) - sharp peak at ovulation
+    const LH_BASELINE = 0.15;
     ctx.strokeStyle = '#ffa500';
     ctx.lineWidth = 2.5;
     ctx.beginPath();
@@ -750,14 +751,14 @@ function drawHormoneCurves(ctx, padding, graphWidth, graphHeight, cycleLength) {
         let lh;
         if (day < ovulationDay - 2) {
             // Low baseline during early follicular phase
-            lh = 0.15;
+            lh = LH_BASELINE;
         } else if (day < ovulationDay + 1) {
             // Sharp LH surge triggering ovulation
             const surgeProgress = (day - (ovulationDay - 2)) / 3;
-            lh = 0.15 + 0.75 * Math.sin(surgeProgress * Math.PI);
+            lh = LH_BASELINE + 0.75 * Math.sin(surgeProgress * Math.PI);
         } else {
             // Returns to baseline after ovulation
-            lh = 0.15;
+            lh = LH_BASELINE;
         }
         
         const y = padding + graphHeight - (lh * graphHeight * 0.9);
@@ -1015,7 +1016,7 @@ const hormoneInfo = {
                 <li>Stimule les cellules de la granulosa du follicule à produire de l'estradiol (via l'aromatisation des androgènes)</li>
                 <li>Augmente le nombre de récepteurs à la LH sur le follicule dominant, le préparant à répondre au pic de LH</li>
                 <li>Favorise la prolifération des cellules de la granulosa et l'expansion du follicule</li>
-                <li>Le ratio FSH/LH est utilisé cliniquement pour diagnostiquer certaines pathologies (ex: ratio FSH/LH < 1 dans le SOPK)</li>
+                <li>Le ratio LH/FSH est utilisé cliniquement pour diagnostiquer certaines pathologies (ex: ratio LH/FSH > 2-3 dans le SOPK)</li>
                 <li>Des niveaux élevés constants de FSH peuvent indiquer une insuffisance ovarienne ou une ménopause</li>
             </ul>
         `
