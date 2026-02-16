@@ -46,17 +46,23 @@ function updatePhaseDisplay() {
     // Calculate current cycle day
     const startDate = new Date(cycleStartDate);
     const today = new Date();
-    const diffTime = Math.abs(today - startDate);
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    const cycleDay = ((diffDays % 28) === 0) ? 28 : (diffDays % 28);
+    const diffTime = today - startDate;
+    
+    // If start date is in the future, reset it to today
+    if (diffTime < 0) {
+        cycleStartDate = new Date().toDateString();
+        localStorage.setItem('cycleStartDate', cycleStartDate);
+        phaseDisplay.textContent = 'menstruation';
+        return;
+    }
+    
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    const cycleDay = (diffDays % 28) + 1;
     
     // Get phase name
     const phase = getCyclePhase(cycleDay);
     
-    // Capitalize first letter
-    const phaseName = phase.charAt(0).toUpperCase() + phase.slice(1);
-    
-    phaseDisplay.textContent = phaseName;
+    phaseDisplay.textContent = phase;
 }
 
 // Update date display in the circle
