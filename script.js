@@ -57,6 +57,9 @@ function applyProfileSettings() {
     // Initialize home button with profile-specific styling
     initHomeButton();
 
+    // Initialize cervical mucus tracking for Mathilde
+    initCervicalMucusTracking();
+
     // If viewer mode (Jo), apply read-only restrictions
     if (currentProfile === 'jo') {
         document.body.classList.add('read-only');
@@ -739,9 +742,45 @@ function getPredictedPeriodDates() {
         lastPeriodStart = previous;
     }
     
-    // Calculate next period start
+    // Start with base cycle length
+    let adjustedCycleLength = settings.cycleLength;
+    
+    // Optional refinement: Use cervical mucus data if available (Mathilde only)
+    if (currentProfile === 'mathilde') {
+        const fertileMucusDate = getFertileWindowFromMucus();
+        if (fertileMucusDate) {
+            // If we detected fertile mucus, calculate when ovulation likely occurred
+            // Ovulation typically occurs around day 14, and fertile mucus appears 1-2 days before
+            // The luteal phase is typically 14 days
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            // Calculate days since fertile mucus was detected
+            const daysSinceFertileMucus = Math.floor((today - fertileMucusDate) / (1000 * 60 * 60 * 24));
+            
+            // Calculate days since last period
+            const daysSinceLastPeriod = Math.floor((today - lastPeriodStart) / (1000 * 60 * 60 * 24));
+            
+            // If fertile mucus was detected in current cycle, use it to refine prediction
+            if (daysSinceLastPeriod >= 0 && daysSinceFertileMucus < daysSinceLastPeriod) {
+                // Ovulation likely occurred 0-2 days after fertile mucus detection
+                // Add 14 days (luteal phase) to estimate next period
+                const estimatedOvulationDay = daysSinceLastPeriod - daysSinceFertileMucus + 1;
+                const refinedCycleLength = estimatedOvulationDay + 14;
+                
+                // Use the refined cycle length if it's reasonable (24-35 days)
+                // and different enough from base to matter (at least 2 days difference)
+                if (refinedCycleLength >= 24 && refinedCycleLength <= 35 && 
+                    Math.abs(refinedCycleLength - settings.cycleLength) >= 2) {
+                    adjustedCycleLength = refinedCycleLength;
+                }
+            }
+        }
+    }
+    
+    // Calculate next period start using adjusted cycle length
     const nextPeriodStart = new Date(lastPeriodStart);
-    nextPeriodStart.setDate(nextPeriodStart.getDate() + settings.cycleLength);
+    nextPeriodStart.setDate(nextPeriodStart.getDate() + adjustedCycleLength);
     
     // Generate predicted period dates
     const predictedDates = [];
@@ -1696,6 +1735,178 @@ function initHormoneModal() {
             modal.classList.remove('active');
         }
     });
+}
+
+// ============================
+// Cervical Mucus Tracking Functions
+// ============================
+
+// Get cervical mucus data from localStorage
+function getCervicalMucusData() {
+    const data = localStorage.getItem(`mucusData_${currentProfile}`);
+    return data ? JSON.parse(data) : {};
+}
+
+// Save cervical mucus data to localStorage
+function saveCervicalMucusData(data) {
+    localStorage.setItem(`mucusData_${currentProfile}`, JSON.stringify(data));
+}
+
+// Save today's mucus texture
+function saveTodayMucus(texture) {
+    const mucusData = getCervicalMucusData();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const dateString = today.toDateString();
+    
+    if (texture === '') {
+        // Remove entry if no texture selected
+        delete mucusData[dateString];
+    } else {
+        mucusData[dateString] = texture;
+    }
+    
+    saveCervicalMucusData(mucusData);
+    updateMucusCalendar();
+    
+    // Update prediction if we have period data
+    updatePhaseDisplay();
+    updateDateDisplay();
+    renderCalendar();
+}
+
+// Get texture label for display
+function getMucusTextureLabel(texture) {
+    const labels = {
+        'none': 'Absente / Sèche',
+        'sticky': 'Collante',
+        'creamy': 'Crémeuse',
+        'watery': 'Aqueuse',
+        'egg-white': 'Blanc d\'œuf'
+    };
+    return labels[texture] || texture;
+}
+
+// Get texture icon
+function getMucusTextureIcon(texture) {
+    const icons = {
+        'none': '○',
+        'sticky': '●',
+        'creamy': '◐',
+        'watery': '◎',
+        'egg-white': '◉'
+    };
+    return icons[texture] || '○';
+}
+
+// Update mucus calendar display
+function updateMucusCalendar() {
+    const mucusCalendar = document.getElementById('mucusCalendar');
+    if (!mucusCalendar) return;
+    
+    const mucusData = getCervicalMucusData();
+    const entries = Object.entries(mucusData).sort((a, b) => new Date(b[0]) - new Date(a[0]));
+    
+    if (entries.length === 0) {
+        mucusCalendar.innerHTML = '<p style="text-align: center; color: #87ceeb; font-size: 0.9rem;">Aucune donnée enregistrée pour le moment</p>';
+        return;
+    }
+    
+    // Show last 10 entries
+    const recentEntries = entries.slice(0, 10);
+    
+    let html = '<div class="mucus-calendar-title">Dernières entrées</div>';
+    html += '<div class="mucus-entries">';
+    
+    for (const [dateString, texture] of recentEntries) {
+        const date = new Date(dateString);
+        const formattedDate = date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+        const textureClass = texture === 'egg-white' ? 'fertile' : texture === 'watery' ? 'watery' : '';
+        
+        html += `
+            <div class="mucus-entry ${textureClass}">
+                <div class="mucus-entry-icon">${getMucusTextureIcon(texture)}</div>
+                <div class="mucus-entry-date">${formattedDate}</div>
+                <div class="mucus-entry-texture">${getMucusTextureLabel(texture)}</div>
+            </div>
+        `;
+    }
+    
+    html += '</div>';
+    mucusCalendar.innerHTML = html;
+}
+
+// Initialize cervical mucus section for Mathilde
+function initCervicalMucusTracking() {
+    const mucusSection = document.getElementById('cervicalMucusSection');
+    const saveMucusBtn = document.getElementById('saveMucus');
+    const mucusTextureSelect = document.getElementById('mucusTexture');
+    
+    if (!mucusSection || !saveMucusBtn || !mucusTextureSelect) return;
+    
+    // Show section only for Mathilde
+    if (currentProfile === 'mathilde') {
+        mucusSection.style.display = 'block';
+        
+        // Load today's mucus data if it exists
+        const mucusData = getCervicalMucusData();
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const dateString = today.toDateString();
+        const todayTexture = mucusData[dateString] || '';
+        mucusTextureSelect.value = todayTexture;
+        
+        // Update calendar display
+        updateMucusCalendar();
+        
+        // Add event listener to save button
+        saveMucusBtn.addEventListener('click', () => {
+            const texture = mucusTextureSelect.value;
+            saveTodayMucus(texture);
+            
+            // Visual feedback
+            saveMucusBtn.textContent = '✓ Enregistré';
+            saveMucusBtn.style.backgroundColor = 'rgba(76, 175, 80, 0.3)';
+            saveMucusBtn.style.borderColor = '#4caf50';
+            saveMucusBtn.style.color = '#4caf50';
+            
+            setTimeout(() => {
+                saveMucusBtn.textContent = 'Enregistrer';
+                saveMucusBtn.style.backgroundColor = '';
+                saveMucusBtn.style.borderColor = '';
+                saveMucusBtn.style.color = '';
+            }, 2000);
+        });
+    } else {
+        mucusSection.style.display = 'none';
+    }
+}
+
+// Estimate fertile window based on mucus data
+function getFertileWindowFromMucus() {
+    const mucusData = getCervicalMucusData();
+    const entries = Object.entries(mucusData);
+    
+    if (entries.length === 0) return null;
+    
+    // Find recent fertile mucus (egg-white or watery within last 30 days)
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const thirtyDaysAgo = new Date(today);
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    
+    const recentFertileDates = entries.filter(([dateString, texture]) => {
+        const date = new Date(dateString);
+        return (texture === 'egg-white' || texture === 'watery') && 
+               date >= thirtyDaysAgo && 
+               date <= today;
+    }).map(([dateString]) => new Date(dateString));
+    
+    if (recentFertileDates.length === 0) return null;
+    
+    // Find the most recent fertile date
+    recentFertileDates.sort((a, b) => b - a);
+    return recentFertileDates[0];
 }
 
 // Initialize hormone visibility checkboxes

@@ -105,6 +105,27 @@
             </div>
         </div>
 
+        <!-- Cervical Mucus Tracking - Mathilde Profile Only -->
+        <div class="cervical-mucus-section" id="cervicalMucusSection" style="display: none;">
+            <h2>Glaire Cervicale</h2>
+            <p class="mucus-description">Enregistre la texture de ta glaire pour affiner la prédiction de ton cycle</p>
+            <div class="mucus-selector">
+                <label for="mucusTexture">Texture aujourd'hui:</label>
+                <select id="mucusTexture">
+                    <option value="">-- Pas de données --</option>
+                    <option value="none">Absente / Sèche</option>
+                    <option value="sticky">Collante / Épaisse</option>
+                    <option value="creamy">Crémeuse / Laiteuse</option>
+                    <option value="watery">Aqueuse / Glissante</option>
+                    <option value="egg-white">Blanc d'œuf (fertile)</option>
+                </select>
+                <button class="save-mucus" id="saveMucus">Enregistrer</button>
+            </div>
+            <div class="mucus-calendar" id="mucusCalendar">
+                <!-- Calendar with mucus data will be populated by JavaScript -->
+            </div>
+        </div>
+
         <!-- Hormone Graph -->
         <div class="hormone-graph-container">
             <h2>Cycle Hormonal</h2>
