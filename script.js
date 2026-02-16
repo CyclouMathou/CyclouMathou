@@ -1,11 +1,14 @@
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
+    loadCycleSettings();
     updateDateDisplay();
     updatePhaseDisplay();
     initMoodTracking();
     initNeedsTracking();
     loadTodaysMood();
     loadTodaysNeeds();
+    initCalendar();
+    initSettings();
 });
 
 // Calculate cycle phase based on cycle day
@@ -31,39 +34,27 @@ function getCyclePhase(cycleDay) {
 function updatePhaseDisplay() {
     const phaseDisplay = document.getElementById('phaseDisplay');
     
-    // Get or initialize cycle start date
-    let cycleStartDate = localStorage.getItem('cycleStartDate');
+    const cycleDay = getCurrentCycleDay();
     
-    if (!cycleStartDate) {
-        // Initialize with today as day 1 of cycle
-        // Note: User can manually reset cycle start date by clearing localStorage
-        cycleStartDate = new Date().toDateString();
-        localStorage.setItem('cycleStartDate', cycleStartDate);
-    }
-    
-    // Normalize dates to midnight for consistent day counting
-    const startDate = new Date(cycleStartDate);
-    startDate.setHours(0, 0, 0, 0);
-    
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    
-    const diffTime = today - startDate;
-    
-    // If start date is in the future, reset it to today
-    if (diffTime < 0) {
-        cycleStartDate = new Date().toDateString();
-        localStorage.setItem('cycleStartDate', cycleStartDate);
-        phaseDisplay.textContent = 'menstruation';
+    // If no period data, show a default message
+    if (cycleDay === null) {
+        phaseDisplay.textContent = 'Ajoutez vos dates de règles';
         return;
     }
     
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-    // Calculate cycle day (1-28) assuming a repeating 28-day cycle
-    const cycleDay = (diffDays % 28) + 1;
+    const settings = loadCycleSettings();
     
-    // Get phase name
-    const phase = getCyclePhase(cycleDay);
+    // Determine phase based on cycle day and settings
+    let phase;
+    if (cycleDay >= 1 && cycleDay <= settings.periodLength) {
+        phase = 'menstruation';
+    } else if (cycleDay <= Math.floor(settings.cycleLength * 0.45)) {
+        phase = 'folliculaire';
+    } else if (cycleDay <= Math.floor(settings.cycleLength * 0.55)) {
+        phase = 'ovulation';
+    } else {
+        phase = 'lutéale';
+    }
     
     phaseDisplay.textContent = phase;
 }
@@ -175,4 +166,186 @@ function loadTodaysNeeds() {
             });
         }
     }
+}
+
+// Calendar functionality
+let currentWeekStart = new Date();
+
+function initCalendar() {
+    // Set to start of week (Monday)
+    currentWeekStart.setDate(currentWeekStart.getDate() - (currentWeekStart.getDay() || 7) + 1);
+    currentWeekStart.setHours(0, 0, 0, 0);
+    
+    renderCalendar();
+    
+    document.getElementById('prevWeek').addEventListener('click', () => {
+        currentWeekStart.setDate(currentWeekStart.getDate() - 7);
+        renderCalendar();
+    });
+    
+    document.getElementById('nextWeek').addEventListener('click', () => {
+        currentWeekStart.setDate(currentWeekStart.getDate() + 7);
+        renderCalendar();
+    });
+}
+
+function renderCalendar() {
+    const monthDisplay = document.getElementById('calendarMonth');
+    const datesContainer = document.getElementById('calendarDates');
+    
+    // Display month and year
+    const monthName = currentWeekStart.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+    monthDisplay.textContent = monthName.charAt(0).toUpperCase() + monthName.slice(1);
+    
+    // Clear previous dates
+    datesContainer.innerHTML = '';
+    
+    // Get period dates and predictions
+    const periodDates = getPeriodDates();
+    const predictedDates = getPredictedPeriodDates();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    // Render 7 days of the week
+    for (let i = 0; i < 7; i++) {
+        const date = new Date(currentWeekStart);
+        date.setDate(date.getDate() + i);
+        
+        const dateElement = document.createElement('div');
+        dateElement.className = 'calendar-date';
+        dateElement.textContent = date.getDate();
+        
+        const dateString = date.toDateString();
+        
+        // Add classes based on date type
+        if (date.getTime() === today.getTime()) {
+            dateElement.classList.add('today');
+        }
+        
+        if (periodDates.includes(dateString)) {
+            dateElement.classList.add('period');
+        } else if (predictedDates.includes(dateString)) {
+            dateElement.classList.add('predicted-period');
+        }
+        
+        // Add click handler to mark/unmark period
+        dateElement.addEventListener('click', () => togglePeriodDate(dateString));
+        
+        datesContainer.appendChild(dateElement);
+    }
+}
+
+function togglePeriodDate(dateString) {
+    let periodDates = JSON.parse(localStorage.getItem('periodDates') || '[]');
+    
+    const index = periodDates.indexOf(dateString);
+    if (index > -1) {
+        periodDates.splice(index, 1);
+    } else {
+        periodDates.push(dateString);
+    }
+    
+    localStorage.setItem('periodDates', JSON.stringify(periodDates));
+    renderCalendar();
+    updatePhaseDisplay();
+}
+
+function getPeriodDates() {
+    return JSON.parse(localStorage.getItem('periodDates') || '[]');
+}
+
+// Cycle Settings
+function loadCycleSettings() {
+    const settings = {
+        cycleLength: parseInt(localStorage.getItem('cycleLength') || '28'),
+        periodLength: parseInt(localStorage.getItem('periodLength') || '5'),
+        cycleRegular: localStorage.getItem('cycleRegular') === 'true'
+    };
+    return settings;
+}
+
+function saveCycleSettings(cycleLength, periodLength, cycleRegular) {
+    localStorage.setItem('cycleLength', cycleLength);
+    localStorage.setItem('periodLength', periodLength);
+    localStorage.setItem('cycleRegular', cycleRegular);
+}
+
+function initSettings() {
+    const settingsToggle = document.getElementById('settingsToggle');
+    const settingsPanel = document.getElementById('settingsPanel');
+    const saveButton = document.getElementById('saveSettings');
+    
+    // Load current settings
+    const settings = loadCycleSettings();
+    document.getElementById('cycleLength').value = settings.cycleLength;
+    document.getElementById('periodLength').value = settings.periodLength;
+    document.getElementById('cycleRegular').value = settings.cycleRegular;
+    
+    // Toggle settings panel
+    settingsToggle.addEventListener('click', () => {
+        settingsPanel.classList.toggle('open');
+    });
+    
+    // Save settings
+    saveButton.addEventListener('click', () => {
+        const cycleLength = parseInt(document.getElementById('cycleLength').value);
+        const periodLength = parseInt(document.getElementById('periodLength').value);
+        const cycleRegular = document.getElementById('cycleRegular').value === 'true';
+        
+        saveCycleSettings(cycleLength, periodLength, cycleRegular);
+        settingsPanel.classList.remove('open');
+        renderCalendar();
+        updatePhaseDisplay();
+    });
+}
+
+// Cycle prediction algorithm
+function getPredictedPeriodDates() {
+    const periodDates = getPeriodDates();
+    if (periodDates.length === 0) {
+        return [];
+    }
+    
+    const settings = loadCycleSettings();
+    const sortedDates = periodDates.map(d => new Date(d)).sort((a, b) => a - b);
+    
+    // Find the most recent period start
+    const lastPeriodStart = sortedDates[sortedDates.length - 1];
+    
+    // Calculate next period start
+    const nextPeriodStart = new Date(lastPeriodStart);
+    nextPeriodStart.setDate(nextPeriodStart.getDate() + settings.cycleLength);
+    
+    // Generate predicted period dates
+    const predictedDates = [];
+    for (let i = 0; i < settings.periodLength; i++) {
+        const date = new Date(nextPeriodStart);
+        date.setDate(date.getDate() + i);
+        predictedDates.push(date.toDateString());
+    }
+    
+    return predictedDates;
+}
+
+// Update phase display based on actual period data
+function getCurrentCycleDay() {
+    const periodDates = getPeriodDates();
+    if (periodDates.length === 0) {
+        return null;
+    }
+    
+    const sortedDates = periodDates.map(d => new Date(d)).sort((a, b) => a - b);
+    const lastPeriodStart = sortedDates[sortedDates.length - 1];
+    
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    lastPeriodStart.setHours(0, 0, 0, 0);
+    
+    const diffTime = today - lastPeriodStart;
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    
+    const settings = loadCycleSettings();
+    const cycleDay = (diffDays % settings.cycleLength) + 1;
+    
+    return cycleDay;
 }

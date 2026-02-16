@@ -11,6 +11,51 @@
     <main class="container">
         <h1>Suit Mon Cycle</h1>
         
+        <!-- Mini Calendar -->
+        <div class="mini-calendar" id="miniCalendar">
+            <div class="calendar-header">
+                <button class="calendar-nav" id="prevWeek" aria-label="Semaine précédente">‹</button>
+                <div class="calendar-month" id="calendarMonth">Mois</div>
+                <button class="calendar-nav" id="nextWeek" aria-label="Semaine suivante">›</button>
+            </div>
+            <div class="calendar-weekdays">
+                <div class="weekday">L</div>
+                <div class="weekday">M</div>
+                <div class="weekday">M</div>
+                <div class="weekday">J</div>
+                <div class="weekday">V</div>
+                <div class="weekday">S</div>
+                <div class="weekday">D</div>
+            </div>
+            <div class="calendar-dates" id="calendarDates">
+                <!-- Dates will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Settings Toggle -->
+        <button class="settings-toggle" id="settingsToggle" aria-label="Paramètres du cycle">⚙</button>
+        
+        <!-- Settings Panel -->
+        <div class="settings-panel" id="settingsPanel">
+            <h3>Paramètres du Cycle</h3>
+            <div class="setting-item">
+                <label for="cycleLength">Durée du cycle (jours):</label>
+                <input type="number" id="cycleLength" min="21" max="35" value="28">
+            </div>
+            <div class="setting-item">
+                <label for="periodLength">Durée des règles (jours):</label>
+                <input type="number" id="periodLength" min="2" max="10" value="5">
+            </div>
+            <div class="setting-item">
+                <label for="cycleRegular">Cycle régulier:</label>
+                <select id="cycleRegular">
+                    <option value="true">Oui</option>
+                    <option value="false">Non</option>
+                </select>
+            </div>
+            <button class="save-settings" id="saveSettings">Enregistrer</button>
+        </div>
+        
         <div class="phase-display" id="phaseDisplay">Phase</div>
         
         <div class="circle" id="dateCircle">
