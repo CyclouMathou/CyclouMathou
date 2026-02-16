@@ -559,11 +559,16 @@ function drawHormoneGraph() {
 
 // Draw phase backgrounds with colors
 function drawPhaseBackgrounds(ctx, padding, graphWidth, graphHeight, cycleLength, periodLength) {
+    // Calculate phase boundaries proportionally
+    const ovulationDay = Math.round(cycleLength / 2);
+    const follicularEnd = ovulationDay - 3;
+    const ovulationEnd = ovulationDay + 2;
+    
     const phases = [
         { start: 1, end: periodLength, color: 'rgba(255, 0, 0, 0.1)' }, // Menstruation
-        { start: periodLength + 1, end: 11, color: 'rgba(255, 215, 0, 0.1)' }, // Follicular
-        { start: 12, end: 16, color: 'rgba(0, 255, 0, 0.1)' }, // Ovulation
-        { start: 17, end: cycleLength, color: 'rgba(64, 224, 208, 0.1)' } // Luteal
+        { start: periodLength + 1, end: follicularEnd, color: 'rgba(255, 215, 0, 0.1)' }, // Follicular
+        { start: follicularEnd + 1, end: ovulationEnd, color: 'rgba(0, 255, 0, 0.1)' }, // Ovulation
+        { start: ovulationEnd + 1, end: cycleLength, color: 'rgba(64, 224, 208, 0.1)' } // Luteal
     ];
     
     phases.forEach(phase => {
@@ -631,6 +636,11 @@ function drawAxes(ctx, padding, width, height, graphWidth, graphHeight, cycleLen
 function drawHormoneCurves(ctx, padding, graphWidth, graphHeight, cycleLength) {
     const points = 100; // Number of points for smooth curves
     
+    // Calculate ovulation day proportionally (typically mid-cycle)
+    const ovulationDay = cycleLength / 2;
+    const ovulationStart = ovulationDay - 2;
+    const ovulationEnd = ovulationDay + 2;
+    
     // Estrogen curve (pink) - peaks at ovulation
     ctx.strokeStyle = '#ff1493';
     ctx.lineWidth = 2.5;
@@ -641,16 +651,16 @@ function drawHormoneCurves(ctx, padding, graphWidth, graphHeight, cycleLength) {
         
         // Estrogen: rises during follicular phase, peaks at ovulation, drops in luteal phase with small rise
         let estrogen;
-        if (day < 14) {
+        if (day < ovulationDay) {
             // Rising during follicular phase
-            estrogen = 0.2 + 0.7 * (day / 14);
-        } else if (day < 16) {
+            estrogen = 0.2 + 0.7 * (day / ovulationDay);
+        } else if (day < ovulationEnd) {
             // Peak at ovulation
-            estrogen = 0.9 - 0.3 * ((day - 14) / 2);
+            estrogen = 0.9 - 0.3 * ((day - ovulationDay) / 2);
         } else {
             // Drop with small secondary rise in luteal phase
-            const lutealDay = day - 16;
-            const lutealLength = cycleLength - 16;
+            const lutealDay = day - ovulationEnd;
+            const lutealLength = cycleLength - ovulationEnd;
             estrogen = 0.6 - 0.3 * Math.sin((lutealDay / lutealLength) * Math.PI);
         }
         
@@ -674,13 +684,13 @@ function drawHormoneCurves(ctx, padding, graphWidth, graphHeight, cycleLength) {
         
         // Progesterone: low until ovulation, then rises and dominates luteal phase
         let progesterone;
-        if (day < 14) {
+        if (day < ovulationDay) {
             // Very low during follicular phase
             progesterone = 0.1;
         } else {
             // Rises after ovulation, peaks mid-luteal, then drops
-            const lutealDay = day - 14;
-            const lutealLength = cycleLength - 14;
+            const lutealDay = day - ovulationDay;
+            const lutealLength = cycleLength - ovulationDay;
             progesterone = 0.1 + 0.8 * Math.sin((lutealDay / lutealLength) * Math.PI);
         }
         
@@ -704,13 +714,13 @@ function drawHormoneCurves(ctx, padding, graphWidth, graphHeight, cycleLength) {
         
         // Testosterone: relatively stable with small peak around ovulation
         let testosterone;
-        if (day < 12) {
-            testosterone = 0.3 + 0.1 * (day / 12);
-        } else if (day < 16) {
+        if (day < ovulationStart) {
+            testosterone = 0.3 + 0.1 * (day / ovulationStart);
+        } else if (day < ovulationEnd) {
             // Small peak at ovulation
-            testosterone = 0.4 + 0.15 * Math.sin(((day - 12) / 4) * Math.PI);
+            testosterone = 0.4 + 0.15 * Math.sin(((day - ovulationStart) / (ovulationEnd - ovulationStart)) * Math.PI);
         } else {
-            testosterone = 0.3 + 0.1 * Math.sin(((day - 16) / (cycleLength - 16)) * Math.PI);
+            testosterone = 0.3 + 0.1 * Math.sin(((day - ovulationEnd) / (cycleLength - ovulationEnd)) * Math.PI);
         }
         
         const y = padding + graphHeight - (testosterone * graphHeight * 0.9);
