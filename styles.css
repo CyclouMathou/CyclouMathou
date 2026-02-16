@@ -867,9 +867,18 @@ h1 {
   font-size: 1.3rem;
   font-weight: 300;
   color: #87ceeb;
-  margin-bottom: 20px;
+  margin-bottom: 5px;
   letter-spacing: 1px;
   text-align: center;
+}
+
+.hormone-subtitle {
+  font-size: 0.95rem;
+  font-weight: 300;
+  color: #87ceeb;
+  margin-bottom: 20px;
+  text-align: center;
+  opacity: 0.8;
 }
 
 .interpretation-content {
@@ -933,6 +942,10 @@ h1 {
   
   .hormone-interpretation h3 {
     font-size: 1.1rem;
+  }
+  
+  .hormone-subtitle {
+    font-size: 0.85rem;
   }
   
   .interpretation-section h4 {
