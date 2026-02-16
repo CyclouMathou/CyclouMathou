@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
     loadCycleSettings();
     updateDateDisplay();
     updatePhaseDisplay();
+    updateCircleColor();
     initMoodTracking();
     initNeedsTracking();
     loadTodaysMood();
@@ -12,22 +13,63 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Calculate cycle phase based on cycle day
-function getCyclePhase(cycleDay) {
-    // Standard 28-day cycle phases:
-    // Days 1-5: Menstruation
-    // Days 6-13: Follicular phase
-    // Days 14-16: Ovulation
-    // Days 17-28: Luteal phase
+function getCyclePhase(cycleDay, settings) {
+    // Ovulation: Day 14 ±2 days = days 12-16 (5 days total)
+    // Menstruation: Days 1 to periodLength
+    // Follicular: After menstruation until ovulation
+    // Luteal: After ovulation until end of cycle
     
-    if (cycleDay >= 1 && cycleDay <= 5) {
+    if (cycleDay >= 1 && cycleDay <= settings.periodLength) {
         return 'menstruation';
-    } else if (cycleDay >= 6 && cycleDay <= 13) {
-        return 'folliculaire';
-    } else if (cycleDay >= 14 && cycleDay <= 16) {
+    } else if (cycleDay >= 12 && cycleDay <= 16) {
         return 'ovulation';
+    } else if (cycleDay > settings.periodLength && cycleDay < 12) {
+        return 'folliculaire';
     } else {
         return 'lutéale';
     }
+}
+
+// Get phase color for styling
+function getPhaseColor(phase) {
+    const colors = {
+        'menstruation': '#ff0000',      // bright red
+        'folliculaire': '#ffd700',      // yellow/gold
+        'ovulation': '#00ff00',         // green
+        'lutéale': '#40e0d0',          // turquoise
+        'retard': '#ff00ff'            // magenta (late period)
+    };
+    return colors[phase] || '#ff00ff';
+}
+
+// Update circle border color based on current phase
+function updateCircleColor() {
+    const circle = document.getElementById('dateCircle');
+    const cycleDay = getCurrentCycleDay();
+    
+    if (cycleDay === null) {
+        // No period data, keep default magenta
+        circle.style.borderColor = '#ff00ff';
+        return;
+    }
+    
+    const settings = loadCycleSettings();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const todayString = today.toDateString();
+    const periodDates = getPeriodDates();
+    const predictedDates = getPredictedPeriodDates();
+    const isInPredictedPeriod = predictedDates.includes(todayString) && !periodDates.includes(todayString);
+    
+    let phase;
+    if (isInPredictedPeriod) {
+        phase = 'retard';
+    } else {
+        phase = getCyclePhase(cycleDay, settings);
+    }
+    
+    const color = getPhaseColor(phase);
+    circle.style.borderColor = color;
 }
 
 // Update phase display
@@ -55,6 +97,7 @@ function updatePhaseDisplay() {
     // If today is in predicted period (dotted pink), show "retard de règles / phase lutéale"
     if (isInPredictedPeriod) {
         phaseDisplay.textContent = 'retard de règles / phase lutéale';
+        updateCircleColor();
         return;
     }
     
@@ -62,15 +105,16 @@ function updatePhaseDisplay() {
     let phase;
     if (cycleDay >= 1 && cycleDay <= settings.periodLength) {
         phase = 'période de menstruation';
-    } else if (cycleDay <= Math.floor(settings.cycleLength * 0.45)) {
-        phase = 'phase folliculaire';
-    } else if (cycleDay <= Math.floor(settings.cycleLength * 0.55)) {
+    } else if (cycleDay >= 12 && cycleDay <= 16) {
         phase = "phase d'ovulation";
+    } else if (cycleDay > settings.periodLength && cycleDay < 12) {
+        phase = 'phase folliculaire';
     } else {
         phase = 'phase lutéale';
     }
     
     phaseDisplay.textContent = phase;
+    updateCircleColor();
 }
 
 // Update date display in the circle
@@ -241,6 +285,12 @@ function renderCalendar() {
             dateElement.classList.add('period');
         } else if (predictedDates.includes(dateString)) {
             dateElement.classList.add('predicted-period');
+        } else {
+            // Apply phase color for non-period dates
+            const phase = getPhaseForDate(date);
+            if (phase) {
+                dateElement.classList.add(`phase-${phase}`);
+            }
         }
         
         // Add click handler to mark/unmark period
@@ -267,6 +317,63 @@ function togglePeriodDate(dateString) {
 
 function getPeriodDates() {
     return JSON.parse(localStorage.getItem('periodDates') || '[]');
+}
+
+// Get the phase for a specific date
+function getPhaseForDate(date) {
+    const periodDates = getPeriodDates();
+    if (periodDates.length === 0) {
+        return null;
+    }
+    
+    const settings = loadCycleSettings();
+    const sortedDates = periodDates.map(d => new Date(d)).sort((a, b) => a - b);
+    
+    // Find the most recent period start before or on the target date
+    let lastPeriodStart = null;
+    for (let i = sortedDates.length - 1; i >= 0; i--) {
+        if (sortedDates[i] <= date) {
+            lastPeriodStart = sortedDates[i];
+            // Find the actual start by going backwards through consecutive dates
+            for (let j = i - 1; j >= 0; j--) {
+                const current = sortedDates[j + 1];
+                const previous = sortedDates[j];
+                const diffDays = Math.floor((current - previous) / (1000 * 60 * 60 * 24));
+                if (diffDays > 1) {
+                    break;
+                }
+                lastPeriodStart = previous;
+            }
+            break;
+        }
+    }
+    
+    if (!lastPeriodStart) {
+        return null;
+    }
+    
+    const targetDate = new Date(date);
+    targetDate.setHours(0, 0, 0, 0);
+    lastPeriodStart.setHours(0, 0, 0, 0);
+    
+    const diffTime = targetDate - lastPeriodStart;
+    if (diffTime < 0) {
+        return null;
+    }
+    
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    const cycleDay = (diffDays % settings.cycleLength) + 1;
+    
+    // Check if this is a predicted period date
+    const predictedDates = getPredictedPeriodDates();
+    const dateString = targetDate.toDateString();
+    const isInPredictedPeriod = predictedDates.includes(dateString) && !periodDates.includes(dateString);
+    
+    if (isInPredictedPeriod) {
+        return 'retard';
+    }
+    
+    return getCyclePhase(cycleDay, settings);
 }
 
 // Cycle Settings
@@ -311,6 +418,7 @@ function initSettings() {
         settingsPanel.classList.remove('open');
         renderCalendar();
         updatePhaseDisplay();
+        updateCircleColor();
     });
 }
 
