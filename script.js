@@ -51,6 +51,7 @@ function applyProfileSettings() {
     // If viewer mode (Jo), apply read-only restrictions
     if (currentProfile === 'jo') {
         document.body.classList.add('read-only');
+        adaptInterfaceForJo();
     }
 }
 
@@ -317,6 +318,11 @@ function updatePhaseDisplay() {
     // If no period data, show a default message
     if (cycleDay === null) {
         phaseDisplay.textContent = 'Ajoutez vos dates de règles';
+        // Update Jo's displays even if no data
+        if (currentProfile === 'jo') {
+            updateJoMoodDisplay();
+            updateJoNeedsDisplay();
+        }
         return;
     }
     
@@ -334,6 +340,11 @@ function updatePhaseDisplay() {
     if (isInPredictedPeriod) {
         phaseDisplay.textContent = 'retard de règles / phase lutéale';
         updateCircleColor();
+        // Update Jo's displays
+        if (currentProfile === 'jo') {
+            updateJoMoodDisplay();
+            updateJoNeedsDisplay();
+        }
         return;
     }
     
@@ -351,6 +362,12 @@ function updatePhaseDisplay() {
     
     phaseDisplay.textContent = phase;
     updateCircleColor();
+    
+    // Update Jo's displays
+    if (currentProfile === 'jo') {
+        updateJoMoodDisplay();
+        updateJoNeedsDisplay();
+    }
 }
 
 // Update date display in the circle
@@ -1150,6 +1167,178 @@ const cycleInterpretations = {
         relational: "Besoin de soutien et de réassurance. Parlez à quelqu'un de confiance si vous vous sentez inquiète. Le soutien émotionnel de vos proches peut être particulièrement important."
     }
 };
+
+// Jo's profile - Mood emojis and emotions by cycle phase
+const joMoodByPhase = {
+    menstruation: {
+        emoji: '😴',
+        emotion: 'Fatiguée et introspective'
+    },
+    folliculaire: {
+        emoji: '😊',
+        emotion: 'Énergique et optimiste'
+    },
+    ovulation: {
+        emoji: '⚡',
+        emotion: 'Confiante et rayonnante'
+    },
+    lutéale: {
+        emoji: '😌',
+        emotion: 'Calme puis sensible'
+    },
+    retard: {
+        emoji: '😟',
+        emotion: 'Inquiète et incertaine'
+    }
+};
+
+// Jo's profile - Daily partner suggestions by cycle phase
+const joPartnerSuggestions = {
+    menstruation: [
+        "Prépare-lui un thé chaud ou son chocolat chaud préféré ☕",
+        "Propose-lui de regarder sa série préférée ensemble en mode cocooning 📺",
+        "Fais les courses ou prépare le dîner pour qu'elle n'ait pas à s'en soucier 🍽️",
+        "Offre-lui un massage des pieds ou du dos sans rien demander en retour 💆",
+        "Laisse-lui des petits mots doux dans la maison pour lui remonter le moral 💌",
+        "Prends en charge les tâches ménagères aujourd'hui pour qu'elle puisse se reposer 🧹",
+        "Propose une soirée calme avec des bougies et de la musique douce 🕯️"
+    ],
+    folliculaire: [
+        "Propose-lui une sortie au restaurant ou un pique-nique improvisé 🍱",
+        "Suggère une activité sportive ensemble comme une randonnée ou du vélo 🚴",
+        "Planifie une sortie culturelle : musée, expo, concert 🎨",
+        "Organise une soirée jeux de société ou karaoké avec des amis 🎲",
+        "Emmène-la découvrir un nouveau quartier ou un nouveau café ☕",
+        "Propose un atelier créatif ensemble : cuisine, bricolage, peinture 🎨",
+        "Planifie un week-end surprise ou une escapade d'un jour 🚗"
+    ],
+    ovulation: [
+        "Complimente son look, elle est au top de sa forme ! 💃",
+        "Organise un dîner romantique aux chandelles avec sa musique préférée 🕯️",
+        "Emmène-la danser ou à un concert qu'elle aime 💃",
+        "Planifie une sortie photos pour capturer ce moment où elle rayonne 📸",
+        "Propose une activité qu'elle a toujours voulu essayer ensemble 🎯",
+        "Laisse-lui un message d'amour sincère sur pourquoi tu l'apprécies ❤️",
+        "Organise une soirée surprise avec ses amis proches 🎉"
+    ],
+    lutéale: [
+        "Sois patient et compréhensif si elle semble irritable ou fatiguée 🤗",
+        "Complimente-la sincèrement sur ce qu'elle fait de bien aujourd'hui 💝",
+        "Propose une soirée cocooning avec un film qu'elle choisit 🎬",
+        "Prends les devants sur l'organisation du quotidien sans qu'elle demande 📋",
+        "Prépare son plat réconfortant préféré pour le dîner 🍝",
+        "Offre-lui de l'espace si elle en a besoin, tout en étant disponible 🤝",
+        "Fais-lui un compliment authentique sur sa personnalité, pas son apparence 💕"
+    ],
+    retard: [
+        "Sois présent et rassurant, écoute ses inquiétudes sans jugement 👂",
+        "Propose de l'accompagner à la pharmacie si besoin 🏥",
+        "Prends en charge le stress quotidien : courses, repas, ménage 🛒",
+        "Rappelle-lui que tu es là quoi qu'il arrive ❤️",
+        "Offre-lui une sortie pour se changer les idées si elle le souhaite 🌳",
+        "Prépare-lui une tisane calmante et un moment tranquille ensemble 🍵",
+        "Reste patient et disponible pour discuter quand elle le souhaite 💬"
+    ]
+};
+
+// Phase name mapping for display
+const phaseDisplayNames = {
+    menstruation: 'Menstruation',
+    folliculaire: 'Folliculaire',
+    ovulation: 'Ovulation',
+    lutéale: 'Lutéale',
+    retard: 'Retard'
+};
+
+// Adapt interface for Jo's profile
+function adaptInterfaceForJo() {
+    // Wait for DOM to be fully loaded
+    setTimeout(() => {
+        updateJoMoodDisplay();
+        updateJoNeedsDisplay();
+    }, 100);
+}
+
+// Update mood display for Jo's profile
+function updateJoMoodDisplay() {
+    const moodContainer = document.querySelector('.mood-container');
+    if (!moodContainer) return;
+
+    const cycleDay = getCurrentCycleDay();
+    if (cycleDay === null) {
+        moodContainer.innerHTML = '<div class="jo-mood-display">Ajoute des dates de règles pour voir l\'humeur du jour</div>';
+        return;
+    }
+
+    const settings = loadCycleSettings();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const todayString = today.toDateString();
+    const periodDates = getPeriodDates();
+    const predictedDates = getPredictedPeriodDates();
+    const isInPredictedPeriod = predictedDates.includes(todayString) && !periodDates.includes(todayString);
+
+    let phase;
+    if (isInPredictedPeriod) {
+        phase = 'retard';
+    } else {
+        phase = getCyclePhase(cycleDay, settings);
+    }
+
+    const moodData = joMoodByPhase[phase];
+    if (moodData) {
+        moodContainer.innerHTML = `
+            <div class="jo-mood-display">
+                <div class="jo-mood-emoji">${moodData.emoji}</div>
+                <div class="jo-mood-emotion">${moodData.emotion}</div>
+            </div>
+        `;
+    }
+}
+
+// Update needs display for Jo's profile with daily suggestions
+function updateJoNeedsDisplay() {
+    const needsContainer = document.querySelector('.needs-container');
+    if (!needsContainer) return;
+
+    const cycleDay = getCurrentCycleDay();
+    if (cycleDay === null) {
+        needsContainer.innerHTML = '<div class="jo-suggestion-display">Ajoute des dates de règles pour voir les suggestions du jour</div>';
+        return;
+    }
+
+    const settings = loadCycleSettings();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const todayString = today.toDateString();
+    const periodDates = getPeriodDates();
+    const predictedDates = getPredictedPeriodDates();
+    const isInPredictedPeriod = predictedDates.includes(todayString) && !periodDates.includes(todayString);
+
+    let phase;
+    if (isInPredictedPeriod) {
+        phase = 'retard';
+    } else {
+        phase = getCyclePhase(cycleDay, settings);
+    }
+
+    const suggestions = joPartnerSuggestions[phase];
+    if (suggestions && suggestions.length > 0) {
+        // Use day of year to select a suggestion (changes daily)
+        const startOfYear = new Date(today.getFullYear(), 0, 1);
+        const dayOfYear = Math.floor((today - startOfYear) / 1000 / 60 / 60 / 24);
+        const suggestionIndex = dayOfYear % suggestions.length;
+        const todaySuggestion = suggestions[suggestionIndex];
+
+        needsContainer.innerHTML = `
+            <div class="jo-suggestion-display">
+                <div class="jo-suggestion-title">💡 Suggestion du jour pour toi</div>
+                <div class="jo-suggestion-text">${todaySuggestion}</div>
+                <div class="jo-suggestion-phase">Phase: ${phaseDisplayNames[phase] || 'Retard'}</div>
+            </div>
+        `;
+    }
+}
 
 // Update hormone interpretation based on current cycle day
 function updateHormoneInterpretation() {
