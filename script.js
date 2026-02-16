@@ -48,7 +48,6 @@ function applyProfileSettings() {
     // If viewer mode (Jo), apply read-only restrictions
     if (currentProfile === 'jo') {
         document.body.classList.add('read-only');
-        disableEditingFeatures();
     }
 }
 
@@ -64,24 +63,8 @@ function addProfileIndicator() {
     document.body.appendChild(indicator);
 }
 
-function disableEditingFeatures() {
-    // Disable calendar date clicking
-    document.addEventListener('click', function(e) {
-        if (e.target.classList.contains('calendar-date') && 
-            document.body.classList.contains('read-only')) {
-            e.preventDefault();
-            e.stopPropagation();
-        }
-    }, true);
-
-    // Disable mood and needs selection
-    document.addEventListener('click', function(e) {
-        if ((e.target.classList.contains('mood') || e.target.classList.contains('need')) && 
-            document.body.classList.contains('read-only')) {
-            e.preventDefault();
-            e.stopPropagation();
-        }
-    }, true);
+function isReadOnlyMode() {
+    return document.body.classList.contains('read-only');
 }
 
 // Initialize the application
@@ -228,7 +211,7 @@ function initMoodTracking() {
     moodButtons.forEach(button => {
         button.addEventListener('click', () => {
             // Check if in read-only mode
-            if (document.body.classList.contains('read-only')) {
+            if (isReadOnlyMode()) {
                 return;
             }
             
@@ -281,7 +264,7 @@ function initNeedsTracking() {
     needButtons.forEach(button => {
         button.addEventListener('click', () => {
             // Check if in read-only mode
-            if (document.body.classList.contains('read-only')) {
+            if (isReadOnlyMode()) {
                 return;
             }
             
@@ -402,7 +385,7 @@ function renderCalendar() {
 
 function togglePeriodDate(dateString) {
     // Check if in read-only mode
-    if (document.body.classList.contains('read-only')) {
+    if (isReadOnlyMode()) {
         return;
     }
     
