@@ -1241,6 +1241,15 @@ const joPartnerSuggestions = {
     ]
 };
 
+// Phase name mapping for display
+const phaseDisplayNames = {
+    menstruation: 'Menstruation',
+    folliculaire: 'Folliculaire',
+    ovulation: 'Ovulation',
+    lutéale: 'Lutéale',
+    retard: 'Retard'
+};
+
 // Adapt interface for Jo's profile
 function adaptInterfaceForJo() {
     // Wait for DOM to be fully loaded
@@ -1316,7 +1325,8 @@ function updateJoNeedsDisplay() {
     const suggestions = joPartnerSuggestions[phase];
     if (suggestions && suggestions.length > 0) {
         // Use day of year to select a suggestion (changes daily)
-        const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
+        const startOfYear = new Date(today.getFullYear(), 0, 1);
+        const dayOfYear = Math.floor((today - startOfYear) / 1000 / 60 / 60 / 24);
         const suggestionIndex = dayOfYear % suggestions.length;
         const todaySuggestion = suggestions[suggestionIndex];
 
@@ -1324,7 +1334,7 @@ function updateJoNeedsDisplay() {
             <div class="jo-suggestion-display">
                 <div class="jo-suggestion-title">💡 Suggestion du jour pour toi</div>
                 <div class="jo-suggestion-text">${todaySuggestion}</div>
-                <div class="jo-suggestion-phase">Phase: ${phase === 'menstruation' ? 'Menstruation' : phase === 'folliculaire' ? 'Folliculaire' : phase === 'ovulation' ? 'Ovulation' : phase === 'lutéale' ? 'Lutéale' : 'Retard'}</div>
+                <div class="jo-suggestion-phase">Phase: ${phaseDisplayNames[phase] || 'Retard'}</div>
             </div>
         `;
     }
