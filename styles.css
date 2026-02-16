@@ -440,7 +440,7 @@ h1 {
 .home-button {
   position: fixed;
   top: 20px;
-  right: 230px;
+  right: 150px;
   background-color: rgba(26, 26, 26, 0.8);
   border: 1px solid rgba(255, 0, 255, 0.3);
   color: #ff00ff;
@@ -687,7 +687,7 @@ h1 {
   
   .home-button {
     top: 15px;
-    right: 190px;
+    right: 130px;
     font-size: 0.8rem;
     padding: 10px 15px;
   }
@@ -759,7 +759,7 @@ h1 {
   
   .home-button {
     top: 10px;
-    right: 165px;
+    right: 110px;
     font-size: 0.75rem;
     padding: 8px 12px;
   }
