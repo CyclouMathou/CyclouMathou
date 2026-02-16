@@ -1459,17 +1459,17 @@ body.read-only .need.selected {
 .mucus-selector {
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  max-width: 500px;
+  gap: 12px;
+  max-width: 400px;
   margin: 0 auto 30px;
-  padding: 20px;
+  padding: 16px;
   background-color: rgba(10, 15, 26, 0.5);
   border-radius: 8px;
   border: 1px solid rgba(255, 0, 255, 0.2);
 }
 
 .mucus-selector label {
-  font-size: 1rem;
+  font-size: 0.9rem;
   color: #ffffff;
   font-weight: 400;
   text-align: center;
@@ -1477,12 +1477,12 @@ body.read-only .need.selected {
 
 .mucus-selector select {
   width: 100%;
-  padding: 12px;
+  padding: 8px;
   background-color: rgba(26, 26, 26, 0.8);
   border: 1px solid rgba(135, 206, 250, 0.3);
   border-radius: 6px;
   color: #ffffff;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   cursor: pointer;
   transition: all 0.3s ease;
 }
