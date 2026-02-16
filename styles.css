@@ -615,6 +615,11 @@ h1 {
   color: #ffffff;
   margin-bottom: 30px;
   letter-spacing: 1px;
+  padding: 15px 20px;
+  border: 2px solid #87ceeb;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(135, 206, 250, 0.1) 0%, rgba(135, 206, 250, 0.05) 100%);
+  box-shadow: 0 2px 10px rgba(135, 206, 250, 0.2);
 }
 
 /* Mood and Needs Containers */
@@ -631,7 +636,7 @@ h1 {
   font-size: 2rem;
   cursor: pointer;
   transition: all 0.3s ease;
-  background-color: #1a1a1a;
+  background-color: transparent;
   color: #ffffff;
 }
 
@@ -778,6 +783,7 @@ h1 {
   .column h2 {
     font-size: 1.2rem;
     margin-bottom: 20px;
+    padding: 12px 15px;
   }
   
   .mood-container, .needs-container {
@@ -1325,13 +1331,16 @@ body.read-only .need.selected {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding: 25px 30px;
+  padding: 30px 40px;
   background: linear-gradient(135deg, rgba(64, 224, 208, 0.15) 0%, rgba(135, 206, 250, 0.1) 100%);
   border-radius: 16px;
   border: 2px solid #40e0d0;
-  min-height: 120px;
+  min-height: 180px;
   position: relative;
   box-shadow: 0 4px 20px rgba(64, 224, 208, 0.2);
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 .jo-suggestion-title {
@@ -1347,9 +1356,9 @@ body.read-only .need.selected {
 .jo-suggestion-text {
   font-size: 1.05rem;
   color: #ffffff;
-  text-align: center;
-  line-height: 1.7;
-  padding: 15px 20px;
+  text-align: left;
+  line-height: 1.8;
+  padding: 20px 25px;
   background-color: rgba(64, 224, 208, 0.15);
   border-radius: 12px;
   font-weight: 400;
@@ -1430,6 +1439,7 @@ body.read-only .need.selected {
 
   .jo-suggestion-display {
     padding: 20px 25px;
+    min-height: 150px;
   }
 
   .jo-suggestion-title {
@@ -1438,7 +1448,7 @@ body.read-only .need.selected {
 
   .jo-suggestion-text {
     font-size: 0.95rem;
-    padding: 12px 16px;
+    padding: 15px 18px;
   }
 
   .jo-suggestion-phase {
@@ -1731,10 +1741,11 @@ body.read-only .need.selected {
 .warning-message {
   margin-top: 1rem;
   padding: 1rem;
-  background-color: #fff3cd;
-  border: 1px solid #ffc107;
+  background-color: transparent;
+  border: none;
   border-radius: 8px;
   text-align: center;
   font-style: italic;
-  color: #856404;
+  color: #888888;
+  font-size: 0.95rem;
 }
