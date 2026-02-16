@@ -1294,6 +1294,7 @@ body.read-only .need.selected {
 /* Romantic Style Variant - "Douceur et Tendresse" */
 .jo-mood-display.romantic,
 .jo-suggestion-display.romantic {
+  position: relative;
   background: linear-gradient(135deg, rgba(255, 182, 193, 0.15) 0%, rgba(255, 105, 180, 0.1) 100%);
   border: 2px solid #ff69b4;
   box-shadow: 0 4px 15px rgba(255, 105, 180, 0.2);
@@ -1309,11 +1310,6 @@ body.read-only .need.selected {
   opacity: 0.6;
 }
 
-.jo-mood-display.romantic,
-.jo-suggestion-display.romantic {
-  position: relative;
-}
-
 .jo-suggestion-display.romantic .jo-suggestion-title {
   color: #ff69b4;
 }
@@ -1321,6 +1317,7 @@ body.read-only .need.selected {
 /* Pragmatic Style Variant - "Claire et Directe" */
 .jo-mood-display.pragmatic,
 .jo-suggestion-display.pragmatic {
+  position: relative;
   background: linear-gradient(135deg, rgba(100, 149, 237, 0.15) 0%, rgba(70, 130, 180, 0.1) 100%);
   border: 2px solid #6495ed;
   box-shadow: 0 4px 15px rgba(100, 149, 237, 0.2);
@@ -1334,11 +1331,6 @@ body.read-only .need.selected {
   right: 12px;
   font-size: 1.2rem;
   opacity: 0.6;
-}
-
-.jo-mood-display.pragmatic,
-.jo-suggestion-display.pragmatic {
-  position: relative;
 }
 
 .jo-suggestion-display.pragmatic .jo-suggestion-title {
@@ -1402,7 +1394,7 @@ body.read-only .need.selected {
 @media (max-width: 480px) {
   .jo-mood-display,
   .jo-suggestion-display {
-    padding: 15px 20px;
+    padding: 20px 15px;
     min-height: 70px;
     flex-direction: column;
     gap: 10px;

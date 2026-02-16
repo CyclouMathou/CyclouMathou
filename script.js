@@ -1424,7 +1424,11 @@ function adaptInterfaceForJo() {
     const styleToggle = document.getElementById('joStyleToggle');
     if (styleToggle) {
         styleToggle.style.display = 'flex';
-        initStyleToggle();
+        // Only initialize once
+        if (!styleToggle.dataset.initialized) {
+            initStyleToggle();
+            styleToggle.dataset.initialized = 'true';
+        }
     }
     
     // Wait for DOM to be fully loaded
@@ -1439,7 +1443,7 @@ function initStyleToggle() {
     const buttons = document.querySelectorAll('.style-variant-btn');
     const currentStyle = getJoStyleVariant();
     
-    // Set active button based on saved preference
+    // Set active button based on saved preference and add click handlers
     buttons.forEach(btn => {
         const style = btn.getAttribute('data-style');
         if (style === currentStyle) {
@@ -1449,19 +1453,25 @@ function initStyleToggle() {
         }
         
         // Add click handler
-        btn.addEventListener('click', () => {
-            // Update active state
-            buttons.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            
-            // Save preference
-            localStorage.setItem('joStyleVariant', style);
-            
-            // Update displays
-            updateJoMoodDisplay();
-            updateJoNeedsDisplay();
-        });
+        btn.addEventListener('click', handleStyleChange);
     });
+}
+
+// Handle style change button click
+function handleStyleChange(event) {
+    const btn = event.currentTarget;
+    const style = btn.getAttribute('data-style');
+    
+    // Update active state
+    document.querySelectorAll('.style-variant-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    
+    // Save preference
+    localStorage.setItem('joStyleVariant', style);
+    
+    // Update displays
+    updateJoMoodDisplay();
+    updateJoNeedsDisplay();
 }
 
 // Get Jo's style variant preference (romantic or pragmatic)
