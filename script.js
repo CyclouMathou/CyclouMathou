@@ -22,11 +22,8 @@ function getCyclePhase(cycleDay) {
         return 'folliculaire';
     } else if (cycleDay >= 14 && cycleDay <= 16) {
         return 'ovulation';
-    } else if (cycleDay >= 17 && cycleDay <= 28) {
-        return 'lutéale';
     } else {
-        // If beyond 28 days, cycle repeats
-        return getCyclePhase(((cycleDay - 1) % 28) + 1);
+        return 'lutéale';
     }
 }
 
@@ -39,13 +36,18 @@ function updatePhaseDisplay() {
     
     if (!cycleStartDate) {
         // Initialize with today as day 1 of cycle
+        // Note: User can manually reset cycle start date by clearing localStorage
         cycleStartDate = new Date().toDateString();
         localStorage.setItem('cycleStartDate', cycleStartDate);
     }
     
-    // Calculate current cycle day
+    // Normalize dates to midnight for consistent day counting
     const startDate = new Date(cycleStartDate);
+    startDate.setHours(0, 0, 0, 0);
+    
     const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
     const diffTime = today - startDate;
     
     // If start date is in the future, reset it to today
@@ -57,6 +59,7 @@ function updatePhaseDisplay() {
     }
     
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    // Calculate cycle day (1-28) assuming a repeating 28-day cycle
     const cycleDay = (diffDays % 28) + 1;
     
     // Get phase name
