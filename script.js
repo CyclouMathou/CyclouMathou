@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initSettings();
     drawHormoneGraph();
     initHormoneModal();
+    updateHormoneInterpretation();
 });
 
 // Calculate cycle phase based on cycle day
@@ -315,6 +316,8 @@ function togglePeriodDate(dateString) {
     localStorage.setItem('periodDates', JSON.stringify(periodDates));
     renderCalendar();
     updatePhaseDisplay();
+    updateCircleColor();
+    updateHormoneInterpretation();
 }
 
 function getPeriodDates() {
@@ -429,6 +432,7 @@ function initSettings() {
         updatePhaseDisplay();
         updateCircleColor();
         drawHormoneGraph();
+        updateHormoneInterpretation();
     });
 }
 
@@ -759,7 +763,77 @@ function drawCurrentDayIndicator(ctx, padding, graphWidth, graphHeight, cycleLen
 // Redraw graph on window resize
 window.addEventListener('resize', function() {
     drawHormoneGraph();
+    updateHormoneInterpretation();
 });
+
+// Hormone interpretation data based on cycle phase
+const cycleInterpretations = {
+    menstruation: {
+        hormones: "Niveaux d'œstrogène et de progestérone bas. Le corps se remet à zéro pour un nouveau cycle.",
+        mood: "Vous pouvez vous sentir plus fatiguée, introspective ou sensible. C'est normal et temporaire. La fatigue peut être accompagnée d'une envie de ralentir et de se reposer.",
+        relational: "Besoin accru de confort, de douceur et de compréhension. Privilégiez les moments calmes avec vos proches. Vous pourriez préférer des activités tranquilles et peu d'interactions sociales intenses. C'est le moment de vous écouter et de respecter votre besoin de repos."
+    },
+    folliculaire: {
+        hormones: "L'œstrogène augmente progressivement, stimulant votre énergie et votre confiance.",
+        mood: "Vous vous sentez probablement plus optimiste, énergique et confiante. C'est une période propice aux nouveaux projets et aux défis. Votre créativité et votre clarté mentale sont au rendez-vous.",
+        relational: "Phase idéale pour socialiser, rencontrer de nouvelles personnes et renforcer vos liens. Vous êtes plus ouverte aux autres et aux nouvelles expériences. C'est le moment parfait pour planifier des activités sociales ou des sorties."
+    },
+    ovulation: {
+        hormones: "Pic d'œstrogène et de testostérone. Maximum d'énergie et de confiance.",
+        mood: "Vous êtes au sommet de votre forme ! Énergie débordante, confiance maximale, communication fluide. Vous vous sentez attirante et sociable. C'est votre moment de rayonnement.",
+        relational: "Période de forte sociabilité et de connexion. Votre charisme est à son maximum. C'est le moment idéal pour les rendez-vous importants, les présentations ou les conversations significatives. Vous êtes naturellement plus expressive et empathique."
+    },
+    lutéale: {
+        hormones: "La progestérone domine, apportant un effet calmant mais pouvant causer des symptômes prémenstruels en fin de phase.",
+        mood: "En début de phase : calme et stabilité. En fin de phase : possibles changements d'humeur, irritabilité ou anxiété (SPM). Vous pourriez vous sentir plus sensible émotionnellement et avoir besoin de plus de temps pour vous.",
+        relational: "Besoin croissant d'intimité avec des personnes de confiance. Vous pourriez préférer les petits groupes aux grandes foules. Privilégiez la qualité des interactions à la quantité. En fin de phase, vous pourriez avoir besoin de plus d'espace personnel et de compréhension de vos proches."
+    },
+    retard: {
+        hormones: "Si vos règles sont en retard, la progestérone peut rester élevée, ou chuter si un nouveau cycle commence.",
+        mood: "Possibles inquiétudes ou stress liés au retard. Vous pourriez vous sentir dans l'attente ou l'incertitude. L'anxiété peut amplifier les symptômes physiques.",
+        relational: "Besoin de soutien et de réassurance. Parlez à quelqu'un de confiance si vous vous sentez inquiète. Le soutien émotionnel de vos proches peut être particulièrement important."
+    }
+};
+
+// Update hormone interpretation based on current cycle day
+function updateHormoneInterpretation() {
+    const hormoneLevel = document.getElementById('hormoneLevel');
+    const moodInterpretation = document.getElementById('moodInterpretation');
+    const relationalNeeds = document.getElementById('relationalNeeds');
+    
+    if (!hormoneLevel || !moodInterpretation || !relationalNeeds) return;
+    
+    const cycleDay = getCurrentCycleDay();
+    
+    if (cycleDay === null) {
+        hormoneLevel.textContent = 'Ajoutez vos dates de règles pour voir l\'interprétation';
+        moodInterpretation.textContent = 'Non disponible';
+        relationalNeeds.textContent = 'Non disponible';
+        return;
+    }
+    
+    const settings = loadCycleSettings();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const todayString = today.toDateString();
+    const periodDates = getPeriodDates();
+    const predictedDates = getPredictedPeriodDates();
+    const isInPredictedPeriod = predictedDates.includes(todayString) && !periodDates.includes(todayString);
+    
+    let phase;
+    if (isInPredictedPeriod) {
+        phase = 'retard';
+    } else {
+        phase = getCyclePhase(cycleDay, settings);
+    }
+    
+    const interpretation = cycleInterpretations[phase];
+    if (interpretation) {
+        hormoneLevel.textContent = interpretation.hormones;
+        moodInterpretation.textContent = interpretation.mood;
+        relationalNeeds.textContent = interpretation.relational;
+    }
+}
 
 // Hormone Information Data - Medical and precise
 const hormoneInfo = {
