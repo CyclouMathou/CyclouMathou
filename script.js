@@ -1,5 +1,92 @@
+// Profile and Splash Screen Management
+let currentProfile = null;
+
+function initSplashScreen() {
+    // Check if profile was already selected
+    const savedProfile = localStorage.getItem('cycleAppProfile');
+    if (savedProfile) {
+        currentProfile = savedProfile;
+        hideSplashScreen();
+        applyProfileSettings();
+        return;
+    }
+
+    // Show splash screen and hide main content
+    const mainContent = document.getElementById('mainContent');
+    mainContent.classList.add('hidden');
+
+    // Setup profile button listeners
+    const mathildeButton = document.getElementById('mathildeButton');
+    const joButton = document.getElementById('joButton');
+
+    mathildeButton.addEventListener('click', () => selectProfile('mathilde'));
+    joButton.addEventListener('click', () => selectProfile('jo'));
+}
+
+function selectProfile(profile) {
+    currentProfile = profile;
+    localStorage.setItem('cycleAppProfile', profile);
+    hideSplashScreen();
+    applyProfileSettings();
+}
+
+function hideSplashScreen() {
+    const splashScreen = document.getElementById('splashScreen');
+    const mainContent = document.getElementById('mainContent');
+    
+    splashScreen.classList.add('fade-out');
+    setTimeout(() => {
+        splashScreen.style.display = 'none';
+        mainContent.classList.remove('hidden');
+    }, 500);
+}
+
+function applyProfileSettings() {
+    // Add profile indicator
+    addProfileIndicator();
+
+    // If viewer mode (Jo), apply read-only restrictions
+    if (currentProfile === 'jo') {
+        document.body.classList.add('read-only');
+        disableEditingFeatures();
+    }
+}
+
+function addProfileIndicator() {
+    // Check if indicator already exists
+    if (document.querySelector('.profile-indicator')) {
+        return;
+    }
+
+    const indicator = document.createElement('div');
+    indicator.className = `profile-indicator ${currentProfile}`;
+    indicator.textContent = currentProfile === 'mathilde' ? 'La Queen Mathilde' : 'Jo';
+    document.body.appendChild(indicator);
+}
+
+function disableEditingFeatures() {
+    // Disable calendar date clicking
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('calendar-date') && 
+            document.body.classList.contains('read-only')) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+    }, true);
+
+    // Disable mood and needs selection
+    document.addEventListener('click', function(e) {
+        if ((e.target.classList.contains('mood') || e.target.classList.contains('need')) && 
+            document.body.classList.contains('read-only')) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+    }, true);
+}
+
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
+    initSplashScreen();
     loadCycleSettings();
     updateDateDisplay();
     updatePhaseDisplay();
@@ -140,6 +227,11 @@ function initMoodTracking() {
 
     moodButtons.forEach(button => {
         button.addEventListener('click', () => {
+            // Check if in read-only mode
+            if (document.body.classList.contains('read-only')) {
+                return;
+            }
+            
             // Remove previous selection
             moodButtons.forEach(btn => btn.classList.remove('selected'));
             
@@ -188,6 +280,11 @@ function initNeedsTracking() {
 
     needButtons.forEach(button => {
         button.addEventListener('click', () => {
+            // Check if in read-only mode
+            if (document.body.classList.contains('read-only')) {
+                return;
+            }
+            
             // Toggle selection
             button.classList.toggle('selected');
             
@@ -304,6 +401,11 @@ function renderCalendar() {
 }
 
 function togglePeriodDate(dateString) {
+    // Check if in read-only mode
+    if (document.body.classList.contains('read-only')) {
+        return;
+    }
+    
     let periodDates = JSON.parse(localStorage.getItem('periodDates') || '[]');
     
     const index = periodDates.indexOf(dateString);
