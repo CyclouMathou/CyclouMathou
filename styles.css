@@ -1,4 +1,10 @@
 /* Global Styles */
+:root {
+  /* Jo's profile style decorator positioning */
+  --jo-decorator-top: 8px;
+  --jo-decorator-right: 12px;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -1228,15 +1234,16 @@ body.read-only .need.selected {
 /* Jo's Profile - Mood Display */
 .jo-mood-display {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
-  gap: 15px;
-  padding: 30px 20px;
+  gap: 20px;
+  padding: 20px 30px;
   background-color: rgba(26, 26, 26, 0.5);
   border-radius: 12px;
   border: 2px solid #40e0d0;
-  min-height: 120px;
+  min-height: 80px;
+  position: relative;
 }
 
 .jo-mood-emoji {
@@ -1256,12 +1263,13 @@ body.read-only .need.selected {
 .jo-suggestion-display {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 25px 20px;
+  gap: 10px;
+  padding: 20px 25px;
   background-color: rgba(26, 26, 26, 0.5);
   border-radius: 12px;
   border: 2px solid #40e0d0;
-  min-height: 120px;
+  min-height: 80px;
+  position: relative;
 }
 
 .jo-suggestion-title {
@@ -1291,6 +1299,85 @@ body.read-only .need.selected {
   margin-top: 5px;
 }
 
+/* Romantic Style Variant - "Douceur et Tendresse" */
+.jo-mood-display.romantic,
+.jo-suggestion-display.romantic {
+  background: linear-gradient(135deg, rgba(255, 182, 193, 0.15) 0%, rgba(255, 105, 180, 0.1) 100%);
+  border: 2px solid #ff69b4;
+  box-shadow: 0 4px 15px rgba(255, 105, 180, 0.2);
+}
+
+.jo-mood-display.romantic::before,
+.jo-suggestion-display.romantic::before {
+  content: '💕';
+  position: absolute;
+  top: var(--jo-decorator-top);
+  right: var(--jo-decorator-right);
+  font-size: 1.2rem;
+  opacity: 0.6;
+}
+
+.jo-suggestion-display.romantic .jo-suggestion-title {
+  color: #ff69b4;
+}
+
+/* Pragmatic Style Variant - "Claire et Directe" */
+.jo-mood-display.pragmatic,
+.jo-suggestion-display.pragmatic {
+  background: linear-gradient(135deg, rgba(100, 149, 237, 0.15) 0%, rgba(70, 130, 180, 0.1) 100%);
+  border: 2px solid #6495ed;
+  box-shadow: 0 4px 15px rgba(100, 149, 237, 0.2);
+}
+
+.jo-mood-display.pragmatic::before,
+.jo-suggestion-display.pragmatic::before {
+  content: '📋';
+  position: absolute;
+  top: var(--jo-decorator-top);
+  right: var(--jo-decorator-right);
+  font-size: 1.2rem;
+  opacity: 0.6;
+}
+
+.jo-suggestion-display.pragmatic .jo-suggestion-title {
+  color: #6495ed;
+}
+
+/* Jo's Style Toggle */
+.jo-style-toggle {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin: 30px auto 40px;
+  max-width: 600px;
+}
+
+.style-variant-btn {
+  padding: 12px 24px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  border: 2px solid rgba(135, 206, 250, 0.3);
+  border-radius: 8px;
+  background-color: rgba(26, 26, 26, 0.5);
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  letter-spacing: 0.5px;
+}
+
+.style-variant-btn:hover {
+  background-color: rgba(135, 206, 250, 0.1);
+  border-color: rgba(135, 206, 250, 0.5);
+  transform: translateY(-2px);
+}
+
+.style-variant-btn.active {
+  background-color: rgba(64, 224, 208, 0.2);
+  border-color: #40e0d0;
+  color: #40e0d0;
+  font-weight: 600;
+}
+
 /* Responsive adjustments for Jo's displays */
 @media (max-width: 768px) {
   .jo-mood-emoji {
@@ -1314,7 +1401,10 @@ body.read-only .need.selected {
   .jo-mood-display,
   .jo-suggestion-display {
     padding: 20px 15px;
-    min-height: 100px;
+    min-height: 70px;
+    /* Revert to vertical layout on mobile for better readability on narrow screens */
+    flex-direction: column;
+    gap: 10px;
   }
 
   .jo-mood-emoji {
