@@ -457,6 +457,17 @@ h1 {
   box-shadow: 0 4px 12px rgba(255, 0, 255, 0.3);
 }
 
+.home-button.jo {
+  border-color: rgba(64, 224, 208, 0.3);
+  color: #40e0d0;
+}
+
+.home-button.jo:hover {
+  background-color: rgba(64, 224, 208, 0.2);
+  border-color: #40e0d0;
+  box-shadow: 0 4px 12px rgba(64, 224, 208, 0.3);
+}
+
 /* Settings Panel */
 .settings-panel {
   position: fixed;
