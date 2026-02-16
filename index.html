@@ -109,26 +109,41 @@
         <div class="hormone-graph-container">
             <h2>Cycle Hormonal</h2>
             <div class="hormone-legend">
-                <button class="legend-item" data-hormone="estrogene" aria-label="En savoir plus sur l'œstrogène">
-                    <span class="legend-color" style="background-color: #ff1493;"></span>
-                    <span>Œstrogène</span>
-                </button>
-                <button class="legend-item" data-hormone="progesterone" aria-label="En savoir plus sur la progestérone">
-                    <span class="legend-color" style="background-color: #9370db;"></span>
-                    <span>Progestérone</span>
-                </button>
-                <button class="legend-item" data-hormone="testosterone" aria-label="En savoir plus sur la testostérone">
-                    <span class="legend-color" style="background-color: #4169e1;"></span>
-                    <span>Testostérone</span>
-                </button>
-                <button class="legend-item" data-hormone="lh" aria-label="En savoir plus sur la LH">
-                    <span class="legend-color" style="background-color: #ffa500;"></span>
-                    <span>LH</span>
-                </button>
-                <button class="legend-item" data-hormone="fsh" aria-label="En savoir plus sur la FSH">
-                    <span class="legend-color" style="background-color: #32cd32;"></span>
-                    <span>FSH</span>
-                </button>
+                <div class="legend-item-wrapper">
+                    <input type="checkbox" id="checkbox-estrogene" class="hormone-checkbox" data-hormone="estrogene" checked>
+                    <button class="legend-item" data-hormone="estrogene" aria-label="En savoir plus sur l'œstrogène">
+                        <span class="legend-color" style="background-color: #ff1493;"></span>
+                        <span>Œstrogène</span>
+                    </button>
+                </div>
+                <div class="legend-item-wrapper">
+                    <input type="checkbox" id="checkbox-progesterone" class="hormone-checkbox" data-hormone="progesterone" checked>
+                    <button class="legend-item" data-hormone="progesterone" aria-label="En savoir plus sur la progestérone">
+                        <span class="legend-color" style="background-color: #9370db;"></span>
+                        <span>Progestérone</span>
+                    </button>
+                </div>
+                <div class="legend-item-wrapper">
+                    <input type="checkbox" id="checkbox-testosterone" class="hormone-checkbox" data-hormone="testosterone" checked>
+                    <button class="legend-item" data-hormone="testosterone" aria-label="En savoir plus sur la testostérone">
+                        <span class="legend-color" style="background-color: #4169e1;"></span>
+                        <span>Testostérone</span>
+                    </button>
+                </div>
+                <div class="legend-item-wrapper">
+                    <input type="checkbox" id="checkbox-lh" class="hormone-checkbox" data-hormone="lh" checked>
+                    <button class="legend-item" data-hormone="lh" aria-label="En savoir plus sur la LH">
+                        <span class="legend-color" style="background-color: #ffa500;"></span>
+                        <span>LH</span>
+                    </button>
+                </div>
+                <div class="legend-item-wrapper">
+                    <input type="checkbox" id="checkbox-fsh" class="hormone-checkbox" data-hormone="fsh" checked>
+                    <button class="legend-item" data-hormone="fsh" aria-label="En savoir plus sur la FSH">
+                        <span class="legend-color" style="background-color: #32cd32;"></span>
+                        <span>FSH</span>
+                    </button>
+                </div>
             </div>
             <canvas id="hormoneGraph" width="700" height="300"></canvas>
             
