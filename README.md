@@ -14,6 +14,7 @@ Le site est accessible à : **https://cycloumathou.github.io/CyclouMathou/**
 - **Suivi d'humeur** : Sélectionnez votre humeur parmi 6 émojis
 - **Suivi des besoins** : Sélectionnez vos besoins quotidiens (repos, exercice, social, etc.)
 - **Sauvegarde automatique** : Vos sélections sont sauvegardées dans votre navigateur
+- **Partage de données** : Partagez vos données via un lien sécurisé (fonctionne même en navigation privée)
 - **Responsive** : S'adapte à tous les écrans (mobile, tablette, desktop)
 
 ## 🚀 Déploiement sur GitHub Pages
@@ -57,6 +58,18 @@ python3 -m http.server 8000
 - **CSS3** : Design moderne avec Grid Layout
 - **JavaScript** : Interactivité et sauvegarde localStorage
 - **GitHub Pages** : Hébergement gratuit
+
+## 🔗 Partage de données
+
+Le site permet de partager vos données de cycle avec d'autres personnes via un lien URL sécurisé :
+
+1. Entrez vos données (dates de règles, humeurs, besoins, paramètres de cycle)
+2. Cliquez sur le bouton "🔗 Partager" en haut à droite
+3. Le lien est automatiquement copié dans votre presse-papiers
+4. Partagez ce lien avec qui vous voulez (par exemple avec votre partenaire)
+5. Quand la personne ouvre le lien, elle verra toutes vos données, même en navigation privée
+
+**Note** : Les données sont encodées dans l'URL et ne transitent pas par un serveur. La confidentialité est préservée car seules les personnes ayant le lien peuvent accéder aux données.
 
 ## 📝 License
 

@@ -67,8 +67,147 @@ function isReadOnlyMode() {
     return document.body.classList.contains('read-only');
 }
 
+// Data Sharing via URL
+function exportDataToURL() {
+    const data = {
+        profile: currentProfile,
+        periodDates: JSON.parse(localStorage.getItem('periodDates') || '[]'),
+        cycleLength: localStorage.getItem('cycleLength') || '28',
+        periodLength: localStorage.getItem('periodLength') || '5',
+        cycleRegular: localStorage.getItem('cycleRegular') || 'false',
+        todaysMood: localStorage.getItem('todaysMood') || null,
+        todaysNeeds: localStorage.getItem('todaysNeeds') || null
+    };
+    
+    // Compress and encode data for URL
+    const jsonString = JSON.stringify(data);
+    const base64Data = encodeURIComponent(btoa(jsonString));
+    
+    // Create shareable URL
+    const url = new URL(window.location.href);
+    url.searchParams.set('data', base64Data);
+    
+    return url.toString();
+}
+
+function loadDataFromURL() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const dataParam = urlParams.get('data');
+    
+    if (!dataParam) {
+        return false;
+    }
+    
+    try {
+        // Decode and decompress data
+        const jsonString = atob(decodeURIComponent(dataParam));
+        const data = JSON.parse(jsonString);
+        
+        // Import data to localStorage
+        if (data.profile) {
+            localStorage.setItem('cycleAppProfile', data.profile);
+            currentProfile = data.profile;
+        }
+        
+        if (data.periodDates) {
+            localStorage.setItem('periodDates', JSON.stringify(data.periodDates));
+        }
+        
+        if (data.cycleLength) {
+            localStorage.setItem('cycleLength', data.cycleLength);
+        }
+        
+        if (data.periodLength) {
+            localStorage.setItem('periodLength', data.periodLength);
+        }
+        
+        if (data.cycleRegular) {
+            localStorage.setItem('cycleRegular', data.cycleRegular);
+        }
+        
+        if (data.todaysMood) {
+            localStorage.setItem('todaysMood', data.todaysMood);
+        }
+        
+        if (data.todaysNeeds) {
+            localStorage.setItem('todaysNeeds', data.todaysNeeds);
+        }
+        
+        // Clean URL after loading data
+        window.history.replaceState({}, document.title, window.location.pathname);
+        
+        return true;
+    } catch (error) {
+        console.error('Error loading data from URL:', error);
+        return false;
+    }
+}
+
+function initShareButton() {
+    // Check if share button already exists
+    if (document.getElementById('shareButton')) {
+        return;
+    }
+    
+    // Create share button
+    const shareButton = document.createElement('button');
+    shareButton.id = 'shareButton';
+    shareButton.className = 'share-button';
+    shareButton.innerHTML = '🔗 Partager';
+    shareButton.setAttribute('aria-label', 'Partager mes données');
+    
+    // Add click handler
+    shareButton.addEventListener('click', () => {
+        const shareableURL = exportDataToURL();
+        
+        // Copy to clipboard
+        navigator.clipboard.writeText(shareableURL).then(() => {
+            // Show success message
+            const originalText = shareButton.innerHTML;
+            shareButton.innerHTML = '✓ Lien copié!';
+            shareButton.classList.add('copied');
+            
+            setTimeout(() => {
+                shareButton.innerHTML = originalText;
+                shareButton.classList.remove('copied');
+            }, 2000);
+        }).catch(err => {
+            // Fallback for older browsers
+            const textarea = document.createElement('textarea');
+            textarea.value = shareableURL;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                const originalText = shareButton.innerHTML;
+                shareButton.innerHTML = '✓ Lien copié!';
+                shareButton.classList.add('copied');
+                
+                setTimeout(() => {
+                    shareButton.innerHTML = originalText;
+                    shareButton.classList.remove('copied');
+                }, 2000);
+            } catch (err) {
+                alert('Impossible de copier le lien: ' + shareableURL);
+            }
+            document.body.removeChild(textarea);
+        });
+    });
+    
+    // Add button to the page (next to settings toggle)
+    const settingsToggle = document.getElementById('settingsToggle');
+    if (settingsToggle) {
+        settingsToggle.parentNode.insertBefore(shareButton, settingsToggle.nextSibling);
+    }
+}
+
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
+    // Load data from URL if present (for data sharing)
+    const dataLoaded = loadDataFromURL();
+    
     initSplashScreen();
     loadCycleSettings();
     updateDateDisplay();
@@ -83,6 +222,7 @@ document.addEventListener('DOMContentLoaded', function() {
     drawHormoneGraph();
     initHormoneModal();
     updateHormoneInterpretation();
+    initShareButton();
 });
 
 // Calculate cycle phase based on cycle day
