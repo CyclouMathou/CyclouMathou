@@ -1297,7 +1297,7 @@ body.read-only .need.selected {
   height: 100%;
   transition: width 0.8s ease-out;
   border-radius: 12px;
-  background: linear-gradient(90deg, currentColor 0%, currentColor 100%);
+  background: currentColor;
   box-shadow: 0 0 10px currentColor;
   position: relative;
   animation: energyPulse 2s ease-in-out infinite;

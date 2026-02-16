@@ -1644,6 +1644,9 @@ function updateJoMoodDisplay() {
         } else {
             energyColor = '#ff6b6b'; // Low energy - red
         }
+        
+        // Sanitize energy value to ensure it's a safe number
+        const safeEnergy = Math.max(0, Math.min(100, Number(moodData.energy) || 0));
 
         moodContainer.innerHTML = `
             <div class="jo-mood-display">
@@ -1653,9 +1656,9 @@ function updateJoMoodDisplay() {
                     <div class="jo-energy-gauge-container">
                         <div class="jo-energy-label">Énergie physique</div>
                         <div class="jo-energy-gauge">
-                            <div class="jo-energy-fill" style="width: ${moodData.energy}%; background-color: ${energyColor};"></div>
+                            <div class="jo-energy-fill" style="width: ${safeEnergy}%; background-color: ${energyColor};"></div>
                         </div>
-                        <div class="jo-energy-value">${moodData.energy}%</div>
+                        <div class="jo-energy-value">${safeEnergy}%</div>
                     </div>
                 </div>
             </div>
@@ -1693,8 +1696,9 @@ function updateJoNeedsDisplay() {
 
     const phaseSuggestions = joPartnerSuggestions[phase];
     if (phaseSuggestions) {
-        // Select the appropriate suggestion list based on style variant
-        const suggestions = phaseSuggestions[styleVariant] || phaseSuggestions.pragmatic;
+        // Validate styleVariant and select the appropriate suggestion list
+        const validVariant = (styleVariant === 'romantic' || styleVariant === 'pragmatic') ? styleVariant : 'pragmatic';
+        const suggestions = phaseSuggestions[validVariant];
         
         if (suggestions && suggestions.length > 0) {
             // Use day of year to select a suggestion (changes daily)
