@@ -44,16 +44,30 @@ function updatePhaseDisplay() {
     
     const settings = loadCycleSettings();
     
+    // Check if today is in predicted period dates (not confirmed)
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const todayString = today.toDateString();
+    const periodDates = getPeriodDates();
+    const predictedDates = getPredictedPeriodDates();
+    const isInPredictedPeriod = predictedDates.includes(todayString) && !periodDates.includes(todayString);
+    
+    // If today is in predicted period (dotted pink), show "retard de règles / phase lutéale"
+    if (isInPredictedPeriod) {
+        phaseDisplay.textContent = 'retard de règles / phase lutéale';
+        return;
+    }
+    
     // Determine phase based on cycle day and settings
     let phase;
     if (cycleDay >= 1 && cycleDay <= settings.periodLength) {
-        phase = 'menstruation';
+        phase = 'période de menstruation';
     } else if (cycleDay <= Math.floor(settings.cycleLength * 0.45)) {
-        phase = 'folliculaire';
+        phase = 'phase folliculaire';
     } else if (cycleDay <= Math.floor(settings.cycleLength * 0.55)) {
-        phase = 'ovulation';
+        phase = "phase d'ovulation";
     } else {
-        phase = 'lutéale';
+        phase = 'phase lutéale';
     }
     
     phaseDisplay.textContent = phase;
