@@ -530,6 +530,46 @@ h1 {
   border-radius: 8px;
 }
 
+/* Hormone Interpretation Section */
+.hormone-interpretation {
+  margin-top: 30px;
+  padding: 25px;
+  background-color: rgba(10, 15, 26, 0.7);
+  border-radius: 8px;
+  border: 1px solid rgba(135, 206, 250, 0.2);
+}
+
+.hormone-interpretation h3 {
+  font-size: 1.3rem;
+  font-weight: 300;
+  color: #87ceeb;
+  margin-bottom: 20px;
+  letter-spacing: 1px;
+  text-align: center;
+}
+
+.interpretation-content {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  text-align: left;
+}
+
+.interpretation-section h4 {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #ff00ff;
+  margin-bottom: 10px;
+  letter-spacing: 0.5px;
+}
+
+.interpretation-section p {
+  font-size: 0.95rem;
+  color: #ffffff;
+  line-height: 1.6;
+  margin: 0;
+}
+
 @media (max-width: 768px) {
   .hormone-graph-container {
     margin-top: 40px;
@@ -551,6 +591,23 @@ h1 {
   
   #hormoneGraph {
     width: 100%;
+  }
+  
+  .hormone-interpretation {
+    margin-top: 20px;
+    padding: 20px;
+  }
+  
+  .hormone-interpretation h3 {
+    font-size: 1.1rem;
+  }
+  
+  .interpretation-section h4 {
+    font-size: 0.9rem;
+  }
+  
+  .interpretation-section p {
+    font-size: 0.85rem;
   }
 }
 
