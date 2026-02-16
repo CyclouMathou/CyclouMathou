@@ -1452,6 +1452,8 @@ function initStyleToggle() {
             btn.classList.remove('active');
         }
         
+        // Remove any existing listener before adding a new one
+        btn.removeEventListener('click', handleStyleChange);
         // Add click handler
         btn.addEventListener('click', handleStyleChange);
     });
