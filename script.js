@@ -1016,7 +1016,7 @@ const hormoneInfo = {
                 <li>Stimule les cellules de la granulosa du follicule à produire de l'estradiol (via l'aromatisation des androgènes)</li>
                 <li>Augmente le nombre de récepteurs à la LH sur le follicule dominant, le préparant à répondre au pic de LH</li>
                 <li>Favorise la prolifération des cellules de la granulosa et l'expansion du follicule</li>
-                <li>Le ratio LH/FSH est utilisé cliniquement pour diagnostiquer certaines pathologies (ex: ratio LH/FSH > 2-3 dans le SOPK)</li>
+                <li>Le ratio LH/FSH est utilisé cliniquement pour diagnostiquer certaines pathologies (ex : ratio LH/FSH > 2-3 dans le SOPK)</li>
                 <li>Des niveaux élevés constants de FSH peuvent indiquer une insuffisance ovarienne ou une ménopause</li>
             </ul>
         `
