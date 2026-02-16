@@ -81,7 +81,7 @@ function exportDataToURL() {
     
     // Compress and encode data for URL
     const jsonString = JSON.stringify(data);
-    const base64Data = btoa(encodeURIComponent(jsonString));
+    const base64Data = encodeURIComponent(btoa(jsonString));
     
     // Create shareable URL
     const url = new URL(window.location.href);
@@ -100,7 +100,7 @@ function loadDataFromURL() {
     
     try {
         // Decode and decompress data
-        const jsonString = decodeURIComponent(atob(dataParam));
+        const jsonString = atob(decodeURIComponent(dataParam));
         const data = JSON.parse(jsonString);
         
         // Import data to localStorage
@@ -158,11 +158,6 @@ function initShareButton() {
     
     // Add click handler
     shareButton.addEventListener('click', () => {
-        if (isReadOnlyMode()) {
-            alert('Vous ne pouvez pas partager en mode lecture seule');
-            return;
-        }
-        
         const shareableURL = exportDataToURL();
         
         // Copy to clipboard
