@@ -1392,77 +1392,138 @@ const cycleInterpretations = {
     }
 };
 
-// Jo's profile - Mood emojis and emotions by cycle phase
+// Jo's profile - Mood emojis, emotions, and energy levels by cycle phase
 const joMoodByPhase = {
     menstruation: {
         emoji: '😴',
-        emotion: 'Fatiguée et introspective'
+        emotion: 'Fatiguée et introspective',
+        energy: 30 // Low energy during menstruation
     },
     folliculaire: {
         emoji: '😊',
-        emotion: 'Énergique et optimiste'
+        emotion: 'Énergique et optimiste',
+        energy: 75 // Rising energy in follicular phase
     },
     ovulation: {
         emoji: '⚡',
-        emotion: 'Confiante et rayonnante'
+        emotion: 'Confiante et rayonnante',
+        energy: 95 // Peak energy during ovulation
     },
     lutéale: {
         emoji: '😌',
-        emotion: 'Calme puis sensible'
+        emotion: 'Calme puis sensible',
+        energy: 60 // Moderate to declining energy in luteal phase
     },
     retard: {
         emoji: '😟',
-        emotion: 'Inquiète et incertaine'
+        emotion: 'Inquiète et incertaine',
+        energy: 40 // Low-moderate energy due to uncertainty
     }
 };
 
 // Jo's profile - Daily partner suggestions by cycle phase
+// Now with separate romantic and pragmatic versions
 const joPartnerSuggestions = {
-    menstruation: [
-        "Prépare-lui un thé chaud ou son chocolat chaud préféré ☕",
-        "Propose-lui de regarder sa série préférée ensemble en mode cocooning 📺",
-        "Fais les courses ou prépare le dîner pour qu'elle n'ait pas à s'en soucier 🍽️",
-        "Offre-lui un massage des pieds ou du dos sans rien demander en retour 💆",
-        "Laisse-lui des petits mots doux dans la maison pour lui remonter le moral 💌",
-        "Prends en charge les tâches ménagères aujourd'hui pour qu'elle puisse se reposer 🧹",
-        "Propose une soirée calme avec des bougies et de la musique douce 🕯️"
-    ],
-    folliculaire: [
-        "Propose-lui une sortie au restaurant ou un pique-nique improvisé 🍱",
-        "Suggère une activité sportive ensemble comme une randonnée ou du vélo 🚴",
-        "Planifie une sortie culturelle : musée, expo, concert 🎨",
-        "Organise une soirée jeux de société ou karaoké avec des amis 🎲",
-        "Emmène-la découvrir un nouveau quartier ou un nouveau café ☕",
-        "Propose un atelier créatif ensemble : cuisine, bricolage, peinture 🎨",
-        "Planifie un week-end surprise ou une escapade d'un jour 🚗"
-    ],
-    ovulation: [
-        "Complimente son look, elle est au top de sa forme ! 💃",
-        "Organise un dîner romantique aux chandelles avec sa musique préférée 🕯️",
-        "Emmène-la danser ou à un concert qu'elle aime 💃",
-        "Planifie une sortie photos pour capturer ce moment où elle rayonne 📸",
-        "Propose une activité qu'elle a toujours voulu essayer ensemble 🎯",
-        "Laisse-lui un message d'amour sincère sur pourquoi tu l'apprécies ❤️",
-        "Organise une soirée surprise avec ses amis proches 🎉"
-    ],
-    lutéale: [
-        "Sois patient et compréhensif si elle semble irritable ou fatiguée 🤗",
-        "Complimente-la sincèrement sur ce qu'elle fait de bien aujourd'hui 💝",
-        "Propose une soirée cocooning avec un film qu'elle choisit 🎬",
-        "Prends les devants sur l'organisation du quotidien sans qu'elle demande 📋",
-        "Prépare son plat réconfortant préféré pour le dîner 🍝",
-        "Offre-lui de l'espace si elle en a besoin, tout en étant disponible 🤝",
-        "Fais-lui un compliment authentique sur sa personnalité, pas son apparence 💕"
-    ],
-    retard: [
-        "Sois présent et rassurant, écoute ses inquiétudes sans jugement 👂",
-        "Propose de l'accompagner à la pharmacie si besoin 🏥",
-        "Prends en charge le stress quotidien : courses, repas, ménage 🛒",
-        "Rappelle-lui que tu es là quoi qu'il arrive ❤️",
-        "Offre-lui une sortie pour se changer les idées si elle le souhaite 🌳",
-        "Prépare-lui une tisane calmante et un moment tranquille ensemble 🍵",
-        "Reste patient et disponible pour discuter quand elle le souhaite 💬"
-    ]
+    menstruation: {
+        romantic: [
+            "Écris-lui un petit mot tendre pour lui dire que tu penses à elle 💌",
+            "Envoie-lui un message doux pendant la journée : 'Je suis là pour toi' 💕",
+            "Murmure-lui des mots réconfortants et tendres pour apaiser son inconfort 🤗",
+            "Dis-lui combien tu admires sa force pendant ces moments difficiles 💝",
+            "Laisse-lui une note d'amour sur son oreiller avant qu'elle se réveille 💗",
+            "Exprime-lui ton affection avec des mots doux et rassurants 💖",
+            "Partage avec elle un souvenir heureux qui te fait sourire 🌸"
+        ],
+        pragmatic: [
+            "Prépare-lui un thé chaud ou son chocolat chaud préféré ☕",
+            "Fais-lui un câlin réconfortant si elle en a besoin 🤗",
+            "Propose-lui de regarder sa série préférée ensemble 📺",
+            "Fais les courses ou prépare le dîner 🍽️",
+            "Offre-lui un massage des pieds ou du dos 💆",
+            "Prends en charge les tâches ménagères 🧹",
+            "Propose une soirée calme ensemble 🕯️"
+        ]
+    },
+    folliculaire: {
+        romantic: [
+            "Écris-lui un poème sur son énergie rayonnante et sa joie de vivre ✨",
+            "Envoie-lui des messages spontanés pour lui dire qu'elle illumine ta journée ☀️",
+            "Complimente sa créativité et son enthousiasme débordant 💫",
+            "Partage avec elle tes rêves d'aventures à vivre ensemble 🌟",
+            "Dis-lui combien son sourire et sa bonne humeur embellissent ta vie 😊",
+            "Exprime-lui ton admiration pour son énergie contagieuse 💖",
+            "Raconte-lui pourquoi tu aimes partager des moments avec elle 🌈"
+        ],
+        pragmatic: [
+            "Propose-lui une sortie au restaurant ou un pique-nique 🍱",
+            "Fais-lui un câlin joyeux pour célébrer son énergie 🤗",
+            "Suggère une activité sportive ensemble 🚴",
+            "Planifie une sortie culturelle : musée, expo, concert 🎨",
+            "Organise une soirée jeux avec des amis 🎲",
+            "Emmène-la découvrir un nouveau quartier ou café ☕",
+            "Planifie un week-end surprise ou une escapade 🚗"
+        ]
+    },
+    ovulation: {
+        romantic: [
+            "Écris-lui une lettre d'amour sincère sur tout ce que tu aimes chez elle ❤️",
+            "Murmure-lui des mots doux sur sa beauté intérieure et extérieure 💕",
+            "Partage avec elle tes sentiments profonds et authentiques 💝",
+            "Exprime-lui combien tu es fier(ère) d'être à ses côtés 👫",
+            "Dis-lui combien elle compte pour toi avec des mots du cœur 💗",
+            "Raconte-lui un moment où tu es tombé(e) amoureux(se) d'elle à nouveau 💖",
+            "Complimente sa confiance et son rayonnement naturel 🌟"
+        ],
+        pragmatic: [
+            "Complimente son look, elle est au top de sa forme ! 💃",
+            "Fais-lui un câlin chaleureux et affectueux 🤗",
+            "Organise un dîner romantique aux chandelles 🕯️",
+            "Emmène-la danser ou à un concert 💃",
+            "Planifie une sortie photos ensemble 📸",
+            "Propose une activité qu'elle a toujours voulu essayer 🎯",
+            "Organise une soirée surprise avec ses amis 🎉"
+        ]
+    },
+    lutéale: {
+        romantic: [
+            "Écris-lui un message tendre pour lui rappeler combien elle est importante 💌",
+            "Partage avec elle des mots d'encouragement et de compréhension 💕",
+            "Exprime-lui ta gratitude pour sa présence dans ta vie 🙏",
+            "Dis-lui que tu l'aimes telle qu'elle est, sans conditions 💝",
+            "Murmure-lui des mots apaisants et réconfortants 🤗",
+            "Complimente sa personnalité, pas son apparence 💖",
+            "Rassure-la sur ton amour et ton soutien indéfectibles 💗"
+        ],
+        pragmatic: [
+            "Sois patient(e) et compréhensif(ve) avec elle 🤗",
+            "Fais-lui un câlin doux et rassurant 💝",
+            "Propose une soirée cocooning avec un film 🎬",
+            "Prends les devants sur l'organisation du quotidien 📋",
+            "Prépare son plat réconfortant préféré 🍝",
+            "Offre-lui de l'espace si elle en a besoin 🤝",
+            "Complimente sincèrement ce qu'elle fait de bien 💕"
+        ]
+    },
+    retard: {
+        romantic: [
+            "Écris-lui un message pour lui dire que tu es là, quoi qu'il arrive ❤️",
+            "Partage avec elle des mots rassurants et pleins d'amour 💕",
+            "Exprime-lui ton soutien inconditionnel avec tendresse 💝",
+            "Dis-lui que tout ira bien et que vous affronterez tout ensemble 🤝",
+            "Murmure-lui des mots apaisants pour calmer ses inquiétudes 🌸",
+            "Rassure-la sur la solidité de votre lien, peu importe la situation 💖",
+            "Rappelle-lui combien elle est forte et courageuse 💪"
+        ],
+        pragmatic: [
+            "Sois présent(e) et rassurant(e), écoute-la sans jugement 👂",
+            "Fais-lui un câlin réconfortant et soutenant 🤗",
+            "Propose de l'accompagner à la pharmacie si besoin 🏥",
+            "Prends en charge le stress quotidien : courses, repas, ménage 🛒",
+            "Offre-lui une sortie pour se changer les idées 🌳",
+            "Prépare-lui une tisane calmante 🍵",
+            "Reste patient(e) et disponible pour discuter 💬"
+        ]
+    }
 };
 
 // Phase name mapping for display
@@ -1572,10 +1633,31 @@ function updateJoMoodDisplay() {
 
     const moodData = joMoodByPhase[phase];
     if (moodData) {
+        // Determine energy level color based on energy value
+        let energyColor;
+        if (moodData.energy >= 80) {
+            energyColor = '#00ff00'; // High energy - green
+        } else if (moodData.energy >= 60) {
+            energyColor = '#87ceeb'; // Good energy - light blue
+        } else if (moodData.energy >= 40) {
+            energyColor = '#ffa500'; // Moderate energy - orange
+        } else {
+            energyColor = '#ff6b6b'; // Low energy - red
+        }
+
         moodContainer.innerHTML = `
-            <div class="jo-mood-display ${styleVariant}">
+            <div class="jo-mood-display">
                 <div class="jo-mood-emoji">${moodData.emoji}</div>
-                <div class="jo-mood-emotion">${moodData.emotion}</div>
+                <div class="jo-mood-info">
+                    <div class="jo-mood-emotion">${moodData.emotion}</div>
+                    <div class="jo-energy-gauge-container">
+                        <div class="jo-energy-label">Énergie physique</div>
+                        <div class="jo-energy-gauge">
+                            <div class="jo-energy-fill" style="width: ${moodData.energy}%; background-color: ${energyColor};"></div>
+                        </div>
+                        <div class="jo-energy-value">${moodData.energy}%</div>
+                    </div>
+                </div>
             </div>
         `;
     }
@@ -1590,7 +1672,7 @@ function updateJoNeedsDisplay() {
     
     const cycleDay = getCurrentCycleDay();
     if (cycleDay === null) {
-        needsContainer.innerHTML = `<div class="jo-suggestion-display ${styleVariant}">Ajoute des dates de règles pour voir les suggestions du jour</div>`;
+        needsContainer.innerHTML = `<div class="jo-suggestion-display">Ajoute des dates de règles pour voir les suggestions du jour</div>`;
         return;
     }
 
@@ -1609,21 +1691,26 @@ function updateJoNeedsDisplay() {
         phase = getCyclePhase(cycleDay, settings);
     }
 
-    const suggestions = joPartnerSuggestions[phase];
-    if (suggestions && suggestions.length > 0) {
-        // Use day of year to select a suggestion (changes daily)
-        const startOfYear = new Date(today.getFullYear(), 0, 1);
-        const dayOfYear = Math.floor((today - startOfYear) / 1000 / 60 / 60 / 24);
-        const suggestionIndex = dayOfYear % suggestions.length;
-        const todaySuggestion = suggestions[suggestionIndex];
+    const phaseSuggestions = joPartnerSuggestions[phase];
+    if (phaseSuggestions) {
+        // Select the appropriate suggestion list based on style variant
+        const suggestions = phaseSuggestions[styleVariant] || phaseSuggestions.pragmatic;
+        
+        if (suggestions && suggestions.length > 0) {
+            // Use day of year to select a suggestion (changes daily)
+            const startOfYear = new Date(today.getFullYear(), 0, 1);
+            const dayOfYear = Math.floor((today - startOfYear) / 1000 / 60 / 60 / 24);
+            const suggestionIndex = dayOfYear % suggestions.length;
+            const todaySuggestion = suggestions[suggestionIndex];
 
-        needsContainer.innerHTML = `
-            <div class="jo-suggestion-display ${styleVariant}">
-                <div class="jo-suggestion-title">💡 Suggestion du jour pour toi</div>
-                <div class="jo-suggestion-text">${todaySuggestion}</div>
-                <div class="jo-suggestion-phase">Phase: ${phaseDisplayNames[phase] || 'Retard'}</div>
-            </div>
-        `;
+            needsContainer.innerHTML = `
+                <div class="jo-suggestion-display">
+                    <div class="jo-suggestion-title">💡 Suggestion du jour pour toi</div>
+                    <div class="jo-suggestion-text">${todaySuggestion}</div>
+                    <div class="jo-suggestion-phase">Phase: ${phaseDisplayNames[phase] || 'Retard'}</div>
+                </div>
+            `;
+        }
     }
 }
 
