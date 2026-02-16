@@ -479,3 +479,99 @@ h1 {
     padding: 12px 8px;
   }
 }
+
+/* Hormone Graph */
+.hormone-graph-container {
+  margin-top: 60px;
+  padding: 30px;
+  background-color: rgba(26, 26, 26, 0.5);
+  border-radius: 12px;
+  border: 1px solid rgba(135, 206, 250, 0.3);
+}
+
+.hormone-graph-container h2 {
+  font-size: 1.5rem;
+  font-weight: 300;
+  color: #ffffff;
+  margin-bottom: 20px;
+  letter-spacing: 1px;
+  text-align: center;
+}
+
+.hormone-legend {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: #ffffff;
+}
+
+.legend-color {
+  width: 20px;
+  height: 20px;
+  border-radius: 3px;
+  display: inline-block;
+}
+
+#hormoneGraph {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+  height: auto;
+  background-color: rgba(10, 15, 26, 0.5);
+  border-radius: 8px;
+}
+
+@media (max-width: 768px) {
+  .hormone-graph-container {
+    margin-top: 40px;
+    padding: 20px;
+  }
+  
+  .hormone-graph-container h2 {
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+  }
+  
+  .hormone-legend {
+    gap: 15px;
+  }
+  
+  .legend-item {
+    font-size: 0.8rem;
+  }
+  
+  #hormoneGraph {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .hormone-graph-container {
+    margin-top: 30px;
+    padding: 15px;
+  }
+  
+  .hormone-graph-container h2 {
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+  }
+  
+  .hormone-legend {
+    gap: 10px;
+    font-size: 0.75rem;
+  }
+  
+  .legend-color {
+    width: 16px;
+    height: 16px;
+  }
+}
