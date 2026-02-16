@@ -21,10 +21,10 @@ function getCyclePhase(cycleDay, settings) {
     
     if (cycleDay >= 1 && cycleDay <= settings.periodLength) {
         return 'menstruation';
-    } else if (cycleDay >= 12 && cycleDay <= 16) {
-        return 'ovulation';
     } else if (cycleDay > settings.periodLength && cycleDay < 12) {
         return 'folliculaire';
+    } else if (cycleDay >= 12 && cycleDay <= 16) {
+        return 'ovulation';
     } else {
         return 'lutéale';
     }
@@ -336,13 +336,13 @@ function getPhaseForDate(date) {
             lastPeriodStart = sortedDates[i];
             // Find the actual start by going backwards through consecutive dates
             for (let j = i - 1; j >= 0; j--) {
-                const current = sortedDates[j + 1];
-                const previous = sortedDates[j];
-                const diffDays = Math.floor((current - previous) / (1000 * 60 * 60 * 24));
+                const laterDate = sortedDates[j + 1];
+                const earlierDate = sortedDates[j];
+                const diffDays = Math.floor((laterDate - earlierDate) / (1000 * 60 * 60 * 24));
                 if (diffDays > 1) {
                     break;
                 }
-                lastPeriodStart = previous;
+                lastPeriodStart = earlierDate;
             }
             break;
         }
@@ -362,12 +362,19 @@ function getPhaseForDate(date) {
     }
     
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-    const cycleDay = (diffDays % settings.cycleLength) + 1;
+    
+    // If beyond one cycle length, don't show phase colors (predicted period will show instead)
+    if (diffDays >= settings.cycleLength) {
+        return null;
+    }
+    
+    const cycleDay = diffDays + 1;
     
     // Check if this is a predicted period date
     const predictedDates = getPredictedPeriodDates();
     const dateString = targetDate.toDateString();
-    const isInPredictedPeriod = predictedDates.includes(dateString) && !periodDates.includes(dateString);
+    const periodDatesSet = new Set(periodDates);
+    const isInPredictedPeriod = predictedDates.includes(dateString) && !periodDatesSet.has(dateString);
     
     if (isInPredictedPeriod) {
         return 'retard';
