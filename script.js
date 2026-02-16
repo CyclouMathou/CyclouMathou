@@ -468,12 +468,14 @@ function saveTodaysMood(mood, label) {
         mood: mood,
         label: label
     };
-    localStorage.setItem('todaysMood', JSON.stringify(moodData));
+    // Save mood with profile-specific key
+    localStorage.setItem(`todaysMood_${currentProfile}`, JSON.stringify(moodData));
 }
 
 // Load today's mood
 function loadTodaysMood() {
-    const savedMood = localStorage.getItem('todaysMood');
+    // Load mood from profile-specific key
+    const savedMood = localStorage.getItem(`todaysMood_${currentProfile}`);
     if (savedMood) {
         const moodData = JSON.parse(savedMood);
         const today = getCurrentDate().toDateString();
@@ -1679,6 +1681,60 @@ function getJoStyleVariant() {
     return 'romantic';
 }
 
+// Helper function to get Mathilde's actual mood for the current date
+function getMathildesActualMood() {
+    const savedMood = localStorage.getItem('todaysMood_mathilde');
+    if (!savedMood) return null;
+    
+    const moodData = JSON.parse(savedMood);
+    const today = getCurrentDate().toDateString();
+    
+    // Check if the saved mood is for today's date
+    if (moodData.date === today) {
+        return moodData.mood; // Returns: 'happy', 'calm', 'sad', 'angry', 'tired', 'energetic'
+    }
+    
+    return null;
+}
+
+// Map Mathilde's mood buttons to Jo's display format
+function mapMathildeMoodToJoDisplay(mood) {
+    const moodMapping = {
+        'happy': {
+            emoji: '😊',
+            emotion: 'Heureuse et épanouie',
+            energy: 80
+        },
+        'calm': {
+            emoji: '😌',
+            emotion: 'Calme et sereine',
+            energy: 70
+        },
+        'sad': {
+            emoji: '😢',
+            emotion: 'Triste et émotive',
+            energy: 40
+        },
+        'angry': {
+            emoji: '😠',
+            emotion: 'En colère ou frustrée',
+            energy: 50
+        },
+        'tired': {
+            emoji: '😴',
+            emotion: 'Fatiguée et épuisée',
+            energy: 25
+        },
+        'energetic': {
+            emoji: '⚡',
+            emotion: 'Énergique et dynamique',
+            energy: 90
+        }
+    };
+    
+    return moodMapping[mood] || null;
+}
+
 // Update mood display for Jo's profile
 function updateJoMoodDisplay() {
     const moodContainer = document.querySelector('.mood-container');
@@ -1707,7 +1763,20 @@ function updateJoMoodDisplay() {
         phase = getCyclePhase(cycleDay, settings);
     }
 
-    const moodData = joMoodByPhase[phase];
+    // Priority 1: Check if Mathilde has entered actual mood data for today
+    const mathildeActualMood = getMathildesActualMood();
+    let moodData;
+    
+    if (mathildeActualMood) {
+        // Use Mathilde's actual mood data
+        moodData = mapMathildeMoodToJoDisplay(mathildeActualMood);
+    }
+    
+    // Priority 2: If no actual mood data, use cycle-based prediction
+    if (!moodData) {
+        moodData = joMoodByPhase[phase];
+    }
+    
     if (moodData) {
         // Determine energy level color based on energy value
         let energyColor;
