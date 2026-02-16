@@ -745,20 +745,25 @@ function getCurrentCycleDay() {
 
 // Get visible hormones based on checkbox state
 function getVisibleHormones() {
-    const visibleHormones = {
-        estrogene: true,
-        progesterone: true,
-        testosterone: true,
-        lh: true,
-        fsh: true
-    };
+    const visibleHormones = {};
     
-    // Check each checkbox
+    // Read state from checkboxes - default to true only if checkbox doesn't exist
     const checkboxes = document.querySelectorAll('.hormone-checkbox');
     checkboxes.forEach(checkbox => {
         const hormone = checkbox.getAttribute('data-hormone');
         visibleHormones[hormone] = checkbox.checked;
     });
+    
+    // If no checkboxes found, default all to visible
+    if (Object.keys(visibleHormones).length === 0) {
+        return {
+            estrogene: true,
+            progesterone: true,
+            testosterone: true,
+            lh: true,
+            fsh: true
+        };
+    }
     
     return visibleHormones;
 }
