@@ -85,6 +85,9 @@ function applyProfileSettings() {
         updateDateDisplay();
         updatePhaseDisplay();
         updateCircleColor();
+        // Hide calendar navigation
+        document.getElementById('prevWeek').style.display = 'none';
+        document.getElementById('nextWeek').style.display = 'none';
         adaptInterfaceForJo();
     } else {
         // Restore original headers for Mathilde's profile
@@ -550,6 +553,7 @@ function loadTodaysNeeds() {
 
 // Calendar functionality
 let currentWeekStart = getCurrentDate();
+let calendarInitialized = false;
 
 function initCalendar() {
     // Set to start of week (Monday)
@@ -559,21 +563,31 @@ function initCalendar() {
     
     renderCalendar();
     
-    // Disable calendar navigation for Jo's profile
-    if (currentProfile === 'jo') {
-        document.getElementById('prevWeek').style.display = 'none';
-        document.getElementById('nextWeek').style.display = 'none';
-    } else {
-        document.getElementById('prevWeek').addEventListener('click', () => {
-            currentWeekStart.setDate(currentWeekStart.getDate() - 7);
-            renderCalendar();
+    // Only add event listeners once
+    if (!calendarInitialized) {
+        const prevWeekBtn = document.getElementById('prevWeek');
+        const nextWeekBtn = document.getElementById('nextWeek');
+        
+        prevWeekBtn.addEventListener('click', () => {
+            if (currentProfile !== 'jo') {
+                currentWeekStart.setDate(currentWeekStart.getDate() - 7);
+                renderCalendar();
+            }
         });
         
-        document.getElementById('nextWeek').addEventListener('click', () => {
-            currentWeekStart.setDate(currentWeekStart.getDate() + 7);
-            renderCalendar();
+        nextWeekBtn.addEventListener('click', () => {
+            if (currentProfile !== 'jo') {
+                currentWeekStart.setDate(currentWeekStart.getDate() + 7);
+                renderCalendar();
+            }
         });
+        
+        calendarInitialized = true;
     }
+    
+    // Update button visibility based on profile
+    document.getElementById('prevWeek').style.display = currentProfile === 'jo' ? 'none' : 'block';
+    document.getElementById('nextWeek').style.display = currentProfile === 'jo' ? 'none' : 'block';
 }
 
 function renderCalendar() {
@@ -1585,10 +1599,6 @@ const phaseDisplayNames = {
 
 // Adapt interface for Jo's profile
 function adaptInterfaceForJo() {
-    // Hide calendar navigation for Jo's profile
-    document.getElementById('prevWeek').style.display = 'none';
-    document.getElementById('nextWeek').style.display = 'none';
-    
     // Show style toggle button
     const styleToggle = document.getElementById('joStyleToggle');
     if (styleToggle) {
