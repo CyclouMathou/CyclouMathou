@@ -59,6 +59,9 @@ function applyProfileSettings() {
 
     // Initialize cervical mucus tracking for Mathilde
     initCervicalMucusTracking();
+    
+    // Initialize notification settings for Jo
+    initNotificationSettings();
 
     // If viewer mode (Jo), apply read-only restrictions
     if (currentProfile === 'jo') {
@@ -443,7 +446,6 @@ document.addEventListener('DOMContentLoaded', function() {
     initHormoneCheckboxes();
     updateHormoneInterpretation();
     initShareButton();
-    initNotificationSettings();
     
     // Draw graph after a short delay to ensure canvas is properly sized
     // and all checkboxes are initialized
