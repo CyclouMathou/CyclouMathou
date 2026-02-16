@@ -1275,7 +1275,7 @@ function drawHormoneCurves(ctx, padding, graphWidth, graphHeight, cycleLength, v
                     
                     // Slightly rising as body prepares for next cycle
                     const delayedDays = day - cycleLength;
-                    fsh = Math.min(0.5, fshAtCycleEnd + delayedDays * 0.015);
+                    fsh = Math.min(0.4, fshAtCycleEnd + delayedDays * 0.015);
                 }
                 
                 const y = padding + graphHeight - (fsh * graphHeight * 0.9);
