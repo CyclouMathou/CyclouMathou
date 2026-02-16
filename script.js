@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initCalendar();
     initSettings();
     drawHormoneGraph();
+    initHormoneTooltip();
 });
 
 // Calculate cycle phase based on cycle day
@@ -760,6 +761,9 @@ window.addEventListener('resize', function() {
     drawHormoneGraph();
 });
 
+// Click threshold for hormone curve detection (as fraction of graph height)
+const CLICK_THRESHOLD = 0.15;
+
 // Hormone medical explanations
 const hormoneExplanations = {
     estrogen: {
@@ -785,8 +789,6 @@ function initHormoneTooltip() {
     
     // Add click event to canvas
     canvas.addEventListener('click', function(event) {
-        event.stopPropagation(); // Prevent document click handler from firing
-        
         const rect = canvas.getBoundingClientRect();
         const x = event.clientX - rect.left;
         const y = event.clientY - rect.top;
@@ -801,6 +803,7 @@ function initHormoneTooltip() {
         const hormone = detectHormoneClick(canvasX, canvasY);
         
         if (hormone) {
+            event.stopPropagation(); // Only stop propagation if we found a hormone
             showHormoneTooltip(hormone, event.pageX, event.pageY);
         } else {
             hideHormoneTooltip();
@@ -882,7 +885,6 @@ function detectHormoneClick(canvasX, canvasY) {
     const testosteroneY = 1 - (testosteroneLevel * 0.9);
     
     // Check which curve is closest (within threshold)
-    const threshold = 0.15; // 15% of graph height (increased for better usability)
     const distances = {
         estrogen: Math.abs(graphY - estrogenY),
         progesterone: Math.abs(graphY - progesteroneY),
@@ -891,7 +893,7 @@ function detectHormoneClick(canvasX, canvasY) {
     
     // Find closest hormone
     let closestHormone = null;
-    let minDistance = threshold;
+    let minDistance = CLICK_THRESHOLD;
     
     for (const [hormone, distance] of Object.entries(distances)) {
         if (distance < minDistance) {
@@ -917,7 +919,11 @@ function showHormoneTooltip(hormone, x, y) {
     tooltipTitle.textContent = explanation.title;
     tooltipContent.textContent = explanation.content;
     
+    // Make tooltip visible first
     tooltip.classList.add('visible');
+    
+    // Force a reflow to get accurate dimensions
+    tooltip.offsetHeight;
     
     // Position tooltip near click
     const tooltipRect = tooltip.getBoundingClientRect();
@@ -943,9 +949,3 @@ function hideHormoneTooltip() {
         tooltip.classList.remove('visible');
     }
 }
-
-// Initialize tooltip when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
-    // ... existing initialization code runs first ...
-    initHormoneTooltip();
-});
