@@ -173,6 +173,7 @@ let currentWeekStart = new Date();
 
 function initCalendar() {
     // Set to start of week (Monday)
+    // JavaScript's getDay() returns 0 for Sunday, so we convert 0 to 7 to treat Monday as day 1
     currentWeekStart.setDate(currentWeekStart.getDate() - (currentWeekStart.getDay() || 7) + 1);
     currentWeekStart.setHours(0, 0, 0, 0);
     
@@ -309,8 +310,19 @@ function getPredictedPeriodDates() {
     const settings = loadCycleSettings();
     const sortedDates = periodDates.map(d => new Date(d)).sort((a, b) => a - b);
     
-    // Find the most recent period start
-    const lastPeriodStart = sortedDates[sortedDates.length - 1];
+    // Find the most recent period start by grouping consecutive dates
+    let lastPeriodStart = sortedDates[sortedDates.length - 1];
+    for (let i = sortedDates.length - 1; i > 0; i--) {
+        const current = sortedDates[i];
+        const previous = sortedDates[i - 1];
+        const diffDays = Math.floor((current - previous) / (1000 * 60 * 60 * 24));
+        
+        // If gap is more than 1 day, previous date is from a different period
+        if (diffDays > 1) {
+            break;
+        }
+        lastPeriodStart = previous;
+    }
     
     // Calculate next period start
     const nextPeriodStart = new Date(lastPeriodStart);
@@ -335,13 +347,32 @@ function getCurrentCycleDay() {
     }
     
     const sortedDates = periodDates.map(d => new Date(d)).sort((a, b) => a - b);
-    const lastPeriodStart = sortedDates[sortedDates.length - 1];
+    
+    // Find the most recent period start by grouping consecutive dates
+    let lastPeriodStart = sortedDates[sortedDates.length - 1];
+    for (let i = sortedDates.length - 1; i > 0; i--) {
+        const current = sortedDates[i];
+        const previous = sortedDates[i - 1];
+        const diffDays = Math.floor((current - previous) / (1000 * 60 * 60 * 24));
+        
+        // If gap is more than 1 day, previous date is from a different period
+        if (diffDays > 1) {
+            break;
+        }
+        lastPeriodStart = previous;
+    }
     
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     lastPeriodStart.setHours(0, 0, 0, 0);
     
     const diffTime = today - lastPeriodStart;
+    
+    // If last period start is in the future, return null (invalid state)
+    if (diffTime < 0) {
+        return null;
+    }
+    
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
     
     const settings = loadCycleSettings();
