@@ -1,6 +1,11 @@
 // Profile and Splash Screen Management
 let currentProfile = null;
 
+// Constants for graph rendering delays
+// These delays ensure the canvas element is properly sized in the DOM before drawing
+const SPLASH_GRAPH_RENDER_DELAY_MS = 50; // Delay after splash screen is hidden
+const INIT_GRAPH_DELAY_MS = 100; // Initial delay on page load
+
 function initSplashScreen() {
     // Check if profile was already selected
     const savedProfile = localStorage.getItem('cycleAppProfile');
@@ -41,7 +46,7 @@ function hideSplashScreen() {
         // Redraw graph after main content is visible to ensure proper sizing
         setTimeout(() => {
             drawHormoneGraph();
-        }, 50);
+        }, SPLASH_GRAPH_RENDER_DELAY_MS);
     }, 500);
 }
 
@@ -254,7 +259,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // and all checkboxes are initialized
     setTimeout(() => {
         drawHormoneGraph();
-    }, 100);
+    }, INIT_GRAPH_DELAY_MS);
 });
 
 // Calculate cycle phase based on cycle day
@@ -815,7 +820,7 @@ function drawHormoneGraph() {
     
     // Determine the actual display length for the graph
     // If current day exceeds expected cycle length, extend the graph
-    const displayLength = (currentCycleDay && currentCycleDay > cycleLength) 
+    const displayLength = (currentCycleDay !== null && currentCycleDay > cycleLength) 
         ? currentCycleDay 
         : cycleLength;
     
