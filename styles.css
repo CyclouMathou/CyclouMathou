@@ -397,6 +397,39 @@ h1 {
   transform: rotate(90deg);
 }
 
+/* Share Button */
+.share-button {
+  position: fixed;
+  top: 20px;
+  right: 80px;
+  background-color: rgba(26, 26, 26, 0.8);
+  border: 1px solid rgba(135, 206, 250, 0.3);
+  color: #87ceeb;
+  font-size: 0.9rem;
+  padding: 12px 20px;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 100;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.share-button:hover {
+  background-color: rgba(135, 206, 250, 0.2);
+  border-color: #87ceeb;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(135, 206, 250, 0.3);
+}
+
+.share-button.copied {
+  background-color: rgba(76, 175, 80, 0.3);
+  border-color: #4caf50;
+  color: #4caf50;
+}
+
 /* Settings Panel */
 .settings-panel {
   position: fixed;
@@ -596,6 +629,13 @@ h1 {
     font-size: 1.3rem;
   }
   
+  .share-button {
+    top: 15px;
+    right: 70px;
+    font-size: 0.8rem;
+    padding: 10px 15px;
+  }
+  
   .settings-panel {
     top: 70px;
     right: 15px;
@@ -652,6 +692,13 @@ h1 {
     width: 40px;
     height: 40px;
     font-size: 1.2rem;
+  }
+  
+  .share-button {
+    top: 10px;
+    right: 60px;
+    font-size: 0.75rem;
+    padding: 8px 12px;
   }
   
   .settings-panel {
@@ -1010,7 +1057,8 @@ h1 {
 }
 
 /* Read-Only Mode Styles */
-body.read-only .settings-toggle {
+body.read-only .settings-toggle,
+body.read-only .share-button {
   display: none;
 }
 
