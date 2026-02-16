@@ -248,6 +248,16 @@ h1 {
   letter-spacing: 8px;
   color: #ffffff;
   margin-bottom: 60px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: linear-gradient(135deg, rgba(10, 15, 26, 0.95) 0%, rgba(26, 26, 46, 0.95) 100%);
+  padding: 20px 30px;
+  border: 2px solid;
+  border-image: linear-gradient(90deg, #ff00ff 0%, #87ceeb 50%, #40e0d0 100%) 1;
+  border-radius: 0;
+  box-shadow: 0 4px 20px rgba(135, 206, 250, 0.3), 0 0 30px rgba(255, 0, 255, 0.2);
+  backdrop-filter: blur(10px);
 }
 
 /* Mini Calendar */
@@ -663,6 +673,7 @@ h1 {
   h1 {
     font-size: 2rem;
     margin-bottom: 40px;
+    padding: 15px 20px;
   }
   
   .mini-calendar {
@@ -724,6 +735,8 @@ h1 {
   h1 {
     font-size: 1.5rem;
     margin-bottom: 30px;
+    padding: 12px 15px;
+    letter-spacing: 4px;
   }
   
   .mini-calendar {
