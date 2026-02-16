@@ -737,6 +737,76 @@ function drawHormoneCurves(ctx, padding, graphWidth, graphHeight, cycleLength) {
         }
     }
     ctx.stroke();
+    
+    // LH curve (orange) - sharp peak at ovulation
+    const LH_BASELINE = 0.15;
+    ctx.strokeStyle = '#ffa500';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    for (let i = 0; i <= points; i++) {
+        const day = (i / points) * cycleLength;
+        const x = padding + (i / points) * graphWidth;
+        
+        // LH: low baseline with sharp surge just before ovulation
+        let lh;
+        if (day < ovulationDay - 2) {
+            // Low baseline during early follicular phase
+            lh = LH_BASELINE;
+        } else if (day < ovulationDay + 1) {
+            // Sharp LH surge triggering ovulation
+            const surgeProgress = (day - (ovulationDay - 2)) / 3;
+            lh = LH_BASELINE + 0.75 * Math.sin(surgeProgress * Math.PI);
+        } else {
+            // Returns to baseline after ovulation
+            lh = LH_BASELINE;
+        }
+        
+        const y = padding + graphHeight - (lh * graphHeight * 0.9);
+        
+        if (i === 0) {
+            ctx.moveTo(x, y);
+        } else {
+            ctx.lineTo(x, y);
+        }
+    }
+    ctx.stroke();
+    
+    // FSH curve (lime green) - peaks early follicular, drops at ovulation
+    ctx.strokeStyle = '#32cd32';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    for (let i = 0; i <= points; i++) {
+        const day = (i / points) * cycleLength;
+        const x = padding + (i / points) * graphWidth;
+        
+        // FSH: high in early follicular phase, drops as estrogen rises, slight rise in luteal
+        let fsh;
+        if (day < 5) {
+            // High at cycle start to stimulate follicle development
+            fsh = 0.7 - 0.2 * (day / 5);
+        } else if (day < ovulationDay) {
+            // Gradual decrease as estrogen rises
+            fsh = 0.5 - 0.3 * ((day - 5) / (ovulationDay - 5));
+        } else if (day < ovulationDay + 2) {
+            // Small surge at ovulation with LH
+            const surgeProgress = (day - ovulationDay) / 2;
+            fsh = 0.2 + 0.2 * Math.sin(surgeProgress * Math.PI);
+        } else {
+            // Low during luteal phase with slight increase at end
+            const lutealDay = day - (ovulationDay + 2);
+            const lutealLength = cycleLength - (ovulationDay + 2);
+            fsh = 0.2 + 0.15 * (lutealDay / lutealLength);
+        }
+        
+        const y = padding + graphHeight - (fsh * graphHeight * 0.9);
+        
+        if (i === 0) {
+            ctx.moveTo(x, y);
+        } else {
+            ctx.lineTo(x, y);
+        }
+    }
+    ctx.stroke();
 }
 
 // Draw current day indicator line
@@ -903,6 +973,51 @@ const hormoneInfo = {
                 <li>Participe à la production de nouveaux follicules ovariens</li>
                 <li>Action sur la distribution de la masse grasse et le métabolisme</li>
                 <li>En excès (hyperandrogénie), peut causer de l'acné, une pilosité excessive (hirsutisme) et des troubles du cycle (syndrome des ovaires polykystiques)</li>
+            </ul>
+        `
+    },
+    lh: {
+        title: 'LH (Hormone Lutéinisante)',
+        content: `
+            <p>La <strong>LH (hormone lutéinisante)</strong> est une hormone gonadotrope sécrétée par l'hypophyse antérieure (glande pituitaire). Elle joue un rôle crucial dans le déclenchement de l'ovulation et la formation du corps jaune.</p>
+            
+            <p><strong>Rôle physiologique dans le cycle menstruel :</strong></p>
+            <ul>
+                <li><strong>Phase folliculaire (J1 à J12) :</strong> Les niveaux de LH restent relativement bas et stables (2-10 mUI/mL), permettant la maturation progressive du follicule dominant sous l'influence de la FSH et de l'estradiol.</li>
+                <li><strong>Pic de LH (J12-14) :</strong> Lorsque l'estradiol atteint son pic pré-ovulatoire, il déclenche par rétrocontrôle positif une libération massive de LH (pic à 25-100 mUI/mL). Ce pic de LH survient environ 24-36 heures avant l'ovulation.</li>
+                <li><strong>Ovulation :</strong> Le pic de LH provoque la rupture du follicule mature et la libération de l'ovocyte (ovulation), généralement vers J14 d'un cycle de 28 jours.</li>
+                <li><strong>Phase lutéale (J14 à J28) :</strong> Après l'ovulation, la LH stimule la transformation du follicule rompu en corps jaune, qui sécrète progestérone et estradiol pour maintenir l'endomètre.</li>
+            </ul>
+            
+            <p><strong>Autres effets physiologiques :</strong></p>
+            <ul>
+                <li>Stimule la production d'androgènes (dont la testostérone) par les cellules thécales de l'ovaire</li>
+                <li>Essentielle pour la lutéinisation et le maintien du corps jaune en début de phase lutéale</li>
+                <li>Les tests d'ovulation détectent ce pic de LH dans les urines pour prédire la période fertile</li>
+                <li>Des niveaux élevés constants peuvent indiquer un syndrome des ovaires polykystiques (SOPK) ou une ménopause</li>
+            </ul>
+        `
+    },
+    fsh: {
+        title: 'FSH (Hormone Folliculo-Stimulante)',
+        content: `
+            <p>La <strong>FSH (hormone folliculo-stimulante)</strong> est une hormone gonadotrope sécrétée par l'hypophyse antérieure. Elle est essentielle pour la croissance et la maturation des follicules ovariens.</p>
+            
+            <p><strong>Rôle physiologique dans le cycle menstruel :</strong></p>
+            <ul>
+                <li><strong>Début de phase folliculaire (J1 à J5) :</strong> Les niveaux de FSH augmentent au début du cycle (5-20 mUI/mL) pour recruter un groupe de follicules ovariens et stimuler leur croissance. Cette augmentation fait suite à la chute de progestérone et d'estradiol en fin de cycle précédent.</li>
+                <li><strong>Phase folliculaire moyenne (J5 à J12) :</strong> La FSH diminue progressivement grâce au rétrocontrôle négatif exercé par l'estradiol croissant sécrété par le follicule dominant. Seul le follicule le plus sensible (dominant) continue de croître malgré la baisse de FSH.</li>
+                <li><strong>Pic pré-ovulatoire (J12-14) :</strong> Un petit pic de FSH accompagne le pic de LH, contribuant à la maturation finale de l'ovocyte et à la rupture folliculaire.</li>
+                <li><strong>Phase lutéale (J14 à J28) :</strong> Les niveaux de FSH restent bas pendant la phase lutéale en raison des taux élevés d'estradiol et de progestérone sécrétés par le corps jaune.</li>
+            </ul>
+            
+            <p><strong>Autres effets physiologiques :</strong></p>
+            <ul>
+                <li>Stimule les cellules de la granulosa du follicule à produire de l'estradiol (via l'aromatisation des androgènes)</li>
+                <li>Augmente le nombre de récepteurs à la LH sur le follicule dominant, le préparant à répondre au pic de LH</li>
+                <li>Favorise la prolifération des cellules de la granulosa et l'expansion du follicule</li>
+                <li>Le ratio LH/FSH est utilisé cliniquement pour diagnostiquer certaines pathologies (ex : ratio LH/FSH > 2-3 dans le SOPK)</li>
+                <li>Des niveaux élevés constants de FSH peuvent indiquer une insuffisance ovarienne ou une ménopause</li>
             </ul>
         `
     }
