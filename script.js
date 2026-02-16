@@ -38,6 +38,10 @@ function hideSplashScreen() {
     setTimeout(() => {
         splashScreen.style.display = 'none';
         mainContent.classList.remove('hidden');
+        // Redraw graph after main content is visible to ensure proper sizing
+        setTimeout(() => {
+            drawHormoneGraph();
+        }, 50);
     }, 500);
 }
 
@@ -241,11 +245,16 @@ document.addEventListener('DOMContentLoaded', function() {
     loadTodaysNeeds();
     initCalendar();
     initSettings();
-    drawHormoneGraph();
     initHormoneModal();
     initHormoneCheckboxes();
     updateHormoneInterpretation();
     initShareButton();
+    
+    // Draw graph after a short delay to ensure canvas is properly sized
+    // and all checkboxes are initialized
+    setTimeout(() => {
+        drawHormoneGraph();
+    }, 100);
 });
 
 // Calculate cycle phase based on cycle day
@@ -759,8 +768,9 @@ function getCurrentCycleDay() {
     
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
     
-    const settings = loadCycleSettings();
-    const cycleDay = (diffDays % settings.cycleLength) + 1;
+    // Return actual day number (Day 1, Day 2, ..., Day 36, etc.)
+    // Don't wrap around with modulo - show real cycle day even if delayed
+    const cycleDay = diffDays + 1;
     
     return cycleDay;
 }
@@ -803,6 +813,12 @@ function drawHormoneGraph() {
     // Get current cycle day for indicator
     const currentCycleDay = getCurrentCycleDay();
     
+    // Determine the actual display length for the graph
+    // If current day exceeds expected cycle length, extend the graph
+    const displayLength = (currentCycleDay && currentCycleDay > cycleLength) 
+        ? currentCycleDay 
+        : cycleLength;
+    
     // Get visible hormones from checkboxes
     const visibleHormones = getVisibleHormones();
     
@@ -824,26 +840,28 @@ function drawHormoneGraph() {
     ctx.clearRect(0, 0, width, height);
     
     // Draw phase backgrounds
-    drawPhaseBackgrounds(ctx, padding, graphWidth, graphHeight, cycleLength, periodLength);
+    drawPhaseBackgrounds(ctx, padding, graphWidth, graphHeight, cycleLength, periodLength, displayLength);
     
     // Draw axes
-    drawAxes(ctx, padding, width, height, graphWidth, graphHeight, cycleLength);
+    drawAxes(ctx, padding, width, height, graphWidth, graphHeight, cycleLength, displayLength);
     
     // Draw hormone curves (only visible ones)
-    drawHormoneCurves(ctx, padding, graphWidth, graphHeight, cycleLength, visibleHormones);
+    drawHormoneCurves(ctx, padding, graphWidth, graphHeight, cycleLength, visibleHormones, displayLength);
     
     // Draw current day indicator
     if (currentCycleDay !== null) {
-        drawCurrentDayIndicator(ctx, padding, graphWidth, graphHeight, cycleLength, currentCycleDay);
+        drawCurrentDayIndicator(ctx, padding, graphWidth, graphHeight, displayLength, currentCycleDay);
     }
 }
 
 // Draw phase backgrounds with colors
-function drawPhaseBackgrounds(ctx, padding, graphWidth, graphHeight, cycleLength, periodLength) {
+function drawPhaseBackgrounds(ctx, padding, graphWidth, graphHeight, cycleLength, periodLength, displayLength) {
     // Calculate phase boundaries proportionally
+    // Ovulation typically occurs around day 14 in a standard 28-day cycle
     const ovulationDay = Math.round(cycleLength / 2);
-    const follicularEnd = ovulationDay - 3;
-    const ovulationEnd = ovulationDay + 2;
+    // Ovulation phase should start around day 13-14 (2-3 days before ovulation day)
+    const follicularEnd = ovulationDay - 2;
+    const ovulationEnd = ovulationDay + 1;
     
     const phases = [
         { start: 1, end: periodLength, color: 'rgba(255, 0, 0, 0.1)' }, // Menstruation
@@ -852,9 +870,14 @@ function drawPhaseBackgrounds(ctx, padding, graphWidth, graphHeight, cycleLength
         { start: ovulationEnd + 1, end: cycleLength, color: 'rgba(64, 224, 208, 0.1)' } // Luteal
     ];
     
+    // If cycle is delayed beyond expected length, add a "delay" phase
+    if (displayLength > cycleLength) {
+        phases.push({ start: cycleLength + 1, end: displayLength, color: 'rgba(255, 165, 0, 0.15)' }); // Delay/Extended phase
+    }
+    
     phases.forEach(phase => {
-        const startX = padding + (phase.start - 1) / cycleLength * graphWidth;
-        const endX = padding + phase.end / cycleLength * graphWidth;
+        const startX = padding + (phase.start - 1) / displayLength * graphWidth;
+        const endX = padding + phase.end / displayLength * graphWidth;
         const width = endX - startX;
         
         ctx.fillStyle = phase.color;
@@ -863,7 +886,7 @@ function drawPhaseBackgrounds(ctx, padding, graphWidth, graphHeight, cycleLength
 }
 
 // Draw axes with labels
-function drawAxes(ctx, padding, width, height, graphWidth, graphHeight, cycleLength) {
+function drawAxes(ctx, padding, width, height, graphWidth, graphHeight, cycleLength, displayLength) {
     ctx.strokeStyle = 'rgba(135, 206, 250, 0.5)';
     ctx.lineWidth = 1;
     
@@ -884,11 +907,15 @@ function drawAxes(ctx, padding, width, height, graphWidth, graphHeight, cycleLen
     ctx.font = '11px Inter, sans-serif';
     ctx.textAlign = 'center';
     
-    // Draw labels for key days
+    // Draw labels for key days, adjusted for displayLength
     const keyDays = [1, 7, 14, 21, cycleLength];
+    // If display length is extended, add the end day
+    if (displayLength > cycleLength) {
+        keyDays.push(displayLength);
+    }
     keyDays.forEach(day => {
-        if (day <= cycleLength) {
-            const x = padding + (day - 1) / cycleLength * graphWidth;
+        if (day <= displayLength) {
+            const x = padding + (day - 1) / displayLength * graphWidth;
             ctx.fillText(`J${day}`, x, height - padding + 20);
             
             // Draw tick mark
@@ -914,7 +941,7 @@ function drawAxes(ctx, padding, width, height, graphWidth, graphHeight, cycleLen
 }
 
 // Draw hormone curves (estrogen, progesterone, testosterone)
-function drawHormoneCurves(ctx, padding, graphWidth, graphHeight, cycleLength, visibleHormones) {
+function drawHormoneCurves(ctx, padding, graphWidth, graphHeight, cycleLength, visibleHormones, displayLength) {
     const points = 100; // Number of points for smooth curves
     
     // Calculate ovulation day proportionally (typically mid-cycle)
@@ -928,7 +955,7 @@ function drawHormoneCurves(ctx, padding, graphWidth, graphHeight, cycleLength, v
         ctx.lineWidth = 2.5;
         ctx.beginPath();
         for (let i = 0; i <= points; i++) {
-            const day = (i / points) * cycleLength;
+            const day = (i / points) * displayLength;
             const x = padding + (i / points) * graphWidth;
             
             // Estrogen: rises during follicular phase, peaks at ovulation, drops in luteal phase with small rise
@@ -939,11 +966,14 @@ function drawHormoneCurves(ctx, padding, graphWidth, graphHeight, cycleLength, v
             } else if (day < ovulationEnd) {
                 // Peak at ovulation
                 estrogen = 0.9 - 0.3 * ((day - ovulationDay) / 2);
-            } else {
+            } else if (day <= cycleLength) {
                 // Drop with small secondary rise in luteal phase
                 const lutealDay = day - ovulationEnd;
                 const lutealLength = cycleLength - ovulationEnd;
                 estrogen = 0.6 - 0.3 * Math.sin((lutealDay / lutealLength) * Math.PI);
+            } else {
+                // Extended/delayed phase - low level
+                estrogen = 0.2;
             }
             
             const y = padding + graphHeight - (estrogen * graphHeight * 0.9);
@@ -963,7 +993,7 @@ function drawHormoneCurves(ctx, padding, graphWidth, graphHeight, cycleLength, v
         ctx.lineWidth = 2.5;
         ctx.beginPath();
         for (let i = 0; i <= points; i++) {
-            const day = (i / points) * cycleLength;
+            const day = (i / points) * displayLength;
             const x = padding + (i / points) * graphWidth;
             
             // Progesterone: low until ovulation, then rises and dominates luteal phase
@@ -971,11 +1001,14 @@ function drawHormoneCurves(ctx, padding, graphWidth, graphHeight, cycleLength, v
             if (day < ovulationDay) {
                 // Very low during follicular phase
                 progesterone = 0.1;
-            } else {
+            } else if (day <= cycleLength) {
                 // Rises after ovulation, peaks mid-luteal, then drops
                 const lutealDay = day - ovulationDay;
                 const lutealLength = cycleLength - ovulationDay;
                 progesterone = 0.1 + 0.8 * Math.sin((lutealDay / lutealLength) * Math.PI);
+            } else {
+                // Extended/delayed phase - low level (waiting for period)
+                progesterone = 0.1;
             }
             
             const y = padding + graphHeight - (progesterone * graphHeight * 0.9);
@@ -995,7 +1028,7 @@ function drawHormoneCurves(ctx, padding, graphWidth, graphHeight, cycleLength, v
         ctx.lineWidth = 2.5;
         ctx.beginPath();
         for (let i = 0; i <= points; i++) {
-            const day = (i / points) * cycleLength;
+            const day = (i / points) * displayLength;
             const x = padding + (i / points) * graphWidth;
             
             // Testosterone: relatively stable with small peak around ovulation
@@ -1005,8 +1038,11 @@ function drawHormoneCurves(ctx, padding, graphWidth, graphHeight, cycleLength, v
             } else if (day < ovulationEnd) {
                 // Small peak at ovulation
                 testosterone = 0.4 + 0.15 * Math.sin(((day - ovulationStart) / (ovulationEnd - ovulationStart)) * Math.PI);
-            } else {
+            } else if (day <= cycleLength) {
                 testosterone = 0.3 + 0.1 * Math.sin(((day - ovulationEnd) / (cycleLength - ovulationEnd)) * Math.PI);
+            } else {
+                // Extended/delayed phase - stable baseline
+                testosterone = 0.3;
             }
             
             const y = padding + graphHeight - (testosterone * graphHeight * 0.9);
@@ -1027,7 +1063,7 @@ function drawHormoneCurves(ctx, padding, graphWidth, graphHeight, cycleLength, v
         ctx.lineWidth = 2.5;
         ctx.beginPath();
         for (let i = 0; i <= points; i++) {
-            const day = (i / points) * cycleLength;
+            const day = (i / points) * displayLength;
             const x = padding + (i / points) * graphWidth;
             
             // LH: low baseline with sharp surge just before ovulation
@@ -1061,7 +1097,7 @@ function drawHormoneCurves(ctx, padding, graphWidth, graphHeight, cycleLength, v
         ctx.lineWidth = 2.5;
         ctx.beginPath();
         for (let i = 0; i <= points; i++) {
-            const day = (i / points) * cycleLength;
+            const day = (i / points) * displayLength;
             const x = padding + (i / points) * graphWidth;
             
             // FSH: high in early follicular phase, drops as estrogen rises, slight rise in luteal
@@ -1076,11 +1112,14 @@ function drawHormoneCurves(ctx, padding, graphWidth, graphHeight, cycleLength, v
                 // Small surge at ovulation with LH
                 const surgeProgress = (day - ovulationDay) / 2;
                 fsh = 0.2 + 0.2 * Math.sin(surgeProgress * Math.PI);
-            } else {
+            } else if (day <= cycleLength) {
                 // Low during luteal phase with slight increase at end
                 const lutealDay = day - (ovulationDay + 2);
                 const lutealLength = cycleLength - (ovulationDay + 2);
                 fsh = 0.2 + 0.15 * (lutealDay / lutealLength);
+            } else {
+                // Extended/delayed phase - low baseline
+                fsh = 0.2;
             }
             
             const y = padding + graphHeight - (fsh * graphHeight * 0.9);
@@ -1096,8 +1135,8 @@ function drawHormoneCurves(ctx, padding, graphWidth, graphHeight, cycleLength, v
 }
 
 // Draw current day indicator line
-function drawCurrentDayIndicator(ctx, padding, graphWidth, graphHeight, cycleLength, currentDay) {
-    const x = padding + ((currentDay - 1) / cycleLength) * graphWidth;
+function drawCurrentDayIndicator(ctx, padding, graphWidth, graphHeight, displayLength, currentDay) {
+    const x = padding + ((currentDay - 1) / displayLength) * graphWidth;
     
     // Draw vertical line
     ctx.strokeStyle = '#ffffff';
