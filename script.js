@@ -917,10 +917,9 @@ function drawHormoneGraph() {
 
 // Draw phase backgrounds with colors
 function drawPhaseBackgrounds(ctx, padding, graphWidth, graphHeight, cycleLength, periodLength, displayLength) {
-    // Calculate phase boundaries proportionally
-    // Ovulation typically occurs around day 14 in a standard 28-day cycle
-    const ovulationDay = Math.round(cycleLength / 2);
-    // Ovulation phase: follicularEnd = 12, ovulationEnd = 15 (for 28-day cycle)
+    // Fixed ovulation at Day 14 as per requirements
+    const ovulationDay = 14;
+    // Ovulation phase: follicularEnd = 12, ovulationEnd = 15
     // This makes the ovulation phase span from day 13 to day 15 (3 days centered on day 14)
     const follicularEnd = ovulationDay - 2;
     const ovulationEnd = ovulationDay + 1;
@@ -1006,8 +1005,8 @@ function drawAxes(ctx, padding, width, height, graphWidth, graphHeight, cycleLen
 function drawHormoneCurves(ctx, padding, graphWidth, graphHeight, cycleLength, visibleHormones, displayLength) {
     const points = 100; // Number of points for smooth curves
     
-    // Calculate ovulation day proportionally (typically mid-cycle)
-    const ovulationDay = cycleLength / 2;
+    // Fixed ovulation at Day 14 as per requirements
+    const ovulationDay = 14;
     const ovulationStart = ovulationDay - 2;
     const ovulationEnd = ovulationDay + 2;
     
@@ -1050,10 +1049,16 @@ function drawHormoneCurves(ctx, padding, graphWidth, graphHeight, cycleLength, v
                     const lutealLength = cycleLength - ovulationEnd;
                     estrogen = 0.6 - 0.3 * Math.sin((lutealDay / lutealLength) * Math.PI);
                 } else {
-                    // Extended/delayed phase - continues dropping as period is delayed
+                    // Extended/delayed phase - continues from end of cycle value
+                    // Calculate the value at cycleLength to ensure continuity
+                    const lutealDayEnd = cycleLength - ovulationEnd;
+                    const lutealLength = cycleLength - ovulationEnd;
+                    const estrogenAtCycleEnd = 0.6 - 0.3 * Math.sin((lutealDayEnd / lutealLength) * Math.PI);
+                    
+                    // Continue dropping as period is delayed
                     const delayedDays = day - cycleLength;
                     const fadeRate = 0.02; // Gradual decline
-                    estrogen = Math.max(0.15, 0.3 - delayedDays * fadeRate);
+                    estrogen = Math.max(0.15, estrogenAtCycleEnd - delayedDays * fadeRate);
                 }
                 
                 const y = padding + graphHeight - (estrogen * graphHeight * 0.9);
@@ -1110,10 +1115,16 @@ function drawHormoneCurves(ctx, padding, graphWidth, graphHeight, cycleLength, v
                     const lutealLength = cycleLength - ovulationDay;
                     progesterone = 0.1 + 0.8 * Math.sin((lutealDay / lutealLength) * Math.PI);
                 } else {
-                    // Extended/delayed phase - dropping as period is delayed
+                    // Extended/delayed phase - continues from end of cycle value
+                    // Calculate the value at cycleLength to ensure continuity
+                    const lutealDayEnd = cycleLength - ovulationDay;
+                    const lutealLength = cycleLength - ovulationDay;
+                    const progesteroneAtCycleEnd = 0.1 + 0.8 * Math.sin((lutealDayEnd / lutealLength) * Math.PI);
+                    
+                    // Dropping as period is delayed
                     const delayedDays = day - cycleLength;
                     const dropRate = 0.03; // Faster decline than estrogen
-                    progesterone = Math.max(0.08, 0.2 - delayedDays * dropRate);
+                    progesterone = Math.max(0.08, progesteroneAtCycleEnd - delayedDays * dropRate);
                 }
                 
                 const y = padding + graphHeight - (progesterone * graphHeight * 0.9);
@@ -1295,9 +1306,15 @@ function drawHormoneCurves(ctx, padding, graphWidth, graphHeight, cycleLength, v
                     const lutealLength = cycleLength - (ovulationDay + 2);
                     fsh = 0.2 + 0.15 * (lutealDay / lutealLength);
                 } else {
-                    // Extended/delayed phase - slightly rising as body prepares for next cycle
+                    // Extended/delayed phase - continues from end of cycle value
+                    // Calculate the value at cycleLength to ensure continuity
+                    const lutealDayEnd = cycleLength - (ovulationDay + 2);
+                    const lutealLength = cycleLength - (ovulationDay + 2);
+                    const fshAtCycleEnd = 0.2 + 0.15 * (lutealDayEnd / lutealLength);
+                    
+                    // Slightly rising as body prepares for next cycle
                     const delayedDays = day - cycleLength;
-                    fsh = Math.min(0.4, 0.2 + delayedDays * 0.015);
+                    fsh = Math.min(0.4, fshAtCycleEnd + delayedDays * 0.015);
                 }
                 
                 const y = padding + graphHeight - (fsh * graphHeight * 0.9);
