@@ -133,6 +133,32 @@ h1 {
   border: 1px dashed #ff00ff;
 }
 
+/* Phase colors for calendar dates */
+.calendar-date.phase-menstruation {
+  background-color: rgba(255, 0, 0, 0.15);
+  border: 1px dashed #ff0000;
+}
+
+.calendar-date.phase-folliculaire {
+  background-color: rgba(255, 215, 0, 0.15);
+  border: 1px dashed #ffd700;
+}
+
+.calendar-date.phase-ovulation {
+  background-color: rgba(0, 255, 0, 0.15);
+  border: 1px dashed #00ff00;
+}
+
+.calendar-date.phase-lutéale {
+  background-color: rgba(64, 224, 208, 0.15);
+  border: 1px dashed #40e0d0;
+}
+
+.calendar-date.phase-retard {
+  background-color: rgba(255, 0, 255, 0.15);
+  border: 1px dashed #ff00ff;
+}
+
 .calendar-date.other-month {
   opacity: 0.3;
 }
