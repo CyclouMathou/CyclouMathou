@@ -52,6 +52,30 @@
         <!-- Settings Toggle -->
         <button class="settings-toggle" id="settingsToggle" aria-label="Paramètres du cycle">⚙</button>
         
+        <!-- Jo's Notification Settings Toggle (hidden by default, shown for Jo's profile) -->
+        <button class="notification-settings-toggle" id="notificationSettingsToggle" style="display: none;" aria-label="Paramètres de notifications">🔔</button>
+        
+        <!-- Jo's Notification Settings Panel -->
+        <div class="notification-settings-panel" id="notificationSettingsPanel">
+            <h3>Paramètres de Notifications</h3>
+            <p class="notification-description">Choisis quand tu veux être notifié :</p>
+            <div class="notification-options">
+                <div class="notification-option">
+                    <input type="checkbox" id="notifLateRules" name="notifLateRules">
+                    <label for="notifLateRules">Retard de règle</label>
+                </div>
+                <div class="notification-option">
+                    <input type="checkbox" id="notifFirstDayRules" name="notifFirstDayRules">
+                    <label for="notifFirstDayRules">Premier jour de règle</label>
+                </div>
+                <div class="notification-option">
+                    <input type="checkbox" id="notifDaily" name="notifDaily">
+                    <label for="notifDaily">Des notifs tous les jours parce que c'est too much</label>
+                </div>
+            </div>
+            <button class="save-notification-settings" id="saveNotificationSettings">Enregistrer</button>
+        </div>
+        
         <!-- Settings Panel -->
         <div class="settings-panel" id="settingsPanel">
             <h3>Paramètres du Cycle</h3>

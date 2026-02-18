@@ -407,7 +407,7 @@ h1 {
 .share-button {
   position: fixed;
   top: 20px;
-  right: 80px;
+  right: 140px;
   background-color: rgba(26, 26, 26, 0.8);
   border: 1px solid rgba(135, 206, 250, 0.3);
   color: #87ceeb;
@@ -440,7 +440,7 @@ h1 {
 .home-button {
   position: fixed;
   top: 20px;
-  right: 230px;
+  right: 290px;
   background-color: rgba(26, 26, 26, 0.8);
   border: 1px solid rgba(255, 0, 255, 0.3);
   color: #ff00ff;
@@ -544,6 +544,106 @@ h1 {
 
 .save-settings:hover {
   background-color: rgba(255, 0, 255, 0.3);
+}
+
+/* Notification Settings Toggle (Jo's profile) */
+.notification-settings-toggle {
+  position: fixed;
+  top: 20px;
+  right: 80px;
+  background-color: rgba(26, 26, 26, 0.8);
+  border: 1px solid rgba(64, 224, 208, 0.3);
+  color: #40e0d0;
+  font-size: 1.5rem;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 100;
+}
+
+.notification-settings-toggle:hover {
+  background-color: rgba(64, 224, 208, 0.2);
+  border-color: #40e0d0;
+  transform: scale(1.1);
+}
+
+/* Notification Settings Panel (Jo's profile) */
+.notification-settings-panel {
+  position: fixed;
+  top: 80px;
+  right: 80px;
+  background-color: rgba(26, 26, 26, 0.95);
+  border: 1px solid rgba(64, 224, 208, 0.3);
+  border-radius: 12px;
+  padding: 20px;
+  width: 320px;
+  z-index: 99;
+  display: none;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.notification-settings-panel.open {
+  display: block;
+}
+
+.notification-settings-panel h3 {
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: #40e0d0;
+  margin-bottom: 15px;
+  letter-spacing: 1px;
+}
+
+.notification-description {
+  font-size: 0.9rem;
+  color: #ffffff;
+  margin-bottom: 15px;
+  opacity: 0.8;
+}
+
+.notification-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.notification-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.notification-option input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #40e0d0;
+}
+
+.notification-option label {
+  font-size: 0.9rem;
+  color: #ffffff;
+  cursor: pointer;
+  user-select: none;
+}
+
+.save-notification-settings {
+  width: 100%;
+  padding: 10px;
+  background-color: rgba(64, 224, 208, 0.2);
+  border: 1px solid #40e0d0;
+  border-radius: 6px;
+  color: #40e0d0;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.save-notification-settings:hover {
+  background-color: rgba(64, 224, 208, 0.3);
 }
 
 /* Phase Display */
@@ -678,21 +778,36 @@ h1 {
     font-size: 1.3rem;
   }
   
-  .share-button {
+  .notification-settings-toggle {
     top: 15px;
     right: 70px;
+    width: 45px;
+    height: 45px;
+    font-size: 1.3rem;
+  }
+  
+  .share-button {
+    top: 15px;
+    right: 125px;
     font-size: 0.8rem;
     padding: 10px 15px;
   }
   
   .home-button {
     top: 15px;
-    right: 190px;
+    right: 245px;
     font-size: 0.8rem;
     padding: 10px 15px;
   }
   
   .settings-panel {
+    top: 70px;
+    right: 15px;
+    left: 15px;
+    width: auto;
+  }
+  
+  .notification-settings-panel {
     top: 70px;
     right: 15px;
     left: 15px;
@@ -750,21 +865,35 @@ h1 {
     font-size: 1.2rem;
   }
   
-  .share-button {
+  .notification-settings-toggle {
     top: 10px;
     right: 60px;
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+  }
+  
+  .share-button {
+    top: 10px;
+    right: 110px;
     font-size: 0.75rem;
     padding: 8px 12px;
   }
   
   .home-button {
     top: 10px;
-    right: 165px;
+    right: 215px;
     font-size: 0.75rem;
     padding: 8px 12px;
   }
   
   .settings-panel {
+    top: 60px;
+    right: 10px;
+    left: 10px;
+  }
+  
+  .notification-settings-panel {
     top: 60px;
     right: 10px;
     left: 10px;
